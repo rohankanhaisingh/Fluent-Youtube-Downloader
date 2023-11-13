@@ -1,0 +1,124 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>Fluent-Youtube-Downloader</Name>
+    <RootNamespace>Fluent-Youtube-Downloader</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>4c9b555f-f2a2-4f24-8d98-b1b885b89a91</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>src\app.ts</StartupFile>
+    <StartWebBrowser>False</StartWebBrowser>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <EnableTypeScript>true</EnableTypeScript>
+    <StartWebBrowser>false</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="application\scripts\tsconfig.json" />
+    <Content Include="application\styles\components\_tooltip.scss" />
+    <Content Include="application\styles\partials\_footer.scss" />
+    <Content Include="application\styles\partials\_loader.scss" />
+    <Content Include="application\styles\partials\_navbar.scss" />
+    <Content Include="application\styles\utilities\_default-styles.scss" />
+    <Content Include="application\styles\utilities\_fonts.scss" />
+    <Content Include="application\styles\utilities\_spinner.scss" />
+    <Content Include="application\views\components\_head.ejs" />
+    <Content Include="application\views\components\_tooltip.ejs" />
+    <Content Include="application\views\index.ejs" />
+    <Content Include="application\views\tabs\convert.ejs" />
+    <Content Include="application\views\tabs\download.ejs" />
+    <Content Include="application\views\tabs\settings.ejs" />
+    <Content Include="scss-config.js" />
+    <Content Include="webpack.config.js" />
+    <None Include="src\app.ts" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="tsconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="application\" />
+    <Folder Include="application\res\icons\" />
+    <Folder Include="application\res\fonts\" />
+    <Folder Include="application\res\media\" />
+    <Folder Include="application\res\data\" />
+    <Folder Include="application\res\cache\" />
+    <Folder Include="application\styles\" />
+    <Folder Include="application\res\" />
+    <Folder Include="application\scripts\" />
+    <Folder Include="application\scripts\controllers\" />
+    <Folder Include="application\styles\dist\" />
+    <Folder Include="application\styles\components\" />
+    <Folder Include="application\styles\dist\components\" />
+    <Folder Include="application\styles\dist\utilities\" />
+    <Folder Include="application\styles\dist\partials\" />
+    <Folder Include="application\styles\partials\" />
+    <Folder Include="application\styles\utilities\" />
+    <Folder Include="application\views\" />
+    <Folder Include="application\views\components\" />
+    <Folder Include="application\views\tabs\" />
+    <Folder Include="src\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="application\scripts\controllers\convert.ts" />
+    <TypeScriptCompile Include="application\scripts\controllers\download.ts" />
+    <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
+    <TypeScriptCompile Include="application\scripts\index.ts" />
+    <TypeScriptCompile Include="src\constants.ts" />
+    <TypeScriptCompile Include="src\router.ts" />
+    <TypeScriptCompile Include="src\server.ts" />
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
