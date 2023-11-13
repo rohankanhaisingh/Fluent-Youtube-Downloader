@@ -5,8 +5,25 @@
     <title></title>
 </head>
 <body>
-    
-    
+    <div class="app spa-app electron-app">
+        <div class="container">
+
+            <nav class="app-side-menu">
+                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/download">Download</fluent-button>
+                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/convert">Convert</fluent-button>
+                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/settings">Settings</fluent-button>
+            </nav>
+
+            <div class="app-content">
+                <div class="container">
+                    <div class="content-swappable">
+                        This is where the new contents will be shown.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <script src="/static/scripts/index.dist.js"></script>
 </body>
 </html>

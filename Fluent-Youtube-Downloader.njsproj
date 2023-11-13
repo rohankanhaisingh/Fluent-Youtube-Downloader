@@ -29,6 +29,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".env" />
     <Content Include="application\scripts\tsconfig.json" />
     <Content Include="application\styles\components\_tooltip.scss" />
     <Content Include="application\styles\partials\_footer.scss" />
@@ -57,6 +58,7 @@
     <Folder Include="application\res\media\" />
     <Folder Include="application\res\data\" />
     <Folder Include="application\res\cache\" />
+    <Folder Include="application\scripts\handlers\" />
     <Folder Include="application\styles\" />
     <Folder Include="application\res\" />
     <Folder Include="application\scripts\" />
@@ -77,6 +79,7 @@
     <TypeScriptCompile Include="application\scripts\controllers\convert.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\download.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
+    <TypeScriptCompile Include="application\scripts\handlers\spa-handler.ts" />
     <TypeScriptCompile Include="application\scripts\index.ts" />
     <TypeScriptCompile Include="src\constants.ts" />
     <TypeScriptCompile Include="src\router.ts" />
