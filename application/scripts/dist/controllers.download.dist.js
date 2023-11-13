@@ -1,0 +1,1 @@
+(()=>{"use strict";var __webpack_modules__={114:()=>{eval('\r\nconsole.log("This is the download page.");\r\n\n\n//# sourceURL=webpack://fluent-youtube-downloader/./application/scripts/controllers/download.ts?')}},__webpack_exports__={};__webpack_modules__[114]()})();

@@ -1,7 +1,6 @@
-import { allComponents, fluentButton, provideFluentDesignSystem } from "@fluentui/web-components";
-import { requestPage } from "./handlers/spa-handler";
+import "./handlers/theme";
 
-provideFluentDesignSystem().register(allComponents);
+import { requestPage } from "./handlers/spa-handler";
 
 const navigationButtons: NodeListOf<HTMLElement> = document.querySelectorAll(".navigation-button");
 

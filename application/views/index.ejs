@@ -2,28 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <%- include("components/_head", {title: "Youtube Converter - Rohan Kanhaisingh", description: "Convert Youtube video's"}) -%>
-    <title></title>
+    <link href="/static/styles/index.css" rel="stylesheet" />
+    <title>Fluent Youtube Downloader</title>
 </head>
 <body>
-    <div class="app spa-app electron-app">
-        <div class="container">
+    <fluent-provider>
+        <div class="app spa-app electron-app">
+            <div class="container">
 
-            <nav class="app-side-menu">
-                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/download">Download</fluent-button>
-                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/convert">Convert</fluent-button>
-                <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/settings">Settings</fluent-button>
-            </nav>
+                <nav class="app-side-menu">
+                    <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/download">Download</fluent-button>
+                </nav>
 
-            <div class="app-content">
-                <div class="container">
-                    <div class="content-swappable">
-                        This is where the new contents will be shown.
+                <div class="app-content">
+                    <div class="container">
+                        <div class="content-swappable">
+                            This is where the new contents will be shown.
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-    </div>
+    </fluent-provider>
     <script src="/static/scripts/index.dist.js"></script>
 </body>
 </html>

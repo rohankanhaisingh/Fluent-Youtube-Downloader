@@ -15,6 +15,24 @@ for (let file of ENTRY_SCRIPT_FILES) {
     }
 }
 
+for (let folder of ENTRY_SCRIPT_FILES) {
+
+    if (!folder.includes(".")) {
+
+        if (folder !== "dist") {
+
+            const folderFiles = fs.readdirSync(path.join(SCRIPTS_PATH, folder));
+
+            for (let file of folderFiles) {
+
+                const fileName = file.split(".")[0];
+
+                entryPoints[`${folder}.${fileName}`] = path.join(SCRIPTS_PATH, folder, file);
+            }
+        }
+    }
+}
+
 module.exports = {
     mode: "production",
     watch: true,

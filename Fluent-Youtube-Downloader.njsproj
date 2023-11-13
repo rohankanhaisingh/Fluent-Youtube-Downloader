@@ -32,9 +32,11 @@
     <Content Include=".env" />
     <Content Include="application\scripts\tsconfig.json" />
     <Content Include="application\styles\components\_tooltip.scss" />
+    <Content Include="application\styles\index.scss" />
     <Content Include="application\styles\partials\_footer.scss" />
     <Content Include="application\styles\partials\_loader.scss" />
     <Content Include="application\styles\partials\_navbar.scss" />
+    <Content Include="application\styles\tabs\_convert.scss" />
     <Content Include="application\styles\utilities\_default-styles.scss" />
     <Content Include="application\styles\utilities\_fonts.scss" />
     <Content Include="application\styles\utilities\_spinner.scss" />
@@ -66,8 +68,10 @@
     <Folder Include="application\styles\dist\" />
     <Folder Include="application\styles\components\" />
     <Folder Include="application\styles\dist\components\" />
+    <Folder Include="application\styles\dist\tabs\" />
     <Folder Include="application\styles\dist\utilities\" />
     <Folder Include="application\styles\dist\partials\" />
+    <Folder Include="application\styles\tabs\" />
     <Folder Include="application\styles\partials\" />
     <Folder Include="application\styles\utilities\" />
     <Folder Include="application\views\" />
@@ -80,6 +84,7 @@
     <TypeScriptCompile Include="application\scripts\controllers\download.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\spa-handler.ts" />
+    <TypeScriptCompile Include="application\scripts\handlers\theme.ts" />
     <TypeScriptCompile Include="application\scripts\index.ts" />
     <TypeScriptCompile Include="src\constants.ts" />
     <TypeScriptCompile Include="src\router.ts" />

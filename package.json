@@ -34,6 +34,7 @@
     ]
   },
   "dependencies": {
+    "@fluentui/react": "^8.112.8",
     "@fluentui/web-components": "^2.5.16",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.16",
