@@ -1,0 +1,50 @@
+@use "../utilities/_accents" as accents;
+
+$toggleMinWidth: 50px;
+$toggleMinHeight: 10px;
+$togglePadding: 5px;
+
+$toggleThumbSize: 10px;
+
+.styled-toggle {
+    width: $toggleMinWidth;
+    height: $toggleMinHeight;
+    padding: $togglePadding;
+    border-radius: 15px;
+    border: 1px solid accents.$neutralToggleBorder;
+    -webkit-app-region: none !important;
+    -moz-transition: box-shadow .3s ease, border-color .3s ease;
+    -o-transition: box-shadow .3s ease, border-color .3s ease;
+    -webkit-transition: box-shadow .3s ease, border-color .3s ease;
+    transition: box-shadow .3s ease, border-color .3s ease;
+
+    &__thumb {
+        width: $toggleThumbSize;
+        height: $toggleThumbSize;
+        border-radius: 50%;
+        background: accents.$neutralToggleThumb;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        -moz-transition: left .3s ease;
+        -o-transition: left .3s ease;
+        -webkit-transition: left .3s ease;
+        transition: left .3s ease;
+    }
+
+    &.active {
+        background: accents.$neutralToggleActive;
+        border-color: accents.$neutralToggleActive;
+
+        .styled-toggle__thumb, &__thumb {
+            left: calc(100% - ($toggleThumbSize));
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 0 5px rgb(0 0 0 / 30%);
+        border-color: transparent;
+    }
+}

@@ -1,0 +1,132 @@
+@use "../utilities/_constants" as constants;
+@use "../utilities/_accents" as accents;
+@use "../utilities/_mixins" as mixins;
+
+.app-side-menu {
+    width: constants.$sideMenuExpandedWidth;
+    height: constants.$sideMenuHeight;
+    background-color: accents.$neutralAccent;
+    padding: 0 constants.$sideMenuHorizontalPadding;
+    overflow-x: hidden;
+    -moz-transition: width constants.$transitionDuration constants.$transitionKey;
+    -o-transition: width constants.$transitionDuration constants.$transitionKey;
+    -webkit-transition: width constants.$transitionDuration constants.$transitionKey;
+    transition: width constants.$transitionDuration constants.$transitionKey;
+
+    &.collapsed {
+        width: constants.$sideMenuCollapsedWidth;
+
+        .side-menu__button__text {
+            display: none;
+        }
+    }
+}
+
+.side-menu {
+
+    &__seperator {
+        width: 60%;
+        height: 2px;
+        background: #ded7ef;
+        border-radius: 5px;
+        margin: 20px auto;
+    }
+
+    &__button {
+        width: calc(100% - 20px);
+        height: constants.$sideMenuButtonHeight;
+        background: none;
+        padding: constants.$sideMenuButtonPadding;
+        border-radius: constants.$sideMenuButtonBorderRadius;
+        user-select: none;
+        position: relative;
+        content: "";
+        overflow: hidden;
+        -moz-transition: background constants.$transitionDuration constants.$transitionKey;
+        -o-transition: background constants.$transitionDuration constants.$transitionKey;
+        -webkit-transition: background constants.$transitionDuration constants.$transitionKey;
+        transition: background constants.$transitionDuration constants.$transitionKey;
+
+        &__icon {
+            width: constants.$sideMenuButtonIconSize;
+            height: constants.$sideMenuButtonIconSize;
+            float: left;
+            margin-left: 5px;
+            margin-top: 2px;
+
+            img {
+                @include mixins.StaticIcon;
+                -moz-transition: transform constants.$transitionDuration constants.$transitionKey;
+                -o-transition: transform constants.$transitionDuration constants.$transitionKey;
+                -webkit-transition: transform constants.$transitionDuration constants.$transitionKey;
+                transition: transform constants.$transitionDuration constants.$transitionKey;
+            }
+        }
+
+        &__text {
+            float: left;
+            margin-left: 20px;
+
+            span {
+                font-size: 14px;
+                margin-top: 1px;
+                display: block;
+            }
+        }
+
+        &.active {
+            background: accents.$neutralButtonActive;
+
+            &::before {
+                height: 60%;
+                width: 3px;
+            }
+        }
+
+        &:not(.active):hover {
+            background: accents.$neutralButtonHover;
+
+            &::before {
+                height: 30%;
+            }
+        }
+
+        &:not(.active):active {
+
+            &::before {
+                height: 30%;
+                width: 3px;
+            }
+
+            .side-menu__button__icon img {
+                -moz-transform: scale(.8);
+                -ms-transform: scale(.8);
+                -o-transform: scale(.8);
+                -webkit-transform: scale(.8);
+                transform: scale(.8);
+            }
+        }
+
+        &::before {
+            width: 1px;
+            height: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+            margin: auto;
+            border-radius: 5px;
+            background: accents.$neutralButtonNipple;
+            z-index: 1;
+            -moz-transition: height .3s, width .3s ease;
+            -o-transition: height .3s, width .3s ease;
+            -webkit-transition: height .3s, width .3s ease;
+            transition: height .3s, width .3s ease;
+            -moz-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+            -o-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+            -webkit-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+            transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+        }
+    }
+}

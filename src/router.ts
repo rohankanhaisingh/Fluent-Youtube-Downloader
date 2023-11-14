@@ -5,6 +5,7 @@ import ejs from "ejs";
 import path from "path";
 
 import { VIEWS_PATH } from "./constants";
+import { handleControlEvents } from "./app";
 
 export function route(router: Router) {
 
@@ -24,5 +25,15 @@ export function route(router: Router) {
 		const renderResponse = await ejs.renderFile(path.join(VIEWS_PATH, "tabs", requestedFileName));
 
 		res.status(200).send(renderResponse);
+	});
+
+	router.use("/window/", function (req: Request, res: Response) {
+
+		const requestedWindowFunction = req.url.replace("/", "");
+
+		switch (requestedWindowFunction) {
+			case "control-event": handleControlEvents(req); break;
+		}
+
 	});
 }

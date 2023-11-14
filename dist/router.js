@@ -17,6 +17,7 @@ const fs_1 = __importDefault(require("fs"));
 const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
 const constants_1 = require("./constants");
+const app_1 = require("./app");
 function route(router) {
     router.get("/", function (req, res) {
         res.render("index");
@@ -29,6 +30,14 @@ function route(router) {
             const renderResponse = yield ejs_1.default.renderFile(path_1.default.join(constants_1.VIEWS_PATH, "tabs", requestedFileName));
             res.status(200).send(renderResponse);
         });
+    });
+    router.use("/window/", function (req, res) {
+        const requestedWindowFunction = req.url.replace("/", "");
+        switch (requestedWindowFunction) {
+            case "control-event":
+                (0, app_1.handleControlEvents)(req);
+                break;
+        }
     });
 }
 exports.route = route;

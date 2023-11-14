@@ -1,0 +1,38 @@
+[
+  {
+    "title": "JavaScript",
+    "percentage": 100
+  },
+  {
+    "title": "TypeScript",
+    "percentage": 85
+  },
+  {
+    "title": "FL Studio",
+    "percentage": 100
+  },
+  {
+    "title": "ExpressJS",
+    "percentage": 95
+  },
+  {
+    "title": "Electron",
+    "percentage": 78
+  },
+  {
+    "title": "ReactJS",
+    "percentage": 66
+  },
+  {
+    "title": "SASS",
+    "percentage": 89
+  },
+  {
+    "title": "Visual Studio",
+    "percentage": 78
+  },
+  {
+    "title": "Photoshop",
+    "percentage": 42
+  }
+]

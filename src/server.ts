@@ -2,9 +2,12 @@ import express, { Express, Router } from "express";
 import cors from "cors";
 import path from "path";
 import bodyParser from "body-parser";
+import portscanner from "portscanner";
+import electron from "electron";
 
 import { APPLICATION_PATH, SERVER_PORT, VIEWS_PATH } from "./constants";
 import { route } from "./router";
+import { mainWindow } from "./app";
 
 export const server: Express = express();
 export const router: Router = Router();
@@ -28,10 +31,31 @@ server.use(bodyParser.json());
 server.use(cors());
 server.use("/", router);
 
-export function listen() {
+export async function listen() {
 
-	server.listen(SERVER_PORT, function () {
+	const portStatus = await portscanner.checkPortStatus(SERVER_PORT);
 
-		console.log(`Server is running on port ${SERVER_PORT}`);
+	if (portStatus !== "open") {
+
+		server.listen(SERVER_PORT, function () {
+
+			console.log(`Server is running on port ${SERVER_PORT}`);
+		});
+
+		return true;
+	}
+
+	const errorTrace = new Error(`Failed to start local webserver since port ${SERVER_PORT} is already in use.`);
+
+	const dialog = electron.dialog;
+
+	await dialog.showMessageBox(mainWindow, {
+		type: "error",
+		message: errorTrace.message,
+		detail: errorTrace.stack,
+		title: "Fluent Youtube Downloader - Runtime error",
+		buttons: ["Close"]
 	});
+
+	return false;
 }

@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,8 +40,11 @@ const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const portscanner_1 = __importDefault(require("portscanner"));
+const electron_1 = __importDefault(require("electron"));
 const constants_1 = require("./constants");
 const router_1 = require("./router");
+const app_1 = require("./app");
 exports.server = (0, express_1.default)();
 exports.router = (0, express_1.Router)();
 exports.server.set("view engine", "ejs");
@@ -51,8 +63,24 @@ exports.server.use(body_parser_1.default.json());
 exports.server.use((0, cors_1.default)());
 exports.server.use("/", exports.router);
 function listen() {
-    exports.server.listen(constants_1.SERVER_PORT, function () {
-        console.log(`Server is running on port ${constants_1.SERVER_PORT}`);
+    return __awaiter(this, void 0, void 0, function* () {
+        const portStatus = yield portscanner_1.default.checkPortStatus(constants_1.SERVER_PORT);
+        if (portStatus !== "open") {
+            exports.server.listen(constants_1.SERVER_PORT, function () {
+                console.log(`Server is running on port ${constants_1.SERVER_PORT}`);
+            });
+            return true;
+        }
+        const errorTrace = new Error(`Failed to start local webserver since port ${constants_1.SERVER_PORT} is already in use.`);
+        const dialog = electron_1.default.dialog;
+        yield dialog.showMessageBox(app_1.mainWindow, {
+            type: "error",
+            message: errorTrace.message,
+            detail: errorTrace.stack,
+            title: "Fluent Youtube Downloader - Runtime error",
+            buttons: ["Close"]
+        });
+        return false;
     });
 }
 exports.listen = listen;

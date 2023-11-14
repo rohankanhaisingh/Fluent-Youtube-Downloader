@@ -1,0 +1,42 @@
+@use "./utilities/_constants" as constants;
+@use "./utilities/_accents" as accents;
+@use "./utilities/_mixins" as mixins;
+
+$contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVerticalPadding * 2));
+
+.app {
+    background-color: accents.$neutralAccent;
+
+    .app-grid-seperator {
+        width: 100vw;
+        height: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVerticalPadding * 2));
+        display: grid;
+        overflow: hidden;
+        grid-template-columns: 220px auto;
+        -moz-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+        -o-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+        -webkit-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+        transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+    }
+
+    &.side-menu-collapsed {
+        .app-grid-seperator {
+            grid-template-columns: 65px auto;
+        }
+    }
+
+    .app-content {
+        width: calc(100% - 40px);
+        height: calc(100% - 40px);
+        padding: 20px;
+        border-top-left-radius: 15px;
+        background: accents.$neutralAccentDark;
+
+
+        .content-swappable {
+            height: calc($contentHeight - 40px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    }
+}

@@ -1,0 +1,1 @@
+export type RequestedControlEvent = "maximize" | "minimize" | "close";

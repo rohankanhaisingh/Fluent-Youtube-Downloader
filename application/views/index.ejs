@@ -6,25 +6,20 @@
     <title>Fluent Youtube Downloader</title>
 </head>
 <body>
-    <fluent-provider>
-        <div class="app spa-app electron-app">
-            <div class="container">
+    <div class="app spa-app electron-app side-menu-collapsed">
+        <div class="container">
 
-                <nav class="app-side-menu">
-                    <fluent-button appearance="accent" class="navigation-button" data-href="/tabs/download">Download</fluent-button>
-                </nav>
+            <%- include("partials/_titlebar") -%>
+
+            <div class="app-grid-seperator">
+                <%- include("partials/_side-menu") -%>
 
                 <div class="app-content">
-                    <div class="container">
-                        <div class="content-swappable">
-                            This is where the new contents will be shown.
-                        </div>
-                    </div>
+                    <div class="content-swappable"></div>
                 </div>
-
             </div>
         </div>
-    </fluent-provider>
+    </div>
     <script src="/static/scripts/index.dist.js"></script>
 </body>
 </html>

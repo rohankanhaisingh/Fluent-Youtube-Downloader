@@ -1,4 +1,7 @@
-import "./handlers/theme";
+import { initializeTitleBar } from "./handlers/titlebar";
+import { initializeSideMenu } from "./handlers/side-menu";
+
+import { renderToggles } from "./handlers/dom-generator";
 
 import { requestPage } from "./handlers/spa-handler";
 
@@ -14,4 +17,13 @@ navigationButtons.forEach(function (button: HTMLElement) {
 
 		requestPage(requestUrl);
 	});
+});
+
+window.addEventListener("load", function () {
+
+	requestPage("/tabs/home");
+
+	renderToggles();
+	initializeTitleBar();
+	initializeSideMenu();
 });
