@@ -75,3 +75,93 @@ div.container {
         display: block;
     }
 }
+
+.content-swappable {
+
+    h1, h2, h3, h4, h5 {
+        font-weight: 100;
+    }
+
+    h1 {
+        font-size: 60px
+    }
+
+    h2 {
+        font-size: 40px
+    }
+
+    h3 {
+        font-size: 30px
+    }
+
+    h4 {
+        font-size: 25px
+    }
+
+    h5 {
+        font-size: 20px
+    }
+
+    p {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    hr {
+        width: 25%;
+        border: none;
+        background: #d2cbe1;
+        height: 2px;
+        margin: 20px 0px;
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+        margin: 10px 0 40px 0;
+        box-shadow: 0 0 10px 8px rgb(0 0 0 / 19%);
+    }
+
+    ul {
+        width: calc(100% - 40px);
+        margin: 20px 0;
+        margin-left: 40px;
+    }
+
+    a {
+        color: #000;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    pre {
+        background: #e9e9e9;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    code {
+        font-family: "Cascadia Code",Consolas,monospace;
+        font-size: 14px;
+        font-weight: 400;
+        white-space: pre-line;
+    }
+
+    tag {
+        padding: 5px 10px;
+        border-radius: 5px;
+        background: #f1f1f1;
+        display: inline-block;
+    }
+
+    seperator {
+        width: 100%;
+        height: 1px;
+        margin: 20px 0;
+        display: block;
+    }
+}

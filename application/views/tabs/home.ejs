@@ -4,10 +4,24 @@
         <spa-stylesheet href="/static/styles/tabs/_home.css" type="text/css" rel="stylesheet"></spa-stylesheet>
     </spa-stylesheets>
     <spa-scripts>
-        <!--<spa-script src="/static/scripts/controllers.settings.dist.js" type="text/javascript"></spa-script>-->
+        <spa-script src="/static/scripts/controllers.home.dist.js" type="text/javascript"></spa-script>
     </spa-scripts>
 </spa-config>
 
 <spa-dom-content>
-    <h1>Fluent Youtube Converter</h1>
+    <div id="intro-text">
+        <h2>Fluent Youtube Converter</h2>
+        <p>Convert Youtube video's into any media format you like. This application is current in it's development phase, so things may not work.</p>
+        <p>You can convert videos in parallel, which means that you can download multiple video's at the same time. The maximum size of each video you can download, is 20MB. If it takes too long, then is must be still downloading. Or the server has issues processing the request. </p>
+    </div>
+    
+    <seperator></seperator>
+
+    <div id="recent-activity">
+        <h3>Recent activity</h3>
+
+        <div class="recent-activity-container recent-activity">
+            <div class="activity"></div>
+        </div>
+    </div>
 </spa-dom-content>
