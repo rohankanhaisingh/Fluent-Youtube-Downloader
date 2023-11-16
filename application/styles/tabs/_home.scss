@@ -1,3 +1,5 @@
+@use "../utilities/_accents" as accents;
+
 #intro-text {
     width: 570px;
 }
@@ -7,13 +9,13 @@
     height: auto;
     min-height: auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 
     .activity {
         height: 230px;
         border-radius: 5px;
-        box-shadow: 0 3px 5px rgba(0,0,0,.09);
+        box-shadow: 0 0px 3px rgb(0 0 0 / 15%);
         display: grid;
         grid-template-rows: 160px auto;
 
