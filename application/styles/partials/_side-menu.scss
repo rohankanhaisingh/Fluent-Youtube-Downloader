@@ -19,6 +19,10 @@
         .side-menu__button__text {
             display: none;
         }
+
+        .side-menu__disclaimer {
+            display: none;
+        }
     }
 }
 
@@ -30,6 +34,11 @@
         background: #ded7ef;
         border-radius: 5px;
         margin: 20px auto;
+    }
+
+    &__disclaimer {
+        font-size: 10px;
+        width: constants.$sideMenuExpandedWidth;
     }
 
     &__button {
@@ -52,7 +61,7 @@
             height: constants.$sideMenuButtonIconSize;
             float: left;
             margin-left: 5px;
-            margin-top: 2px;
+            margin-top: 1px;
 
             img {
                 @include mixins.StaticIcon;
@@ -69,7 +78,7 @@
 
             span {
                 font-size: 13px;
-                margin-top: 2px;
+                margin-top: 1px;
                 display: block;
             }
         }

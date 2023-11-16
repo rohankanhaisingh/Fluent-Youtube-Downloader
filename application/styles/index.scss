@@ -4,6 +4,25 @@
 
 $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVerticalPadding * 2));
 
+@keyframes content-fadein {
+    0% {
+        opacity: 0;
+        -moz-transform: translateY(30px);
+        -ms-transform: translateY(30px);
+        -o-transform: translateY(30px);
+        -webkit-transform: translateY(30px);
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        -moz-transform: none;
+        -ms-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
 .app {
     background-color: accents.$neutralAccent;
 
@@ -31,12 +50,20 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
         padding: 20px;
         border-top-left-radius: 15px;
         background: accents.$neutralAccentDark;
+        overflow: hidden;
 
 
         .content-swappable {
             height: calc($contentHeight - 40px);
             overflow-y: auto;
             overflow-x: hidden;
+
+            &.fadein {
+                -moz-animation: content-fadein 0.4s ease;
+                -o-animation: content-fadein 0.4s ease;
+                -webkit-animation: content-fadein 0.4s ease;
+                animation: content-fadein 0.4s ease;
+            }
         }
     }
 }

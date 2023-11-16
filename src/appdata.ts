@@ -166,4 +166,4 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 	const parsedFileContent = JSON.parse(fileContent);
 
 	return JSON.parse(parsedFileContent);
-}
+} // nice 69

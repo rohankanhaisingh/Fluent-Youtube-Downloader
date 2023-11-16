@@ -2,6 +2,12 @@ import { cache } from "ejs";
 
 const renderContainer: HTMLDivElement | null = document.querySelector(".content-swappable");
 
+async function waitFor(ms: number): Promise<void> {
+	return new Promise(function (resolve) {
+		setTimeout(resolve, ms);
+	});
+}
+
 /**
  * Function that replaces the current title with a new one.
  * @param config A '<spa-config>' configuration list element
@@ -128,9 +134,13 @@ export function replaceChildren(contents: HTMLElement | null) {
 	renderContainer.replaceChildren(...contents.childNodes);
 }
 
-export function swapPageContents(newDoc: Document, response: Response) {
+export async function swapPageContents(newDoc: Document, response: Response) {
 
 	if (renderContainer === null) return;
+
+	renderContainer.classList.remove("fadein");
+
+	await waitFor(100);
 
 	const documentBody: HTMLElement = newDoc.body,
 		documentConfig: HTMLElement | null = documentBody.querySelector("spa-config"),
@@ -142,6 +152,7 @@ export function swapPageContents(newDoc: Document, response: Response) {
 
 	replaceChildren(documentContent);
 
+	renderContainer.classList.add("fadein");
 	renderContainer.setAttribute("data-url", response.url);
 }
 

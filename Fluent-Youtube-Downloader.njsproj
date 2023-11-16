@@ -54,6 +54,7 @@
     <Content Include="application\res\fonts\MuseoSansRounded900.otf" />
     <Content Include="application\res\fonts\Segoe UI.ttf" />
     <Content Include="application\res\fonts\Syne-VariableFont_wght.ttf" />
+    <Content Include="application\res\media\icons\windows-icon-about.png" />
     <Content Include="application\res\media\icons\windows-icon-dots.png" />
     <Content Include="application\res\media\icons\windows-icon-file-settings.png" />
     <Content Include="application\res\media\icons\windows-icon-close.png" />
@@ -62,6 +63,7 @@
     <Content Include="application\res\media\icons\windows-icon-history.png" />
     <Content Include="application\res\media\icons\windows-icon-home.png" />
     <Content Include="application\res\media\icons\windows-icon-minus.png" />
+    <Content Include="application\res\media\icons\windows-icon-question.png" />
     <Content Include="application\res\media\icons\windows-icon-search.png" />
     <Content Include="application\res\media\icons\windows-icon-settings.png" />
     <Content Include="application\res\media\icons\windows-icon-square.png" />

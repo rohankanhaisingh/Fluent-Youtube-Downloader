@@ -21,7 +21,7 @@ navigationButtons.forEach(function (button: HTMLElement) {
 
 window.addEventListener("load", function () {
 
-	requestPage("/tabs/home");
+	requestPage("/tabs/convert");
 
 	renderToggles();
 	initializeTitleBar();
