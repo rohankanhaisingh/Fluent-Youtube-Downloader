@@ -3,15 +3,28 @@ import { Request } from "express";
 
 import { listen } from "./server";
 import { SERVER_PORT } from "./constants";
-import { RequestedControlEvent } from "./typings";
+import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
+import { initializeAppData, readSettingsFile } from "./appdata";
+import { settings } from "cluster";
 
 export let mainWindow: BrowserWindow;
 
+// Initializes the application data.
+const initializationState = initializeAppData();
+
 app.once("ready", async function () {
 
+	if (!initializationState) return app.exit();
+
+	const applicationSettings: ApplicationSettings | ReadSettingsFail = readSettingsFile();
+
+	if (applicationSettings.status === "failed") return app.exit();
+
+	const settingsCasting = applicationSettings as ApplicationSettings;
+
 	mainWindow = new BrowserWindow({
-		width: 600,
-		height: 750,
+		width: settingsCasting.window.resolution.width,
+		height: settingsCasting.window.resolution.height,
 		title: "Fluent Youtube Converter",
 		focusable: true,
 		closable: true,
@@ -32,12 +45,12 @@ app.once("ready", async function () {
 		}
 	});
 
-	const listenState: boolean = await listen();
+	const listenState: boolean | number = await listen();
 
 	if (!listenState) return app.exit();
 
 	mainWindow.show();
-	mainWindow.loadURL(`http://localhost:${SERVER_PORT}`);
+	mainWindow.loadURL(`http://localhost:${listenState}`);
 });
 
 export function handleControlEvents(req: Request) {
