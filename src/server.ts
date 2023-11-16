@@ -8,6 +8,8 @@ import electron from "electron";
 import { APPLICATION_PATH, SERVER_PORT, VIEWS_PATH } from "./constants";
 import { route } from "./router";
 import { mainWindow } from "./app";
+import { readSettingsFile } from "./appdata";
+import { ApplicationSettings } from "./typings";
 
 export const server: Express = express();
 export const router: Router = Router();
@@ -31,25 +33,28 @@ server.use(bodyParser.json());
 server.use(cors());
 server.use("/", router);
 
-export async function listen() {
+/**
+ * Starts listening the web server server. This function returns either a boolean 
+ * representing the state of the execution, or a number representing the port of the server.
+ * @returns
+ */
+export async function listen(): Promise<boolean | number> {
 
-	const portStatus = await portscanner.checkPortStatus(SERVER_PORT);
+	const applicationSettings = readSettingsFile() as ApplicationSettings;
+	const allocatedServerPort = applicationSettings.server.port || SERVER_PORT;
+
+	// Check if the allocated server is already in use.
+	const portStatus = await portscanner.checkPortStatus(allocatedServerPort);
 
 	if (portStatus !== "open") {
 
-		server.listen(SERVER_PORT, function () {
-
-			console.log(`Server is running on port ${SERVER_PORT}`);
-		});
-
-		return true;
+		server.listen(allocatedServerPort);
+		return allocatedServerPort;
 	}
 
-	const errorTrace = new Error(`Failed to start local webserver since port ${SERVER_PORT} is already in use.`);
+	const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
 
-	const dialog = electron.dialog;
-
-	await dialog.showMessageBox(mainWindow, {
+	await electron.dialog.showMessageBox(mainWindow, {
 		type: "error",
 		message: errorTrace.message,
 		detail: errorTrace.stack,
