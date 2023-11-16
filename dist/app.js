@@ -12,12 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleControlEvents = exports.mainWindow = void 0;
 const electron_1 = require("electron");
 const server_1 = require("./server");
-const constants_1 = require("./constants");
+const appdata_1 = require("./appdata");
+const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!initializationState)
+            return electron_1.app.exit();
+        const applicationSettings = (0, appdata_1.readSettingsFile)();
+        if (applicationSettings.status === "failed")
+            return electron_1.app.exit();
+        const settingsCasting = applicationSettings;
         exports.mainWindow = new electron_1.BrowserWindow({
-            width: 600,
-            height: 750,
+            width: settingsCasting.window.resolution.width,
+            height: settingsCasting.window.resolution.height,
             title: "Fluent Youtube Converter",
             focusable: true,
             closable: true,
@@ -41,7 +48,7 @@ electron_1.app.once("ready", function () {
         if (!listenState)
             return electron_1.app.exit();
         exports.mainWindow.show();
-        exports.mainWindow.loadURL(`http://localhost:${constants_1.SERVER_PORT}`);
+        exports.mainWindow.loadURL(`http://localhost:${listenState}`);
     });
 });
 function handleControlEvents(req) {

@@ -45,6 +45,7 @@ const electron_1 = __importDefault(require("electron"));
 const constants_1 = require("./constants");
 const router_1 = require("./router");
 const app_1 = require("./app");
+const appdata_1 = require("./appdata");
 exports.server = (0, express_1.default)();
 exports.router = (0, express_1.Router)();
 exports.server.set("view engine", "ejs");
@@ -64,16 +65,15 @@ exports.server.use((0, cors_1.default)());
 exports.server.use("/", exports.router);
 function listen() {
     return __awaiter(this, void 0, void 0, function* () {
-        const portStatus = yield portscanner_1.default.checkPortStatus(constants_1.SERVER_PORT);
+        const applicationSettings = (0, appdata_1.readSettingsFile)();
+        const allocatedServerPort = applicationSettings.server.port || constants_1.SERVER_PORT;
+        const portStatus = yield portscanner_1.default.checkPortStatus(allocatedServerPort);
         if (portStatus !== "open") {
-            exports.server.listen(constants_1.SERVER_PORT, function () {
-                console.log(`Server is running on port ${constants_1.SERVER_PORT}`);
-            });
-            return true;
+            exports.server.listen(allocatedServerPort);
+            return allocatedServerPort;
         }
-        const errorTrace = new Error(`Failed to start local webserver since port ${constants_1.SERVER_PORT} is already in use.`);
-        const dialog = electron_1.default.dialog;
-        yield dialog.showMessageBox(app_1.mainWindow, {
+        const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
+        yield electron_1.default.dialog.showMessageBox(app_1.mainWindow, {
             type: "error",
             message: errorTrace.message,
             detail: errorTrace.stack,

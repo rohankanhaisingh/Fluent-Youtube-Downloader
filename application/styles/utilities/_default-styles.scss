@@ -79,7 +79,8 @@ div.container {
 .content-swappable {
 
     h1, h2, h3, h4, h5 {
-        font-weight: 100;
+        font-weight: 400;
+        margin-bottom: 20px;
     }
 
     h1 {
@@ -113,14 +114,6 @@ div.container {
         background: #d2cbe1;
         height: 2px;
         margin: 20px 0px;
-    }
-
-    img {
-        width: 100%;
-        height: auto;
-        border-radius: 15px;
-        margin: 10px 0 40px 0;
-        box-shadow: 0 0 10px 8px rgb(0 0 0 / 19%);
     }
 
     ul {

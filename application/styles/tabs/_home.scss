@@ -5,7 +5,75 @@
 .recent-activity-container {
     width: 100%;
     height: auto;
-    min-height: 320px;
+    min-height: auto;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    .activity {
+        height: 230px;
+        border-radius: 5px;
+        box-shadow: 0 3px 5px rgba(0,0,0,.09);
+        display: grid;
+        grid-template-rows: 160px auto;
+
+        &__thumbnail {
+            height: 160px;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                object-fit: cover;
+                height: 100%;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+            }
+        }
+
+        &__description {
+            display: block;
+
+            &__wrapper {
+                width: calc(100% - 20px);
+                height: calc(100% - 20px);
+                padding: 10px;
+                display: grid;
+                grid-template-columns: auto 70px;
+            }
+
+            &__content {
+                display: grid;
+                grid-template-rows: 30px auto;
+
+                &__title, &__text {
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                &__title {
+                    font-weight: 600;
+                    font-size: 17px;
+                    line-height: 26px;
+                }
+
+                &__text {
+                    font-size: 13px;
+                }
+            }
+
+            &__button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+
+                img {
+                    width: 15px;
+                    height: 15px;
+                }
+            }
+        }
+    }
 }

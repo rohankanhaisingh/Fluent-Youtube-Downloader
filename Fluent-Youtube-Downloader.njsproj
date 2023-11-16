@@ -54,6 +54,7 @@
     <Content Include="application\res\fonts\MuseoSansRounded900.otf" />
     <Content Include="application\res\fonts\Segoe UI.ttf" />
     <Content Include="application\res\fonts\Syne-VariableFont_wght.ttf" />
+    <Content Include="application\res\media\icons\windows-icon-dots.png" />
     <Content Include="application\res\media\icons\windows-icon-file-settings.png" />
     <Content Include="application\res\media\icons\windows-icon-close.png" />
     <Content Include="application\res\media\icons\windows-icon-download.png" />
@@ -141,6 +142,7 @@
     <TypeScriptCompile Include="application\scripts\handlers\theme.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\titlebar.ts" />
     <TypeScriptCompile Include="application\scripts\index.ts" />
+    <TypeScriptCompile Include="src\appdata.ts" />
     <TypeScriptCompile Include="src\constants.ts" />
     <TypeScriptCompile Include="src\router.ts" />
     <TypeScriptCompile Include="src\server.ts" />
