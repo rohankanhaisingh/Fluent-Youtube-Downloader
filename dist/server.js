@@ -46,6 +46,7 @@ const constants_1 = require("./constants");
 const router_1 = require("./router");
 const app_1 = require("./app");
 const appdata_1 = require("./appdata");
+const entry_1 = require("./rest/entry");
 exports.server = (0, express_1.default)();
 exports.router = (0, express_1.Router)();
 exports.server.set("view engine", "ejs");
@@ -58,6 +59,7 @@ exports.server.use("/static/cache/", express_1.default.static(path_1.default.joi
 exports.server.use("/static/scripts/", express_1.default.static(path_1.default.join(constants_1.APPLICATION_PATH, "scripts", "dist")));
 exports.server.use("/static/sourcemap/", express_1.default.static(path_1.default.join(constants_1.APPLICATION_PATH, "scripts")));
 exports.server.use("/static/styles/", express_1.default.static(path_1.default.join(constants_1.APPLICATION_PATH, "styles", "dist")));
+(0, entry_1.rest)(exports.router);
 (0, router_1.route)(exports.router);
 exports.server.use(body_parser_1.default.urlencoded({ extended: true }));
 exports.server.use(body_parser_1.default.json());

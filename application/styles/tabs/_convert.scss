@@ -1,23 +1,231 @@
 @use "../utilities/_accents" as accents;
+@use "../utilities/_constants" as constants;
+@use "../utilities/_mixins" as mixins;
+
+@keyframes result-fadein {
+    0% {
+        opacity: 0;
+        @include mixins.BasicAnimationTransform;
+    }
+    100% {
+        -moz-transform: none;
+        -ms-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
+        opacity: 1;
+    }
+}
 
 .page-convert {
     width: 100%;
     height: 100%;
     display: grid;
     grid-template-columns: auto 340px;
-    gap: 20px;
+    gap: 40px;
 }
 
 .convert {
 
-    &__right {
+    &__left {
+        display: grid;
+        grid-template-rows: auto 50px;
+        grid-gap: 40px;
 
-        &__container {
-            width: calc(100% - 40px);
-            height: calc(100% - 40px);
-            margin: 20px;
-            background: accents.$neutralAccent;
-            border-radius: 5px;
+        &__content {
+            display: grid;
+            grid-template-rows: 60px auto;
+            gap: 40px;
+
+            &__scroller {
+                height: calc(100vh - 310px);
+                padding-right: 20px;
+                overflow-x: hidden;
+                overflow-y: scroll;
+            }
+
+            .convert-results {
+                &__result {
+                    width: 100%;
+                    height: 200px;
+                    position: relative;
+                    content: "";
+                    padding-bottom: 20px;
+                    border-radius: 5px;
+                    display: grid;
+                    grid-template-columns: 370px auto;
+                    gap: 40px;
+                    -moz-animation: result-fadein constants.$transitionDuration constants.$transitionKey;
+                    -o-animation: result-fadein constants.$transitionDuration constants.$transitionKey;
+                    -webkit-animation: result-fadein constants.$transitionDuration constants.$transitionKey;
+                    animation: result-fadein constants.$transitionDuration constants.$transitionKey;
+
+                    &::before {
+                        width: 20px;
+                        height: 100%;
+                        background: linear-gradient(to right, transparent, accents.$neutralAccentDark, accents.$neutralAccentDark);
+                        position: absolute;
+                        right: -20px;
+                        top: 0;
+                        content: "";
+                    }
+
+                    &__thumbnail {
+                        overflow: hidden;
+
+                        img {
+                            object-fit: cover;
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 5px;
+                        }
+                    }
+
+                    &__info {
+                        display: block;
+
+                        &__title, &__author {
+                            width: 100%;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            display: inline-block;
+                        }
+
+                        &__title {
+                            width: 100%;
+                            font-size: 27px;
+                            font-weight: 400;
+                        }
+
+                        &__author {
+                            font-size: 12px;
+                            font-weight: 700;
+                            line-height: 28px;
+
+                            img {
+                                width: 30px;
+                                height: 30px;
+                                float: left;
+                                border-radius: 50%;
+                                margin-right: 10px;
+                            }
+                        }
+
+                        &__description {
+                            font-size: 13px;
+                            margin: 20px 0;
+                            overflow: hidden;
+                            max-height: 55px;
+                        }
+
+                        &__button {
+                            width: auto;
+                            height: auto;
+                            background: rgb(0, 0, 0, 0.1);
+                            display: inline-block;
+                            padding: 5px 40px;
+                            border-radius: 5px;
+                            font-size: 14px;
+                            line-height: 20px;
+                            user-select: none;
+
+                            &:hover {
+                                background: rgb(0, 0, 0, 0.2);
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        .grid {
+            border-radius: 5px;
+            background: accents.$neutralAccentDarker;
+            display: grid;
+            grid-template-columns: auto 100px;
+
+            &__input {
+                padding: 0px 20px;
+                font-size: 14px;
+                line-height: 47px;
+                content: "";
+                position: relative;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+                &::before, &::after {
+                    content: "";
+                    top: 0;
+                    bottom: 0;
+                    margin: auto;
+                    position: absolute;
+                    margin: auto;
+                    z-index: 1;
+                    -moz-transition: opacity constants.$transitionDuration constants.$transitionKey;
+                    -o-transition: opacity constants.$transitionDuration constants.$transitionKey;
+                    -webkit-transition: opacity constants.$transitionDuration constants.$transitionKey;
+                    transition: opacity constants.$transitionDuration constants.$transitionKey;
+                }
+
+                &::before {
+                    width: 20px;
+                    height: 20px;
+                    pointer-events: none;
+                    left: 20px;
+                    background: url(/static/media/icons/windows-icon-add.png);
+                    background-size: 100% 100%;
+                    filter: opacity(0.2);
+                }
+
+                &::after {
+                    content: attr(placeholder);
+                    left: 50px;
+                    font-size: 14px;
+                    top: 1px;
+                    color: #b4a8c9;
+                }
+
+                &:focus, &:not(:empty) {
+
+                    &::before, &::after {
+                        opacity: 0;
+                    }
+                }
+            }
+
+            &__buttons {
+                display: block;
+
+                &__button {
+                    width: auto;
+                    height: 50px;
+                    padding: 15px;
+                    float: left;
+
+                    img {
+                        @include mixins.StaticIcon;
+                        -moz-filter: opacity(.2);
+                        -webkit-filter: opacity(.2);
+                        filter: opacity(.2);
+                    }
+
+                    &:hover {
+                        img {
+                            -moz-filter: opacity(0.3);
+                            -webkit-filter: opacity(0.3);
+                            filter: opacity(0.3);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &__right {
+        padding: 20px;
+        background: accents.$neutralAccentDarker;
+        border-radius: 5px;
     }
 }

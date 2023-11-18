@@ -1,8 +1,9 @@
-import electron, { app, BrowserWindow } from "electron";
+import { app, BrowserWindow } from "electron";
 import { Request } from "express";
+import path from "path";
 
 import { listen } from "./server";
-import { SERVER_PORT } from "./constants";
+import { ROOT_PATH, SERVER_PORT } from "./constants";
 import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
 import { initializeAppData, readSettingsFile } from "./appdata";
 import { settings } from "cluster";
@@ -23,8 +24,8 @@ app.once("ready", async function () {
 	const settingsCasting = applicationSettings as ApplicationSettings;
 
 	mainWindow = new BrowserWindow({
-		width: settingsCasting.window.resolution.width,
-		height: settingsCasting.window.resolution.height,
+		width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
+		height: settingsCasting.window.resolution.height > 800 ? settingsCasting.window.resolution.height : 800,
 		title: "Fluent Youtube Converter",
 		focusable: true,
 		closable: true,
@@ -36,6 +37,7 @@ app.once("ready", async function () {
 		backgroundColor: "#ffffff",
 		autoHideMenuBar: true,
 		titleBarStyle: "hidden",
+		icon: path.join(ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
 		webPreferences: {
 			contextIsolation: false,
 			nodeIntegration: true,
@@ -49,8 +51,12 @@ app.once("ready", async function () {
 
 	if (!listenState) return app.exit();
 
-	mainWindow.show();
 	mainWindow.loadURL(`http://localhost:${listenState}`);
+
+	mainWindow.webContents.on("dom-ready", function () {
+
+		mainWindow.show();
+	});
 });
 
 export function handleControlEvents(req: Request) {

@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleControlEvents = exports.mainWindow = void 0;
 const electron_1 = require("electron");
+const path_1 = __importDefault(require("path"));
 const server_1 = require("./server");
+const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
 const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
@@ -23,8 +28,8 @@ electron_1.app.once("ready", function () {
             return electron_1.app.exit();
         const settingsCasting = applicationSettings;
         exports.mainWindow = new electron_1.BrowserWindow({
-            width: settingsCasting.window.resolution.width,
-            height: settingsCasting.window.resolution.height,
+            width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
+            height: settingsCasting.window.resolution.height > 800 ? settingsCasting.window.resolution.height : 800,
             title: "Fluent Youtube Converter",
             focusable: true,
             closable: true,
@@ -36,6 +41,7 @@ electron_1.app.once("ready", function () {
             backgroundColor: "#ffffff",
             autoHideMenuBar: true,
             titleBarStyle: "hidden",
+            icon: path_1.default.join(constants_1.ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
             webPreferences: {
                 contextIsolation: false,
                 nodeIntegration: true,
@@ -47,8 +53,10 @@ electron_1.app.once("ready", function () {
         const listenState = yield (0, server_1.listen)();
         if (!listenState)
             return electron_1.app.exit();
-        exports.mainWindow.show();
         exports.mainWindow.loadURL(`http://localhost:${listenState}`);
+        exports.mainWindow.webContents.on("dom-ready", function () {
+            exports.mainWindow.show();
+        });
     });
 });
 function handleControlEvents(req) {

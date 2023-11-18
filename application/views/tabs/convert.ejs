@@ -4,13 +4,32 @@
         <spa-stylesheet href="/static/styles/tabs/_convert.css" type="text/css" rel="stylesheet"></spa-stylesheet>
     </spa-stylesheets>
     <spa-scripts>
-        <!--<spa-script src="/static/scripts/controllers.convert.dist.js" type="text/javascript"></spa-script>-->
+        <spa-script src="/static/scripts/controllers.convert.dist.js" type="text/javascript"></spa-script>
     </spa-scripts>
 </spa-config>
 
 <spa-dom-content>
     <div class="page-convert convert">
-        <div class="convert__left"></div>
+        <div class="convert__left">
+            <div class="convert__left__content">
+                <div class="convert__left__content__top">
+                    <h4 style="margin-bottom: 0;">Start converting video's</h4>
+                    <p>Enter the URL of the video you'd like to download.</p>
+                </div>
+                <div class="convert__left__content__scroller" id="convert-results"></div>
+            </div>
+            <div class="convert__left__input-field-grid grid">
+                <div class="grid__input" id="input-url" contenteditable="true" placeholder="Enter Youtube URL" spellcheck="false" autocomplete="false"></div>
+                <div class="grid__buttons">
+                    <button class="grid__buttons__button" id="button-paste">
+                        <img src="/static/media/icons/windows-icon-paste.png" alt="Paste" />
+                    </button>
+                    <button class="grid__buttons__button" id="button-enter">
+                        <img src="/static/media/icons/windows-icon-arrow_right.png" alt="Enter" />
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="convert__right">
             <div class="convert__right__container">
 

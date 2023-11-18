@@ -10,6 +10,7 @@ import { route } from "./router";
 import { mainWindow } from "./app";
 import { readSettingsFile } from "./appdata";
 import { ApplicationSettings } from "./typings";
+import { rest } from "./rest/entry";
 
 export const server: Express = express();
 export const router: Router = Router();
@@ -26,6 +27,7 @@ server.use("/static/scripts/", express.static(path.join(APPLICATION_PATH, "scrip
 server.use("/static/sourcemap/", express.static(path.join(APPLICATION_PATH, "scripts")));
 server.use("/static/styles/", express.static(path.join(APPLICATION_PATH, "styles", "dist")));
 
+rest(router);
 route(router);
 
 server.use(bodyParser.urlencoded({ extended: true }));

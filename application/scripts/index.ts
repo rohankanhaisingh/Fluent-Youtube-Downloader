@@ -2,10 +2,10 @@ import { initializeTitleBar } from "./handlers/titlebar";
 import { initializeSideMenu } from "./handlers/side-menu";
 
 import { renderToggles } from "./handlers/dom-generator";
-
 import { requestPage } from "./handlers/spa-handler";
 
 const navigationButtons: NodeListOf<HTMLElement> = document.querySelectorAll(".navigation-button");
+const appLoader = document.querySelector(".app-loader") as HTMLDivElement;
 
 navigationButtons.forEach(function (button: HTMLElement) {
 
@@ -26,4 +26,9 @@ window.addEventListener("load", function () {
 	renderToggles();
 	initializeTitleBar();
 	initializeSideMenu();
+
+	this.setTimeout(function () {
+
+		appLoader.classList.add("fadeout");
+	}, 500);
 });

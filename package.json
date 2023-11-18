@@ -7,7 +7,8 @@
     "name": ""
   },
   "scripts": {
-    "build": "tsc --build",
+    "build-ts": "tsc --build",
+    "build": "electron-builder",
     "clean": "tsc --build --clean",
     "webpack": "webpack --config webpack.config.js",
     "watch": "tsc-watch --project public/scripts/tsconfig.json",
@@ -15,12 +16,33 @@
     "auto-build": "tsc --build && electron .",
     "watch-scss": "node ./scss-config.js"
   },
+  "build": {
+    "appId": "com.rohankanhaisingh.fluent-youtube-downloader",
+    "productName": "Fluent Youtube Downloader",
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  },
   "devDependencies": {
     "@types/node": "^14.14.7",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
+    "electron": "^27.1.0",
+    "electron-builder": "^24.6.4",
     "eslint": "^8.21.0",
+    "ts-loader": "^9.5.1",
     "typescript": "^4.5.2",
+    "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
   "eslintConfig": {
@@ -45,12 +67,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
-    "electron": "^27.0.4",
     "express": "^4.18.2",
     "glob": "^10.3.10",
     "portscanner": "^2.2.0",
     "sass": "^1.69.5",
-    "ts-loader": "^9.5.0",
-    "webpack": "^5.89.0"
+    "ytdl-core": "^4.11.5"
   }
 }
