@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleControlEvents = exports.mainWindow = void 0;
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
+const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
 const server_1 = require("./server");
 const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
@@ -38,9 +39,12 @@ electron_1.app.once("ready", function () {
             maximizable: true,
             fullscreenable: true,
             center: true,
-            backgroundColor: "#ffffff",
-            autoHideMenuBar: true,
-            titleBarStyle: "hidden",
+            backgroundColor: "#f7f5fc",
+            titleBarStyle: "default",
+            titleBarOverlay: {
+                color: "#f7f5fc",
+                symbolColor: "#000",
+            },
             icon: path_1.default.join(constants_1.ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
             webPreferences: {
                 contextIsolation: false,
@@ -50,6 +54,9 @@ electron_1.app.once("ready", function () {
                 webgl: true
             }
         });
+        exports.mainWindow.setMenu(null);
+        if (electron_is_dev_1.default)
+            exports.mainWindow.webContents.openDevTools();
         const listenState = yield (0, server_1.listen)();
         if (!listenState)
             return electron_1.app.exit();

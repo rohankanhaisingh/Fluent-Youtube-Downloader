@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import { Request } from "express";
 import path from "path";
+import electronIsDev from "electron-is-dev";
 
 import { listen } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
@@ -34,9 +35,13 @@ app.once("ready", async function () {
 		maximizable: true,
 		fullscreenable: true,
 		center: true,
-		backgroundColor: "#ffffff",
-		autoHideMenuBar: true,
-		titleBarStyle: "hidden",
+		backgroundColor: "#f7f5fc",
+		//autoHideMenuBar: true,
+		titleBarStyle: "default",
+		titleBarOverlay: {
+			color: "#f7f5fc",
+			symbolColor:"#000",
+		},
 		icon: path.join(ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
 		webPreferences: {
 			contextIsolation: false,
@@ -46,6 +51,11 @@ app.once("ready", async function () {
 			webgl: true
 		}
 	});
+
+	mainWindow.setMenu(null);
+
+	if (electronIsDev)
+		mainWindow.webContents.openDevTools();
 
 	const listenState: boolean | number = await listen();
 
