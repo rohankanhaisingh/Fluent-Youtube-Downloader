@@ -37,7 +37,7 @@ app.once("ready", async function () {
 		center: true,
 		backgroundColor: "#f7f5fc",
 		//autoHideMenuBar: true,
-		titleBarStyle: "default",
+		titleBarStyle: "hidden",
 		titleBarOverlay: {
 			color: "#f7f5fc",
 			symbolColor:"#000",

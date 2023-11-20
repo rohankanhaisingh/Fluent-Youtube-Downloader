@@ -40,7 +40,7 @@ electron_1.app.once("ready", function () {
             fullscreenable: true,
             center: true,
             backgroundColor: "#f7f5fc",
-            titleBarStyle: "default",
+            titleBarStyle: "hidden",
             titleBarOverlay: {
                 color: "#f7f5fc",
                 symbolColor: "#000",
