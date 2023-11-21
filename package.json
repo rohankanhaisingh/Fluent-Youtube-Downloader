@@ -1,10 +1,11 @@
 {
   "name": "fluent-youtube-downloader",
-  "version": "0.0.0",
+  "version": "0.2.1",
   "description": "Fluent-Youtube-Downloader",
   "main": "./dist/app.js",
   "author": {
-    "name": ""
+    "name": "Rohan Kanhaisingh",
+    "url": "https://rohankanhaisingh.com"
   },
   "scripts": {
     "build-ts": "tsc --build",
@@ -30,7 +31,8 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "icon": "./icon.ico"
     }
   },
   "devDependencies": {

@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".env" />
+    <Content Include="application\icon.ico" />
     <Content Include="application\res\data\json\60b893e9-20be-48a1-aba7-8b004aa94d30.json" />
     <Content Include="application\res\fonts\CascadiaCode.ttf" />
     <Content Include="application\res\fonts\CreatoDisplay-Black.otf" />
@@ -54,6 +55,7 @@
     <Content Include="application\res\fonts\MuseoSansRounded900.otf" />
     <Content Include="application\res\fonts\Segoe UI.ttf" />
     <Content Include="application\res\fonts\Syne-VariableFont_wght.ttf" />
+    <Content Include="application\res\media\app-icons\icon.ico" />
     <Content Include="application\res\media\app-icons\icon.png" />
     <Content Include="application\res\media\icons\icon.png" />
     <Content Include="application\res\media\icons\windows-icon-18-plus.png" />
@@ -118,6 +120,7 @@
     <Content Include="application\views\tabs\history.ejs" />
     <Content Include="application\views\tabs\home.ejs" />
     <Content Include="application\views\tabs\settings.ejs" />
+    <Content Include="icon.ico" />
     <Content Include="scss-config.js" />
     <Content Include="webpack.config.js" />
     <None Include="src\app.ts" />
