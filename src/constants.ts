@@ -28,6 +28,7 @@ export const APPDATA_PATH: string | undefined = process.env.APPDATA;
 /** Name of the directory where the application data will be stored. */
 export const APPDATA_DIRECTORY_NAME: string = "fluent-youtube-downloader";
 
+/** Defines the AppData file and directory structure. */
 export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 	"blob_storage": {},
 	"Cache": {
@@ -47,7 +48,30 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 	"Network": {},
 	"Session Storage": {},
 	"Application": {
-		"Settings.json": JSON.stringify({"window":{"resolution":{"width":600,"height":750},"display":{"theme":"fluent-light-purple"}},"path":{"appDataPath":null,"downloadPath":null,"ffmpegPath":null},"server":{"port":8000}}),
+		"Settings.json": JSON.stringify({
+			"behavior": {
+				"autoStart": false,
+				"systemTray": false,
+			},
+			"window": {
+				"resolution": {
+					"width": 600,
+					"height": 750
+				},
+				"display": {
+					"theme": "fluent-light-purple",
+					"darkMode": false,
+				}
+			},
+			"path": {
+				"appDataPath": null,
+				"downloadPath": null,
+				"ffmpegPath": null
+			},
+			"server": {
+				"port": 8000
+			}
+		}),
 		"History.json": "[]"
 	}
 };

@@ -1,1 +1,4 @@
-console.log("This is the settings page.");
+import { renderToggles, renderInputFields } from "../handlers/dom-generator";
+
+renderToggles();
+renderInputFields();

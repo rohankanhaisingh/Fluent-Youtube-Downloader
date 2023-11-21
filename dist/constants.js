@@ -34,7 +34,30 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
     "Network": {},
     "Session Storage": {},
     "Application": {
-        "Settings.json": JSON.stringify({ "window": { "resolution": { "width": 600, "height": 750 }, "display": { "theme": "fluent-light-purple" } }, "path": { "appDataPath": null, "downloadPath": null, "ffmpegPath": null }, "server": { "port": 8000 } }),
+        "Settings.json": JSON.stringify({
+            "behavior": {
+                "autoStart": false,
+                "systemTray": false,
+            },
+            "window": {
+                "resolution": {
+                    "width": 600,
+                    "height": 750
+                },
+                "display": {
+                    "theme": "fluent-light-purple",
+                    "darkMode": false,
+                }
+            },
+            "path": {
+                "appDataPath": null,
+                "downloadPath": null,
+                "ffmpegPath": null
+            },
+            "server": {
+                "port": 8000
+            }
+        }),
         "History.json": "[]"
     }
 };

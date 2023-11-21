@@ -1,0 +1,76 @@
+@use "../utilities/_constants" as constants;
+
+$inputFieldWidth: 140px;
+$inputFieldHeight: 20px;
+$inputBorderColor: #dcdadf;
+$inputBorderBottomColor: #d2cfd7;
+$inputBackgroundColor: #ffffff;
+
+@keyframes input-field-stroke-animation {
+    0% {
+        width: 50%;
+    }
+    100% {
+        width: calc(100% - 1px);
+    }
+}
+
+.styled-input-field {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    content: "";
+
+    &__input {
+        width: $inputFieldWidth;
+        height: $inputFieldHeight;
+        padding: 5px 10px;
+        border-radius: 5px;
+        outline: none;
+        appearance: none;
+        position: relative;
+        content: "";
+        background: $inputBackgroundColor;
+        border-top: 1px solid $inputBorderColor;
+        border-right: 1px solid $inputBorderColor;
+        border-left: 1px solid $inputBorderColor;
+        border-bottom: 2px solid $inputBorderBottomColor;
+        font-family: var(--default-font);
+    }
+
+    &[is-disabled=true] {
+        user-select: none;
+
+        .styled-input-field__input {
+            cursor: not-allowed;
+        }
+    }
+
+    &::after {
+        width: calc(100% - 2px);
+        height: 2px;
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+        bottom: 1px;
+        z-index: 1;
+        display: none;
+        background: #9072bb;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        -moz-animation: input-field-stroke-animation constants.$transitionDuration constants.$transitionKey;
+        -o-animation: input-field-stroke-animation constants.$transitionDuration constants.$transitionKey;
+        -webkit-animation: input-field-stroke-animation constants.$transitionDuration constants.$transitionKey;
+        animation: input-field-stroke-animation constants.$transitionDuration constants.$transitionKey;
+    }
+
+    &:active, &:focus, &.focused {
+        &:not([is-disabled=true]) {
+            &::after {
+                display: block;
+            }
+        }
+    }
+}

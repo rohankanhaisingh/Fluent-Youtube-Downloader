@@ -9,6 +9,116 @@
 </spa-config>
 
 <spa-dom-content>
-    This is the settings page.
+    <div class="page-settings settings">
 
+        <h4 style="margin: 0;">Application settings</h4>
+        <p>Adjust the settings to whatever you prefer. Some settings may take effect when you restart the application.</p>
+
+        <div class="settings-category">
+            <div class="settings-category__title">Appearance & behavior</div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-start.png" alt="Start" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">Start with Windows</div>
+                    <div class="settings-category__setting__text__description">Let Windows start Fluent Youtube Downloader automatically.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <label id="setting-auto_start-label">Off</label>
+                    <toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off"></toggle>
+                </div>
+            </div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-grid.png" alt="Grid" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">System-tray icon</div>
+                    <div class="settings-category__setting__text__description">Allow Fluent Youtube Downloader to be in the system-tray.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <label id="setting-system_tray-label">Off</label>
+                    <toggle for="#setting-system_tray-label" active-text="On" inactive-text="Off"></toggle>
+                </div>
+            </div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-theme.png" alt="Theme" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">Dark mode</div>
+                    <div class="settings-category__setting__text__description">Enable dark-mode in Fluent Youtube Downloader.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <label id="setting-dark_mode-label">Off</label>
+                    <toggle for="#setting-dark_mode-label" active-text="On" inactive-text="Off"></toggle>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="settings-category">
+            <div class="settings-category__title">Paths & ports</div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-folder.png" alt="Folder" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">Download path</div>
+                    <div class="settings-category__setting__text__description">Fluent YouTube Downloader will convert videos into any media file and save them to this directory.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false"></input-field>
+                </div>
+            </div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-folder.png" alt="Folder" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">FFMPEG path</div>
+                    <div class="settings-category__setting__text__description">Fluent Youtube Downloader will look for the ffmpeg.exe file within the given directory path.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false" value="Auto" disabled></input-field>
+                </div>
+            </div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-network_manager.png" alt="Network manager" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">ExpressJS port</div>
+                    <div class="settings-category__setting__text__description">ExpressJS is used to render the application. The default port is 8000.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false" value="8000"></input-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-category">
+            <div class="settings-category__title">Other things</div>
+
+            <div class="settings-category__setting">
+                <div class="settings-category__setting__icon">
+                    <img src="/static/media/icons/windows-icon-cmd.png" alt="Cmd" />
+                </div>
+                <div class="settings-category__setting__text">
+                    <div class="settings-category__setting__text__title">Start options</div>
+                    <div class="settings-category__setting__text__description">Configure options by entering arguments. Be cautious, as this might break the program.</div>
+                </div>
+                <div class="settings-category__setting__value">
+                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false"></input-field>
+                </div>
+            </div>
+        </div>
+    </div>
 </spa-dom-content>

@@ -39,7 +39,7 @@ electron_1.app.once("ready", function () {
             maximizable: true,
             fullscreenable: true,
             center: true,
-            backgroundColor: "#f7f5fc",
+            backgroundColor: "#00000000",
             titleBarStyle: "hidden",
             titleBarOverlay: {
                 color: "#f7f5fc",

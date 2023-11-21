@@ -3,6 +3,7 @@ import { Request } from "express";
 import path from "path";
 import electronIsDev from "electron-is-dev";
 
+
 import { listen } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
 import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
@@ -35,7 +36,7 @@ app.once("ready", async function () {
 		maximizable: true,
 		fullscreenable: true,
 		center: true,
-		backgroundColor: "#f7f5fc",
+		backgroundColor: "#00000000",
 		//autoHideMenuBar: true,
 		titleBarStyle: "hidden",
 		titleBarOverlay: {

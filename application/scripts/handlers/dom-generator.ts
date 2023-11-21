@@ -68,3 +68,63 @@ export function renderToggles() {
 		toggleElement.replaceWith(newToggle);
 	}
 }
+
+export function renderInputFields() {
+
+	const inputFieldElements: NodeListOf<HTMLElement> = document.querySelectorAll("input-field");
+
+	for (let inputField of inputFieldElements) {
+
+		const inputFieldClassNames: string | null = inputField.getAttribute("class");
+		const inputFieldType: string | null = inputField.getAttribute("type");
+		const inputFieldSpellcheck: string | null = inputField.getAttribute("spellcheck");
+		const inputFieldAutoComplete: string | null = inputField.getAttribute("autocomplete");
+		const inputFieldValue: string | null = inputField.getAttribute("value");
+		const inputDisabled: string | null = inputField.getAttribute("disabled");
+
+		const root = document.createElement("div");
+		root.className = "styled-input-field";
+
+		root.classList.add(inputFieldClassNames ? inputFieldClassNames : "");
+
+		root.setAttribute("type", inputFieldType !== null ? inputFieldType : "text");
+		root.setAttribute("value", "");
+		root.setAttribute("is-focused", "false");
+		root.setAttribute("is-disabled", inputDisabled !== null ? "true" : "false");
+
+		const rootInput: HTMLInputElement = document.createElement("input");
+		rootInput.className = "styled-input-field__input";
+
+		rootInput.type = (inputFieldType !== null) ? inputFieldType : "text";
+		rootInput.spellcheck = (inputFieldSpellcheck !== null) ? inputFieldSpellcheck as unknown as boolean: true;
+		rootInput.autocomplete = (inputFieldAutoComplete !== null) ? inputFieldAutoComplete : "on";
+		rootInput.value = (inputFieldValue !== null) ? inputFieldValue: "";
+		rootInput.disabled = (inputDisabled !== null) ? true: false;
+
+		rootInput.addEventListener("focus", function () {
+
+			if (!root.classList.contains("focused"))
+				root.classList.add("focused");
+
+			root.setAttribute("is-focused", "true");
+		});
+
+		rootInput.addEventListener("blur", function () {
+
+			if (root.classList.contains("focused"))
+				root.classList.remove("focused");
+
+			root.setAttribute("is-focused", "false");
+		});
+
+		rootInput.addEventListener("input", function () {
+
+			const inputValue = rootInput.value;
+
+			root.setAttribute("value", inputValue);
+		});
+
+		root.appendChild(rootInput);
+		inputField.replaceWith(root);
+	}
+}
