@@ -5,7 +5,7 @@
 @keyframes result-fadein {
     0% {
         opacity: 0;
-        @include mixins.BasicAnimationTransform;
+        // @include mixins.BasicAnimationTransform;
     }
     100% {
         -moz-transform: none;
@@ -17,12 +17,35 @@
     }
 }
 
+@keyframes shine {
+    to {
+        background-position: right -40px top 0;
+    }
+}
+
 .page-convert {
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: auto 340px;
-    gap: 40px;
+    grid-template-columns: auto;
+    gap: 0;
+    -moz-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+    -o-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+    -webkit-transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+    transition: grid-template-columns constants.$transitionDuration constants.$transitionKey;
+
+    .convert__right {
+        display: none;
+    }
+
+    &.in-video-info {
+        grid-template-columns: auto 340px;
+        gap: 40px;
+
+        .convert__right {
+            display: block;
+        }
+    }
 }
 
 .convert {
@@ -136,6 +159,50 @@
                             }
                         }
                     }
+
+                    &.skeleton {
+
+                        .convert-results__result__thumbnail,
+                        .convert-results__result__info__title,
+                        .convert-results__result__info__author,
+                        .convert-results__result__info__description,
+                        .convert-results__result__info__button {
+                            background: linear-gradient(90deg, rgba(255, 255, 255, 0), #e1dbed, rgba(255, 255, 255, 0));
+                            background-color: #dcd6e7;
+                            background-size: 40px 100%;
+                            background-repeat: no-repeat;
+                            background-position: left -40px top 0;
+                            animation: shine 1s infinite ease;
+                            border-radius: 5px;
+                        }
+
+                        .convert-results__result__thumbnail {
+                            display: flex;
+                            justify-content: center;
+                            justify-items: center;
+                            align-items: center;
+                        }
+
+                        .convert-results__result__info__title {
+                            width: 90%;
+                            height: 25px;
+                        }
+
+                        .convert-results__result__info__author {
+                            width: 60%;
+                            height: 15px;
+                        }
+
+                        .convert-results__result__info__description {
+                            width: 56%;
+                            height: 45px;
+                        }
+
+                        .convert-results__result__info__button {
+                            height: 20px;
+                            width: 20px;
+                        }
+                    }
                 }
             }
         }
@@ -144,7 +211,7 @@
             border-radius: 5px;
             background: accents.$neutralAccentDarker;
             display: grid;
-            grid-template-columns: auto 100px;
+            grid-template-columns: auto 60px;
 
             &__input {
                 padding: 0px 20px;
@@ -202,7 +269,7 @@
                 &__button {
                     width: auto;
                     height: 50px;
-                    padding: 15px;
+                    padding: 15px 5px;
                     float: left;
 
                     img {
@@ -232,6 +299,7 @@
         &__scroller {
             width: 100%;
             height: 100%;
+            max-height: calc(100vh - 160px);
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -240,33 +308,87 @@
 
             &__thumbnail {
                 width: 100%;
-                height: auto;
-                border-radius: 5px;
-            }
-
-            &__author {
-                width: 100%;
-                height: 30px;
-                padding: 10px 0px;
-                border-radius: 5px;
+                height: 160px;
+                position: relative;
 
                 &__image {
-                    @include mixins.StaticIcon;
-                    width: 30px;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: fill;
+                    border-radius: 5px;
+                }
+
+                &__author {
+                    width: calc(100% - 30px);
                     height: 30px;
-                    float: left;
-                    border-radius: 50%;
+                    position: absolute;
+                    padding: 5px;
+                    left: 10px;
+                    bottom: 10px;
+                    z-index: 1;
+                    border-radius: 5px;
+                    background: accents.$neutralAccentDarker;
+
+                    &__image {
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        float: left;
+                    }
+
+                    &__text {
+                        width: calc(100% - 40px);
+                        float: left;
+                        margin-left: 10px;
+                        font-weight: 500;
+                        font-size: 14px;
+                        line-height: 29px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+            }
+
+            &__title {
+                width: 100%;
+                height: auto;
+                text-align: center;
+                font-size: 22px;
+                font-weight: 400;
+                margin-top: 20px;
+            }
+
+            &__hl {
+                width: 75px;
+                height: 3px;
+                background: #d2cbe5;
+                border-radius: 5px;
+                margin: 20px auto;
+            }
+
+            &__item {
+                width: 100%;
+                height: 20px;
+                display: grid;
+                grid-template-columns: 20px auto;
+                gap: 20px;
+                padding: 5px;
+
+                &__icon {
+                    width: 20px;
+                    height: 20px;
+                    opacity: .3;
                 }
 
                 &__text {
-                    width: calc(100% - 50px);
-                    margin-left: 10px;
-                    margin-top: 5px;
-                    display: block;
-                    float: left;
-                    font-size: 15px;
-                    font-weight: 500;
+                    font-size: 13px;
+                    line-height: 20px;
                 }
+            }
+
+            &__description {
+                font-size: 12px;
             }
         }
     }

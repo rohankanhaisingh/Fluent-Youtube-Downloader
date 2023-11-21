@@ -56,6 +56,7 @@
     ]
   },
   "dependencies": {
+    "@babahgee/easings": "^1.0.0",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.16",
     "@types/dotenv": "^8.2.0",

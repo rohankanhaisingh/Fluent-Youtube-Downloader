@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
+import { dialog } from "electron";
 
 import details from "./core/video-details";
+import { mainWindow } from "../app";
 
 export function rest(router: Router) {
 
@@ -12,6 +14,13 @@ export function rest(router: Router) {
 
 			res.status(200).json(response);
 		}).catch(function (err: Error) {
+
+			dialog.showMessageBox(mainWindow, {
+				title: "Error",
+				type: "error",
+				message: err.message,
+				detail: err.stack,
+			});
 
 			res.status(500).json({ message: err.message, stack: err.stack, name: err.name });
 		})
