@@ -4,6 +4,8 @@ import path from "path";
 import bodyParser from "body-parser";
 import portscanner from "portscanner";
 import electron from "electron";
+import session from "express-session";
+import { v4 } from "uuid";
 
 import { APPLICATION_PATH, SERVER_PORT, VIEWS_PATH } from "./constants";
 import { route } from "./router";
@@ -14,6 +16,8 @@ import { rest } from "./rest/entry";
 
 export const server: Express = express();
 export const router: Router = Router();
+
+export const reservedServerAuthToken: string = v4();
 
 server.set("view engine", "ejs");
 server.set("views", VIEWS_PATH);
@@ -32,7 +36,26 @@ route(router);
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
+
+server.use(session({
+	secret: reservedServerAuthToken,
+	resave: true,
+	saveUninitialized: true
+}));
+
 server.use(cors());
+
+server.use(function (req, res, next) {
+
+	// This should be done better, anyone know how?
+	const ipHeader: string[] | string | undefined = req.headers[`x-forwarded-for`],
+		clientHostname: string = req.hostname;
+
+	if (clientHostname !== "localhost") return res.status(403).json("Not allowed");
+
+	next();
+});
+
 server.use("/", router);
 
 /**

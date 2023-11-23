@@ -35,13 +35,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listen = exports.router = exports.server = void 0;
+exports.listen = exports.reservedServerAuthToken = exports.router = exports.server = void 0;
 const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const portscanner_1 = __importDefault(require("portscanner"));
 const electron_1 = __importDefault(require("electron"));
+const express_session_1 = __importDefault(require("express-session"));
+const uuid_1 = require("uuid");
 const constants_1 = require("./constants");
 const router_1 = require("./router");
 const app_1 = require("./app");
@@ -49,6 +51,7 @@ const appdata_1 = require("./appdata");
 const entry_1 = require("./rest/entry");
 exports.server = (0, express_1.default)();
 exports.router = (0, express_1.Router)();
+exports.reservedServerAuthToken = (0, uuid_1.v4)();
 exports.server.set("view engine", "ejs");
 exports.server.set("views", constants_1.VIEWS_PATH);
 exports.server.use("/static/icons/", express_1.default.static(path_1.default.join(constants_1.APPLICATION_PATH, "res", "icons")));
@@ -63,7 +66,18 @@ exports.server.use("/static/styles/", express_1.default.static(path_1.default.jo
 (0, router_1.route)(exports.router);
 exports.server.use(body_parser_1.default.urlencoded({ extended: true }));
 exports.server.use(body_parser_1.default.json());
+exports.server.use((0, express_session_1.default)({
+    secret: exports.reservedServerAuthToken,
+    resave: true,
+    saveUninitialized: true
+}));
 exports.server.use((0, cors_1.default)());
+exports.server.use(function (req, res, next) {
+    const ipHeader = req.headers[`x-forwarded-for`], clientHostname = req.hostname;
+    if (clientHostname !== "localhost")
+        return res.status(403).json("Not allowed");
+    next();
+});
 exports.server.use("/", exports.router);
 function listen() {
     return __awaiter(this, void 0, void 0, function* () {

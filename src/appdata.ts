@@ -5,6 +5,8 @@ import electron, { app } from "electron";
 import { APPDATA_PATH, APPDATA_DIRECTORY_NAME, APPDATA_DIRECTORY_STRUCTURE } from "./constants";
 import { mainWindow } from "./app";
 import { ApplicationSettings, ReadSettingsFail } from "./typings";
+import { Request, Response, Router } from "express";
+import { requireLogin } from "./router";
 
 /**
  * Constructs the folder based on a structure map.
@@ -167,3 +169,12 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 
 	return JSON.parse(parsedFileContent);
 } // nice 69
+
+export function route(router: Router) {
+
+	router.get("/appdata/settings", requireLogin, function (req: Request, res: Response) {
+
+		console.log(true);
+	});
+
+}

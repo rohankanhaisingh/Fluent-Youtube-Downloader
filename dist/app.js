@@ -60,7 +60,9 @@ electron_1.app.once("ready", function () {
         const listenState = yield (0, server_1.listen)();
         if (!listenState)
             return electron_1.app.exit();
-        exports.mainWindow.loadURL(`http://localhost:${listenState}`);
+        exports.mainWindow.loadURL(`http://localhost:${listenState}`, {
+            extraHeaders: `Accessibility-Type: Electron\nAuthentication-Token: ${server_1.reservedServerAuthToken}`
+        });
         exports.mainWindow.webContents.on("dom-ready", function () {
             exports.mainWindow.show();
         });

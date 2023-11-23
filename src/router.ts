@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 
 import fs from "fs";
 import ejs from "ejs";
@@ -6,15 +6,43 @@ import path from "path";
 
 import { VIEWS_PATH } from "./constants";
 import { handleControlEvents } from "./app";
+import { reservedServerAuthToken } from "./server";
+import { route as routeAppData } from "./appdata";
+
+declare module 'express-session' {
+	interface SessionData {
+		loggedIn?: boolean;
+	}
+}
+
+export function requireLogin(req: Request, res: Response, next: NextFunction) {
+
+	if (req.session && req.session.loggedIn) return next();
+
+	res.status(403).send("Not allowed");
+}
 
 export function route(router: Router) {
 
+	routeAppData(router);
+
 	router.get("/", function (req: Request, res: Response) {
+
+		if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers))
+			return res.status(403).send("Not allowed.");
+
+		if (req.headers["accessibility-type"] !== "Electron")
+			return res.status(403).send("Not allowed for non-Electron applications.");
+
+		if (req.headers["authentication-token"] !== reservedServerAuthToken)
+			return res.status(403).send("Bruh");
+
+		req.session.loggedIn = true;
 
 		res.render("index");
 	});
 
-	router.use("/tabs/", async function (req: Request, res: Response) {
+	router.use("/tabs/", requireLogin, async function (req: Request, res: Response) {
 
 		const requestedTabName: string = req.url.replace("/", ""),
 			requestedFileName: string = requestedTabName + ".ejs";
@@ -34,6 +62,5 @@ export function route(router: Router) {
 		switch (requestedWindowFunction) {
 			case "control-event": handleControlEvents(req); break;
 		}
-
 	});
 }

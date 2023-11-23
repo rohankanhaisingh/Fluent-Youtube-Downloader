@@ -3,12 +3,10 @@ import { Request } from "express";
 import path from "path";
 import electronIsDev from "electron-is-dev";
 
-
-import { listen } from "./server";
+import { listen, reservedServerAuthToken } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
 import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
 import { initializeAppData, readSettingsFile } from "./appdata";
-import { settings } from "cluster";
 
 export let mainWindow: BrowserWindow;
 
@@ -62,7 +60,9 @@ app.once("ready", async function () {
 
 	if (!listenState) return app.exit();
 
-	mainWindow.loadURL(`http://localhost:${listenState}`);
+	mainWindow.loadURL(`http://localhost:${listenState}`, {
+		extraHeaders: `Accessibility-Type: Electron\nAuthentication-Token: ${reservedServerAuthToken}`
+	});
 
 	mainWindow.webContents.on("dom-ready", function () {
 

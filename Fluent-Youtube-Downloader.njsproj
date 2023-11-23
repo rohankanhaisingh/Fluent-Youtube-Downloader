@@ -122,6 +122,7 @@
     <Content Include="application\views\tabs\settings.ejs" />
     <Content Include="icon.ico" />
     <Content Include="scss-config.js" />
+    <Content Include="src\icon.png" />
     <Content Include="webpack.config.js" />
     <None Include="src\app.ts" />
     <Content Include="package.json" />

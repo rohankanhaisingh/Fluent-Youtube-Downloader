@@ -26,12 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readSettingsFile = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = void 0;
+exports.route = exports.readSettingsFile = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
 const constants_1 = require("./constants");
 const app_1 = require("./app");
+const router_1 = require("./router");
 function createFolderStructure(structureMap, currentPath) {
     if (!fs_1.default.existsSync(currentPath))
         fs_1.default.mkdirSync(currentPath);
@@ -133,3 +134,9 @@ function readSettingsFile() {
     return JSON.parse(parsedFileContent);
 }
 exports.readSettingsFile = readSettingsFile;
+function route(router) {
+    router.get("/appdata/settings", router_1.requireLogin, function (req, res) {
+        console.log(true);
+    });
+}
+exports.route = route;
