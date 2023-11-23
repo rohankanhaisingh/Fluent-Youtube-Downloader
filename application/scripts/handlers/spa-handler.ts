@@ -166,9 +166,21 @@ export function formatNewDocument(html: string): Document {
 
 export async function requestPage(pageUrl: string) {
 
-	const response = await fetch(pageUrl, { method: "GET", headers: {"Content-Type": "text/html"} });
-	const responseText = await response.text();
+	fetch(pageUrl, { method: "GET", headers: { "Content-Type": "text/html" } })
+		.then(function (response: Response) {
 
-	const formattedDocument: Document = formatNewDocument(responseText);
-	swapPageContents(formattedDocument, response);
+			response.text()
+				.then(function (responseText: string) {
+
+					const formattedDocument: Document = formatNewDocument(responseText);
+					return swapPageContents(formattedDocument, response);
+				}).catch(function (err) {
+
+					console.log(err.message);
+				});
+
+		}).catch(function (err: Error) {
+
+			console.log(err.message);
+		});
 }

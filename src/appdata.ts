@@ -174,7 +174,9 @@ export function route(router: Router) {
 
 	router.get("/appdata/settings", requireLogin, function (req: Request, res: Response) {
 
-		console.log(true);
+		const settingsFile = readSettingsFile();
+
+		res.status(200).json(settingsFile);
 	});
 
 }

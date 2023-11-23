@@ -6,6 +6,7 @@ export function renderToggles() {
 
 		const toggleClassNames: string | null = toggleElement.getAttribute("class");
 		const toggleForAttribute: string | null = toggleElement.getAttribute("for");
+		const toggleIdAttribute: string | null = toggleElement.getAttribute("id");
 
 		const newToggle = document.createElement("div");
 		newToggle.className = "styled-toggle";
@@ -17,6 +18,8 @@ export function renderToggles() {
 		const newToggleThumb = document.createElement("div");
 		newToggleThumb.className = "styled-toggle__thumb";
 		newToggleContainer.appendChild(newToggleThumb);
+
+		newToggle.setAttribute("active", "false");
 
 		newToggle.addEventListener("click", function () {
 
@@ -65,6 +68,9 @@ export function renderToggles() {
 		if (toggleClassNames)
 			newToggle.classList.add(toggleClassNames);
 
+		if (toggleIdAttribute)
+			newToggle.id = toggleIdAttribute;
+
 		toggleElement.replaceWith(newToggle);
 	}
 }
@@ -81,16 +87,24 @@ export function renderInputFields() {
 		const inputFieldAutoComplete: string | null = inputField.getAttribute("autocomplete");
 		const inputFieldValue: string | null = inputField.getAttribute("value");
 		const inputDisabled: string | null = inputField.getAttribute("disabled");
+		const inputId: string | null = inputField.getAttribute("id");
 
 		const root = document.createElement("div");
-		root.className = "styled-input-field";
+		root.className = "styled-input-field " + crypto.randomUUID();
 
-		root.classList.add(inputFieldClassNames ? inputFieldClassNames : "");
+		if (inputFieldClassNames) {
+
+			inputFieldClassNames.split(" ").forEach(function (className: string) {
+
+				root.classList.add(className);
+			});
+		}
 
 		root.setAttribute("type", inputFieldType !== null ? inputFieldType : "text");
 		root.setAttribute("value", "");
 		root.setAttribute("is-focused", "false");
 		root.setAttribute("is-disabled", inputDisabled !== null ? "true" : "false");
+		root.setAttribute("id", inputId !== null ? inputId : "");
 
 		const rootInput: HTMLInputElement = document.createElement("input");
 		rootInput.className = "styled-input-field__input";

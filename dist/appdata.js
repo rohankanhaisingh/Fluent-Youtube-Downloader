@@ -136,7 +136,8 @@ function readSettingsFile() {
 exports.readSettingsFile = readSettingsFile;
 function route(router) {
     router.get("/appdata/settings", router_1.requireLogin, function (req, res) {
-        console.log(true);
+        const settingsFile = readSettingsFile();
+        res.status(200).json(settingsFile);
     });
 }
 exports.route = route;

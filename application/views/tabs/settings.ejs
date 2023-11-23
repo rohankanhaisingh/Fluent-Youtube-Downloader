@@ -27,7 +27,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-auto_start-label">Off</label>
-                    <toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off"></toggle>
+                    <toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off" id="toggle-auto_start" class="application-setting"></toggle>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-system_tray-label">Off</label>
-                    <toggle for="#setting-system_tray-label" active-text="On" inactive-text="Off"></toggle>
+                    <toggle for="#setting-system_tray-label" active-text="On" inactive-text="Off" id="toggle-system_tray" class="application-setting"></toggle>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-dark_mode-label">Off</label>
-                    <toggle for="#setting-dark_mode-label" active-text="On" inactive-text="Off"></toggle>
+                    <toggle for="#setting-dark_mode-label" active-text="On" inactive-text="Off" id="toggle-dark_mode" class="application-setting"></toggle>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                     <div class="settings-category__setting__text__description">Fluent YouTube Downloader will convert videos into any media file and save them to this directory.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="input-download_path"></input-field>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                     <div class="settings-category__setting__text__description">Fluent Youtube Downloader will look for the ffmpeg.exe file within the given directory path.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false" value="Auto" disabled></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="Auto" disabled id="input-ffmpeg_path"></input-field>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
                     <div class="settings-category__setting__text__description">ExpressJS is used to render the application. The default port is 8000.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false" value="8000"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="8000" id="input-expressjs_port"></input-field>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                     <div class="settings-category__setting__text__description">Configure options by entering arguments. Be cautious, as this might break the program.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field" spellcheck="false"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="input-start_options"></input-field>
                 </div>
             </div>
         </div>
