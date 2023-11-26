@@ -1,3 +1,7 @@
+/**
+ * Client-sided socket.io handler
+ */
+
 import socket, { Socket } from "socket.io-client";
 
 declare global {

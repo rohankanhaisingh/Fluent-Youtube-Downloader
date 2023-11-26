@@ -173,12 +173,14 @@
     <TypeScriptCompile Include="application\scripts\handlers\titlebar.ts" />
     <TypeScriptCompile Include="application\scripts\index.ts" />
     <TypeScriptCompile Include="src\appdata.ts" />
+    <TypeScriptCompile Include="src\auto-launch.ts" />
     <TypeScriptCompile Include="src\constants.ts" />
     <TypeScriptCompile Include="src\rest\core\video-details.ts" />
     <TypeScriptCompile Include="src\rest\entry.ts" />
     <TypeScriptCompile Include="src\router.ts" />
     <TypeScriptCompile Include="src\server.ts" />
     <TypeScriptCompile Include="src\socket.ts" />
+    <TypeScriptCompile Include="src\tray.ts" />
     <TypeScriptCompile Include="src\typings.ts" />
     <TypeScriptCompile Include="src\utils.ts" />
   </ItemGroup>

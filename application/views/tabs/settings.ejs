@@ -23,7 +23,7 @@
                 </div>
                 <div class="settings-category__setting__text">
                     <div class="settings-category__setting__text__title">Start with Windows</div>
-                    <div class="settings-category__setting__text__description">Let Windows start Fluent Youtube Downloader automatically.</div>
+                    <div class="settings-category__setting__text__description">Let Windows start Fluent Youtube Downloader automatically. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-auto_start-label">Off</label>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="settings-category__setting__text">
                     <div class="settings-category__setting__text__title">System-tray icon</div>
-                    <div class="settings-category__setting__text__description">Allow Fluent Youtube Downloader to be in the system-tray.</div>
+                    <div class="settings-category__setting__text__description">Allow Fluent Youtube Downloader to be in the system-tray. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-system_tray-label">Off</label>
@@ -73,7 +73,7 @@
                     <div class="settings-category__setting__text__description">Fluent YouTube Downloader will convert videos into any media file and save them to this directory.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="path.downloadPath"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="path.downloadPath" placeholder="Not set"></input-field>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                     <div class="settings-category__setting__text__description">Fluent Youtube Downloader will look for the ffmpeg.exe file within the given directory path.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="Auto" disabled id="path.ffmpegPath"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="Auto" disabled id="path.ffmpegPath" placeholder="Not set"></input-field>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
                     <div class="settings-category__setting__text__description">ExpressJS is used to render the application. The default port is 8000. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="8000" id="server.port"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="8000" id="server.port" placeholder="Not set"></input-field>
                 </div>
             </div>
         </div>
@@ -113,10 +113,10 @@
                 </div>
                 <div class="settings-category__setting__text">
                     <div class="settings-category__setting__text__title">Start options</div>
-                    <div class="settings-category__setting__text__description">Configure options by entering arguments. Be cautious, as this might break the program.</div>
+                    <div class="settings-category__setting__text__description">Configure options by entering arguments. Be cautious, as this might break the program. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="behavior.startOptions"></input-field>
+                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="behavior.startOptions" placeholder="Not set"></input-field>
                 </div>
             </div>
         </div>

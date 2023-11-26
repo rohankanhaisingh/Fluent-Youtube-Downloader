@@ -84,7 +84,7 @@ server.use("/", router);
 export async function listen(): Promise<boolean | number> {
 
 	const applicationSettings = readSettingsFile() as ApplicationSettings;
-	const allocatedServerPort = applicationSettings.server.port || SERVER_PORT;
+	const allocatedServerPort = parseInt(applicationSettings.server.port as unknown as string) || SERVER_PORT;
 
 	// Check if the allocated server is already in use.
 	const portStatus = await portscanner.checkPortStatus(allocatedServerPort);

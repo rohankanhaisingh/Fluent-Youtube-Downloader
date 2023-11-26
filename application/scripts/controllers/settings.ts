@@ -44,7 +44,7 @@ interface ApplicationSettings {
 	readonly behavior: ApplicationBehaviorSettings;
 }
 
-function postSettingChangeData(key: string, value: string | boolean) {
+function postSettingChangeData(key: string, value: string | boolean | null) {
 
 	post("/appdata/change-settings", {
 		key, value,
@@ -69,6 +69,20 @@ function handleDomInputs() {
 				if (activeState === null || settingName === null) return;
 
 				postSettingChangeData(settingName, activeState === "true" ? true : false);
+			});
+		}
+
+		if (domElement.classList.contains("styled-input-field")) {
+
+			const input: HTMLInputElement | null = domElement.querySelector("input");
+
+			if (input !== null) input.addEventListener("change", function () {
+
+				const settingName: null | string = domElement.getAttribute("id");
+
+				if (settingName === null) return;
+
+				postSettingChangeData(settingName, input.value === "" ? null : input.value);
 			});
 		}
 	});
@@ -114,7 +128,7 @@ function visualizeSavedSettings(data: ApplicationSettings): number {
 			const itemInputField: HTMLInputElement | null = item.querySelector("input");
 
 			if (itemInputField !== null && !itemInputField.disabled)
-				itemInputField.value = currentObject === null ? "Not set" : currentObject;
+				itemInputField.value = currentObject === null ? "" : currentObject;
 		}
 
 		if (item.classList.contains("styled-toggle")) 

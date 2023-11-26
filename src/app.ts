@@ -7,6 +7,8 @@ import { listen, reservedServerAuthToken } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
 import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
 import { initializeAppData, readSettingsFile } from "./appdata";
+import { initializeAutoLaunch } from "./auto-launch";
+import { initializeSystemTray } from "./tray";
 
 export let mainWindow: BrowserWindow;
 
@@ -19,7 +21,8 @@ app.once("ready", async function () {
 
 	const applicationSettings: ApplicationSettings | ReadSettingsFail = readSettingsFile();
 
-	if (applicationSettings.status === "failed") return app.exit();
+	if (applicationSettings.status === "failed")
+		return app.exit();
 
 	const settingsCasting = applicationSettings as ApplicationSettings;
 
@@ -34,8 +37,7 @@ app.once("ready", async function () {
 		maximizable: true,
 		fullscreenable: true,
 		center: true,
-		backgroundColor: "#00000000",
-		//autoHideMenuBar: true,
+		backgroundColor: "#f7f5fc",
 		titleBarStyle: "hidden",
 		titleBarOverlay: {
 			color: "#f7f5fc",
@@ -48,14 +50,20 @@ app.once("ready", async function () {
 			nodeIntegrationInSubFrames: true,
 			nodeIntegrationInWorker: true,
 			webgl: true,
-			webSecurity: false,
+			devTools: true,
 		}
 	});
 
-	// mainWindow.setMenu(null);
+	if (electronIsDev) {
 
-	if (electronIsDev)
 		mainWindow.webContents.openDevTools();
+	} else {
+
+		mainWindow.setMenu(null);
+
+		initializeSystemTray(settingsCasting);
+		initializeAutoLaunch(settingsCasting);
+	}
 
 	const listenState: boolean | number = await listen();
 

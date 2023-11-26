@@ -20,7 +20,8 @@
 
     &__setting {
         width: calc(100% - 40px);
-        height: 40px;
+        height: auto;
+        min-height: 40px;
         padding: 20px;
         background: #ede6f9;
         border-radius: 5px;

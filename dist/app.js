@@ -19,6 +19,8 @@ const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
 const server_1 = require("./server");
 const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
+const auto_launch_1 = require("./auto-launch");
+const tray_1 = require("./tray");
 const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
     return __awaiter(this, void 0, void 0, function* () {
@@ -39,7 +41,7 @@ electron_1.app.once("ready", function () {
             maximizable: true,
             fullscreenable: true,
             center: true,
-            backgroundColor: "#00000000",
+            backgroundColor: "#f7f5fc",
             titleBarStyle: "hidden",
             titleBarOverlay: {
                 color: "#f7f5fc",
@@ -52,11 +54,17 @@ electron_1.app.once("ready", function () {
                 nodeIntegrationInSubFrames: true,
                 nodeIntegrationInWorker: true,
                 webgl: true,
-                webSecurity: false,
+                devTools: true,
             }
         });
-        if (electron_is_dev_1.default)
+        if (electron_is_dev_1.default) {
             exports.mainWindow.webContents.openDevTools();
+        }
+        else {
+            exports.mainWindow.setMenu(null);
+            (0, tray_1.initializeSystemTray)(settingsCasting);
+            (0, auto_launch_1.initializeAutoLaunch)(settingsCasting);
+        }
         const listenState = yield (0, server_1.listen)();
         if (!listenState)
             return electron_1.app.exit();

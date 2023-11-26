@@ -95,7 +95,7 @@ exports.server.use("/", exports.router);
 function listen() {
     return __awaiter(this, void 0, void 0, function* () {
         const applicationSettings = (0, appdata_1.readSettingsFile)();
-        const allocatedServerPort = applicationSettings.server.port || constants_1.SERVER_PORT;
+        const allocatedServerPort = parseInt(applicationSettings.server.port) || constants_1.SERVER_PORT;
         const portStatus = yield portscanner_1.default.checkPortStatus(allocatedServerPort);
         if (portStatus !== "open") {
             exports.httpServer.listen(allocatedServerPort);
