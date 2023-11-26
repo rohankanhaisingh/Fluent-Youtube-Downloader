@@ -28,9 +28,16 @@ export interface ApplicationServerSettings {
 	readonly port: number;
 }
 
+export interface ApplicationBehaviorSettings {
+	readonly autoStart: boolean;
+	readonly systemTray: boolean;
+	readonly startOptions: string | null;
+}
+
 export interface ApplicationSettings {
 	readonly window: ApplicationWindowSettings;
 	readonly path: ApplicationPathSettings;
 	readonly server: ApplicationServerSettings;
 	readonly status: ApplicationSettingsStatus;
+	readonly behavior: ApplicationBehaviorSettings;
 }

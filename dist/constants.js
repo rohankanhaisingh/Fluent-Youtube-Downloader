@@ -38,6 +38,7 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
             "behavior": {
                 "autoStart": false,
                 "systemTray": false,
+                "startOptions": null
             },
             "window": {
                 "resolution": {

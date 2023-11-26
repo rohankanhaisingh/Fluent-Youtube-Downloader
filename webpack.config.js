@@ -36,7 +36,7 @@ for (let folder of ENTRY_SCRIPT_FILES) {
 module.exports = {
     mode: "production",
     watch: true,
-    devtool: "eval",
+    // devtool: "eval",
     plugins: [],
     entry: entryPoints,
     output: {

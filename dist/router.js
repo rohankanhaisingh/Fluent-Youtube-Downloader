@@ -19,7 +19,6 @@ const path_1 = __importDefault(require("path"));
 const constants_1 = require("./constants");
 const app_1 = require("./app");
 const server_1 = require("./server");
-const appdata_1 = require("./appdata");
 function requireLogin(req, res, next) {
     if (req.session && req.session.loggedIn)
         return next();
@@ -27,7 +26,6 @@ function requireLogin(req, res, next) {
 }
 exports.requireLogin = requireLogin;
 function route(router) {
-    (0, appdata_1.route)(router);
     router.get("/", function (req, res) {
         if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers))
             return res.status(403).send("Not allowed.");
@@ -37,6 +35,9 @@ function route(router) {
             return res.status(403).send("Bruh");
         req.session.loggedIn = true;
         res.render("index");
+    });
+    router.get("/get-authtoken", requireLogin, function (req, res) {
+        res.status(200).send(server_1.reservedServerAuthToken);
     });
     router.use("/tabs/", requireLogin, function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {

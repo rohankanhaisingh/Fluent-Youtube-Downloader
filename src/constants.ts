@@ -52,6 +52,7 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 			"behavior": {
 				"autoStart": false,
 				"systemTray": false,
+				"startOptions": null
 			},
 			"window": {
 				"resolution": {

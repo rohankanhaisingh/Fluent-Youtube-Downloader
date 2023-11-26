@@ -47,11 +47,12 @@ app.once("ready", async function () {
 			nodeIntegration: true,
 			nodeIntegrationInSubFrames: true,
 			nodeIntegrationInWorker: true,
-			webgl: true
+			webgl: true,
+			webSecurity: false,
 		}
 	});
 
-	mainWindow.setMenu(null);
+	// mainWindow.setMenu(null);
 
 	if (electronIsDev)
 		mainWindow.webContents.openDevTools();

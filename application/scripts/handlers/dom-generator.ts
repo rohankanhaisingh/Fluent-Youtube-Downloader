@@ -9,7 +9,7 @@ export function renderToggles() {
 		const toggleIdAttribute: string | null = toggleElement.getAttribute("id");
 
 		const newToggle = document.createElement("div");
-		newToggle.className = "styled-toggle";
+		newToggle.className = "styled-toggle " + crypto.randomUUID();
 
 		const newToggleContainer = document.createElement("div");
 		newToggleContainer.className = "container";
@@ -21,6 +21,38 @@ export function renderToggles() {
 
 		newToggle.setAttribute("active", "false");
 
+		function dispatchOnActiveEvent(element: HTMLElement, attributeName: string, newValue: string) {
+
+			const event = new CustomEvent("active", {
+				bubbles: true,
+				detail: {
+					attributeName,
+					newValue
+				}
+			});
+
+			element.dispatchEvent(event);
+		}
+
+		function changeToggleLabel() {
+
+			if (toggleForAttribute === null) return;
+
+			const toggleActiveTextAttribute: string | null = toggleElement.getAttribute("active-text");
+			const toggleInActiveTextAttribute: string | null = toggleElement.getAttribute("inactive-text");
+
+			if (toggleActiveTextAttribute !== null && toggleInActiveTextAttribute !== null) {
+
+				const toggleForElement: HTMLElement | null = document.querySelector(toggleForAttribute);
+				const currentActiveState: string | null = newToggle.getAttribute("active");
+
+				if (currentActiveState && toggleForElement) {
+
+					toggleForElement.innerText = (currentActiveState === "true") ? toggleActiveTextAttribute : toggleInActiveTextAttribute;
+				}
+			}
+		}
+		
 		newToggle.addEventListener("click", function () {
 
 			const activeAttribute: string | null = newToggle.getAttribute("active");
@@ -34,36 +66,41 @@ export function renderToggles() {
 				newToggle.setAttribute("active", "false");
 			}
 
+			changeToggleLabel();
+		});
 
-			if (toggleForAttribute) {
+		const observer = new MutationObserver(function (mutations: MutationRecord[]) {
 
-				const toggleActiveTextAttribute: string | null = toggleElement.getAttribute("active-text");
-				const toggleInActiveTextAttribute: string | null = toggleElement.getAttribute("inactive-text");
+			mutations.forEach(function (mutation: MutationRecord) {
 
-				if (toggleActiveTextAttribute !== null && toggleInActiveTextAttribute !== null) {
+				if (mutation.attributeName === "active") {
 
-					const toggleForElement: HTMLElement | null = document.querySelector(toggleForAttribute);
-					const currentActiveState: string | null = newToggle.getAttribute("active");
+					const attributeValue: string | null = newToggle.getAttribute("active");
 
-					if (currentActiveState && toggleForElement) {
+					if (attributeValue === null) return;
 
-						toggleForElement.innerText = (currentActiveState === "true") ? toggleActiveTextAttribute : toggleInActiveTextAttribute;
+					switch (attributeValue) {
+						case "true":
+
+							if (!newToggle.classList.contains("active"))
+								newToggle.classList.add("active");
+							break;
+						case "false":
+
+							if (newToggle.classList.contains("active"))
+								newToggle.classList.remove("active");
+
+							break;
 					}
+
+					dispatchOnActiveEvent(newToggle, "active", attributeValue);
+
+					changeToggleLabel();
 				}
-			}
-
+			});
 		});
 
-		newToggle.addEventListener("click", function () {
-
-			if (newToggle.classList.contains("active")) {
-
-				newToggle.classList.remove("active");
-			} else {
-
-				newToggle.classList.add("active");
-			}
-		});
+		observer.observe(newToggle, { attributes: true });
 
 		if (toggleClassNames)
 			newToggle.classList.add(toggleClassNames);

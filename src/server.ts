@@ -4,7 +4,9 @@ import path from "path";
 import bodyParser from "body-parser";
 import portscanner from "portscanner";
 import electron from "electron";
+import http from "http";
 import session from "express-session";
+import socket, { Socket } from "socket.io";
 import { v4 } from "uuid";
 
 import { APPLICATION_PATH, SERVER_PORT, VIEWS_PATH } from "./constants";
@@ -13,9 +15,12 @@ import { mainWindow } from "./app";
 import { readSettingsFile } from "./appdata";
 import { ApplicationSettings } from "./typings";
 import { rest } from "./rest/entry";
+import { sokkie } from "./socket";
 
 export const server: Express = express();
+export const httpServer = http.createServer(server);
 export const router: Router = Router();
+export const io = new socket.Server(httpServer);
 
 export const reservedServerAuthToken: string = v4();
 
@@ -56,6 +61,19 @@ server.use(function (req, res, next) {
 	next();
 });
 
+io.use(function (socket, next) {
+
+	const token = socket.handshake.auth.token;
+
+	if (token === reservedServerAuthToken)
+		return next();
+
+	console.log("Not authorized");
+
+	return next(new Error("Authentication Error"));
+});
+
+sokkie(io);
 server.use("/", router);
 
 /**
@@ -73,7 +91,7 @@ export async function listen(): Promise<boolean | number> {
 
 	if (portStatus !== "open") {
 
-		server.listen(allocatedServerPort);
+		httpServer.listen(allocatedServerPort);
 		return allocatedServerPort;
 	}
 

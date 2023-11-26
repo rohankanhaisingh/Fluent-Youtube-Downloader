@@ -51,10 +51,10 @@ electron_1.app.once("ready", function () {
                 nodeIntegration: true,
                 nodeIntegrationInSubFrames: true,
                 nodeIntegrationInWorker: true,
-                webgl: true
+                webgl: true,
+                webSecurity: false,
             }
         });
-        exports.mainWindow.setMenu(null);
         if (electron_is_dev_1.default)
             exports.mainWindow.webContents.openDevTools();
         const listenState = yield (0, server_1.listen)();

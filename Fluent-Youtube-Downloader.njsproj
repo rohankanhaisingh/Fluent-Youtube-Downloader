@@ -167,6 +167,7 @@
     <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\dom-generator.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\side-menu.ts" />
+    <TypeScriptCompile Include="application\scripts\handlers\socket.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\spa-handler.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\theme.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\titlebar.ts" />
@@ -177,6 +178,7 @@
     <TypeScriptCompile Include="src\rest\entry.ts" />
     <TypeScriptCompile Include="src\router.ts" />
     <TypeScriptCompile Include="src\server.ts" />
+    <TypeScriptCompile Include="src\socket.ts" />
     <TypeScriptCompile Include="src\typings.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />

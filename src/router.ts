@@ -7,7 +7,6 @@ import path from "path";
 import { VIEWS_PATH } from "./constants";
 import { handleControlEvents } from "./app";
 import { reservedServerAuthToken } from "./server";
-import { route as routeAppData } from "./appdata";
 
 declare module 'express-session' {
 	interface SessionData {
@@ -24,8 +23,6 @@ export function requireLogin(req: Request, res: Response, next: NextFunction) {
 
 export function route(router: Router) {
 
-	routeAppData(router);
-
 	router.get("/", function (req: Request, res: Response) {
 
 		if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers))
@@ -40,6 +37,11 @@ export function route(router: Router) {
 		req.session.loggedIn = true;
 
 		res.render("index");
+	});
+
+	router.get("/get-authtoken", requireLogin, function (req: Request, res: Response) {
+
+		res.status(200).send(reservedServerAuthToken);
 	});
 
 	router.use("/tabs/", requireLogin, async function (req: Request, res: Response) {

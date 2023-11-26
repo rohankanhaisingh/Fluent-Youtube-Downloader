@@ -163,20 +163,25 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 	} as ReadSettingsFail;
 
 	// Finally, it's done checking...
-
 	const fileContent: string = fs.readFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), "utf-8");
 	const parsedFileContent = JSON.parse(fileContent);
 
 	return JSON.parse(parsedFileContent);
-} // nice 69
+} 
 
-export function route(router: Router) {
+export function updateSettingsFile(key: string, value: string | boolean) {
 
-	router.get("/appdata/settings", requireLogin, function (req: Request, res: Response) {
+	const settingsFile = readSettingsFile() as ApplicationSettings;
 
-		const settingsFile = readSettingsFile();
+	const keys: string[] = key.split(".");
 
-		res.status(200).json(settingsFile);
-	});
+	let currentObject: any = settingsFile;
 
+	for (let i = 0; i < keys.length; i++) {
+
+		if (currentObject && currentObject.hasOwnProperty(keys[i]))
+			currentObject = currentObject[keys[i]];
+	}
+
+	if (currentObject === undefined) return;
 }

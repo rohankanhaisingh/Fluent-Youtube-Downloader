@@ -16,17 +16,29 @@
     &.collapsed {
         width: constants.$sideMenuCollapsedWidth;
 
+        .side-menu__button.active {
+            background: accents.$neutralAccentDark;
+        }
+
         .side-menu__button__text {
-            display: none;
+            opacity: 0;
         }
 
         .side-menu__disclaimer {
-            display: none;
+            opacity: 0;
+        }
+
+        .side-menu__seperator {
+            opacity: 0;
         }
     }
 }
 
 .side-menu {
+
+    .container {
+        width: constants.$sideMenuExpandedWidth;
+    }
 
     &__seperator {
         width: 60%;

@@ -35,22 +35,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listen = exports.reservedServerAuthToken = exports.router = exports.server = void 0;
+exports.listen = exports.reservedServerAuthToken = exports.io = exports.router = exports.httpServer = exports.server = void 0;
 const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const portscanner_1 = __importDefault(require("portscanner"));
 const electron_1 = __importDefault(require("electron"));
+const http_1 = __importDefault(require("http"));
 const express_session_1 = __importDefault(require("express-session"));
+const socket_io_1 = __importDefault(require("socket.io"));
 const uuid_1 = require("uuid");
 const constants_1 = require("./constants");
 const router_1 = require("./router");
 const app_1 = require("./app");
 const appdata_1 = require("./appdata");
 const entry_1 = require("./rest/entry");
+const socket_1 = require("./socket");
 exports.server = (0, express_1.default)();
+exports.httpServer = http_1.default.createServer(exports.server);
 exports.router = (0, express_1.Router)();
+exports.io = new socket_io_1.default.Server(exports.httpServer);
 exports.reservedServerAuthToken = (0, uuid_1.v4)();
 exports.server.set("view engine", "ejs");
 exports.server.set("views", constants_1.VIEWS_PATH);
@@ -78,6 +83,14 @@ exports.server.use(function (req, res, next) {
         return res.status(403).json("Not allowed");
     next();
 });
+exports.io.use(function (socket, next) {
+    const token = socket.handshake.auth.token;
+    if (token === exports.reservedServerAuthToken)
+        return next();
+    console.log("Not authorized");
+    return next(new Error("Authentication Error"));
+});
+(0, socket_1.sokkie)(exports.io);
 exports.server.use("/", exports.router);
 function listen() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -85,7 +98,7 @@ function listen() {
         const allocatedServerPort = applicationSettings.server.port || constants_1.SERVER_PORT;
         const portStatus = yield portscanner_1.default.checkPortStatus(allocatedServerPort);
         if (portStatus !== "open") {
-            exports.server.listen(allocatedServerPort);
+            exports.httpServer.listen(allocatedServerPort);
             return allocatedServerPort;
         }
         const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
