@@ -180,6 +180,7 @@
     <TypeScriptCompile Include="src\server.ts" />
     <TypeScriptCompile Include="src\socket.ts" />
     <TypeScriptCompile Include="src\typings.ts" />
+    <TypeScriptCompile Include="src\utils.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

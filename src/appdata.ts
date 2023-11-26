@@ -7,6 +7,7 @@ import { mainWindow } from "./app";
 import { ApplicationSettings, ReadSettingsFail } from "./typings";
 import { Request, Response, Router } from "express";
 import { requireLogin } from "./router";
+import { setNestedValue } from "./utils";
 
 /**
  * Constructs the folder based on a structure map.
@@ -32,7 +33,7 @@ export function createFolderStructure(structureMap: { [K: string]: any }, curren
 		} else {
 
 			if(!fs.existsSync(itemPath))
-				fs.writeFileSync(itemPath, JSON.stringify(contents));
+				fs.writeFileSync(itemPath, contents);
 		}
 	});
 }
@@ -138,6 +139,39 @@ export function initializeAppData() {
 	return true;
 }
 
+export function checkPathVariables(): ReadSettingsFail {
+
+	if (!APPDATA_PATH) return {
+		reason: "Cannot read the application settings file since the 'AppData' folder does not exist.",
+		error: new Error("Cannot initialize the application since the 'AppData' folder does not exist."),
+		status: "failed",
+	} as ReadSettingsFail;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return {
+		reason: `Cannot read the application's settings file since the '${APPDATA_DIRECTORY_NAME}' folder does not exist.`,
+		error: new Error(`Cannot read the application's settings file since the '${APPDATA_DIRECTORY_NAME}' folder does not exist.`),
+		status: "failed",
+	} as ReadSettingsFail;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application"))) return {
+		reason: `Cannot read the application settings file since the 'Application' folder in ${APPDATA_DIRECTORY_NAME} does not exist.`,
+		error: new Error(`Cannot read the application settings file since the 'Application' folder in ${APPDATA_DIRECTORY_NAME} does not exist.`),
+		status: "failed",
+	} as ReadSettingsFail;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"))) return {
+		reason: `Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${APPDATA_DIRECTORY_NAME}/Application`,
+		error: new Error(`Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${APPDATA_DIRECTORY_NAME}/Application`),
+		status: "failed",
+	} as ReadSettingsFail;
+
+	return {
+		status: "ok",
+		error: new Error(),
+		reason: ""
+	}
+}
+
 export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 
 	// Recursively checks if the entire path exists or not.
@@ -164,24 +198,23 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 
 	// Finally, it's done checking...
 	const fileContent: string = fs.readFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), "utf-8");
+
 	const parsedFileContent = JSON.parse(fileContent);
 
-	return JSON.parse(parsedFileContent);
+	return parsedFileContent;
 } 
 
 export function updateSettingsFile(key: string, value: string | boolean) {
 
-	const settingsFile = readSettingsFile() as ApplicationSettings;
+	const pathStatus = checkPathVariables();
 
-	const keys: string[] = key.split(".");
+	if (pathStatus.status !== "ok" || !APPDATA_PATH) return;
 
-	let currentObject: any = settingsFile;
+	const currentSettings = readSettingsFile() as ApplicationSettings;
 
-	for (let i = 0; i < keys.length; i++) {
+	setNestedValue(currentSettings, key, value);
 
-		if (currentObject && currentObject.hasOwnProperty(keys[i]))
-			currentObject = currentObject[keys[i]];
-	}
+	const newFileContent = JSON.stringify(currentSettings, null, "");
 
-	if (currentObject === undefined) return;
+	fs.writeFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }

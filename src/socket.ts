@@ -3,7 +3,7 @@
  */
 
 import { Socket, Server } from "socket.io";
-import { readSettingsFile } from "./appdata";
+import { readSettingsFile, updateSettingsFile } from "./appdata";
 
 export function sokkie(io: Server) {
 
@@ -22,7 +22,7 @@ export function sokkie(io: Server) {
 
 			const { key, value } = postData; 
 
-			console.log(key, value);
+			updateSettingsFile(key, value);
 		});
 	});
 }

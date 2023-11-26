@@ -26,12 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateSettingsFile = exports.readSettingsFile = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = void 0;
+exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
 const constants_1 = require("./constants");
 const app_1 = require("./app");
+const utils_1 = require("./utils");
 function createFolderStructure(structureMap, currentPath) {
     if (!fs_1.default.existsSync(currentPath))
         fs_1.default.mkdirSync(currentPath);
@@ -44,7 +45,7 @@ function createFolderStructure(structureMap, currentPath) {
         }
         else {
             if (!fs_1.default.existsSync(itemPath))
-                fs_1.default.writeFileSync(itemPath, JSON.stringify(contents));
+                fs_1.default.writeFileSync(itemPath, contents);
         }
     });
 }
@@ -107,6 +108,38 @@ function initializeAppData() {
     return true;
 }
 exports.initializeAppData = initializeAppData;
+function checkPathVariables() {
+    if (!constants_1.APPDATA_PATH)
+        return {
+            reason: "Cannot read the application settings file since the 'AppData' folder does not exist.",
+            error: new Error("Cannot initialize the application since the 'AppData' folder does not exist."),
+            status: "failed",
+        };
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
+        return {
+            reason: `Cannot read the application's settings file since the '${constants_1.APPDATA_DIRECTORY_NAME}' folder does not exist.`,
+            error: new Error(`Cannot read the application's settings file since the '${constants_1.APPDATA_DIRECTORY_NAME}' folder does not exist.`),
+            status: "failed",
+        };
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application")))
+        return {
+            reason: `Cannot read the application settings file since the 'Application' folder in ${constants_1.APPDATA_DIRECTORY_NAME} does not exist.`,
+            error: new Error(`Cannot read the application settings file since the 'Application' folder in ${constants_1.APPDATA_DIRECTORY_NAME} does not exist.`),
+            status: "failed",
+        };
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json")))
+        return {
+            reason: `Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${constants_1.APPDATA_DIRECTORY_NAME}/Application`,
+            error: new Error(`Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${constants_1.APPDATA_DIRECTORY_NAME}/Application`),
+            status: "failed",
+        };
+    return {
+        status: "ok",
+        error: new Error(),
+        reason: ""
+    };
+}
+exports.checkPathVariables = checkPathVariables;
 function readSettingsFile() {
     if (!constants_1.APPDATA_PATH)
         return {
@@ -130,18 +163,16 @@ function readSettingsFile() {
         };
     const fileContent = fs_1.default.readFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), "utf-8");
     const parsedFileContent = JSON.parse(fileContent);
-    return JSON.parse(parsedFileContent);
+    return parsedFileContent;
 }
 exports.readSettingsFile = readSettingsFile;
 function updateSettingsFile(key, value) {
-    const settingsFile = readSettingsFile();
-    const keys = key.split(".");
-    let currentObject = settingsFile;
-    for (let i = 0; i < keys.length; i++) {
-        if (currentObject && currentObject.hasOwnProperty(keys[i]))
-            currentObject = currentObject[keys[i]];
-    }
-    if (currentObject === undefined)
+    const pathStatus = checkPathVariables();
+    if (pathStatus.status !== "ok" || !constants_1.APPDATA_PATH)
         return;
+    const currentSettings = readSettingsFile();
+    (0, utils_1.setNestedValue)(currentSettings, key, value);
+    const newFileContent = JSON.stringify(currentSettings, null, "");
+    fs_1.default.writeFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }
 exports.updateSettingsFile = updateSettingsFile;

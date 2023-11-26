@@ -10,7 +10,7 @@ function sokkie(io) {
         });
         socket.on("/appdata/change-settings", function (postData) {
             const { key, value } = postData;
-            console.log(key, value);
+            (0, appdata_1.updateSettingsFile)(key, value);
         });
     });
 }
