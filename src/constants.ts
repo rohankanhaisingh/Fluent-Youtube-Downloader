@@ -76,3 +76,6 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 		"History.json": "[]"
 	}
 };
+
+/** The file name of the yt-dlp executable. */
+export const YTDLP_EXECUTABLE_FILENAME: string = "yt-dlp.exe";

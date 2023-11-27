@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.APPDATA_DIRECTORY_STRUCTURE = exports.APPDATA_DIRECTORY_NAME = exports.APPDATA_PATH = exports.DOTENV_FILE = exports.SERVER_PORT = exports.ENTRY_SCRIPT_FILES = exports.SCRIPTS_PATH = exports.VIEWS_PATH = exports.APPLICATION_PATH = exports.ROOT_PATH = void 0;
+exports.YTDLP_EXECUTABLE_FILENAME = exports.APPDATA_DIRECTORY_STRUCTURE = exports.APPDATA_DIRECTORY_NAME = exports.APPDATA_PATH = exports.DOTENV_FILE = exports.SERVER_PORT = exports.ENTRY_SCRIPT_FILES = exports.SCRIPTS_PATH = exports.VIEWS_PATH = exports.APPLICATION_PATH = exports.ROOT_PATH = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 exports.ROOT_PATH = path_1.default.join(__dirname, "../");
@@ -62,3 +62,4 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
         "History.json": "[]"
     }
 };
+exports.YTDLP_EXECUTABLE_FILENAME = "yt-dlp.exe";

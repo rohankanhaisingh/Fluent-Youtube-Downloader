@@ -17,13 +17,19 @@ const initializationState = initializeAppData();
 
 app.once("ready", async function () {
 
-	if (!initializationState) return app.exit();
+	// The program will close if the application's data has 
+	// failed initializing.
+	if (!initializationState)
+		return app.exit();
 
 	const applicationSettings: ApplicationSettings | ReadSettingsFail = readSettingsFile();
 
+	// The application will close whenever the settings 
+	// file failed reading.
 	if (applicationSettings.status === "failed")
 		return app.exit();
 
+	// Cast the variable cuz bruh idfk.
 	const settingsCasting = applicationSettings as ApplicationSettings;
 
 	mainWindow = new BrowserWindow({

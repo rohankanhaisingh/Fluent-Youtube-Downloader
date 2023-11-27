@@ -21,6 +21,7 @@ const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
 const auto_launch_1 = require("./auto-launch");
 const tray_1 = require("./tray");
+const ytdlp_1 = require("./rest/core/ytdlp");
 const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
     return __awaiter(this, void 0, void 0, function* () {
@@ -30,6 +31,7 @@ electron_1.app.once("ready", function () {
         if (applicationSettings.status === "failed")
             return electron_1.app.exit();
         const settingsCasting = applicationSettings;
+        (0, ytdlp_1.initializationProcess)();
         exports.mainWindow = new electron_1.BrowserWindow({
             width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
             height: settingsCasting.window.resolution.height > 800 ? settingsCasting.window.resolution.height : 800,

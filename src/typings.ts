@@ -1,6 +1,13 @@
 export type RequestedControlEvent = "maximize" | "minimize" | "close";
 export type ApplicationWindowTheme = "fluent-light-purple";
 export type ApplicationSettingsStatus = "failed" | "ok";
+export type YTDLPInitializationState = "ok" | "failed";
+export type YTDLPInitializationFailReason = "executable-not-found" | "execution-directory-not-found";
+
+export enum YTDLPInstallationPromptButton {
+	Yes,
+	No
+}
 
 export interface Resolution {
 	readonly width: number;
@@ -40,4 +47,10 @@ export interface ApplicationSettings {
 	readonly server: ApplicationServerSettings;
 	readonly status: ApplicationSettingsStatus;
 	readonly behavior: ApplicationBehaviorSettings;
+}
+
+export interface YTDLPInitializationResponse {
+	readonly state: YTDLPInitializationState;
+	readonly message?: string;
+	readonly reason?: YTDLPInitializationFailReason;
 }
