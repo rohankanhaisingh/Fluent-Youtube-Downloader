@@ -2,9 +2,10 @@ export type RequestedControlEvent = "maximize" | "minimize" | "close";
 export type ApplicationWindowTheme = "fluent-light-purple";
 export type ApplicationSettingsStatus = "failed" | "ok";
 export type YTDLPInitializationState = "ok" | "failed";
-export type ConversionPipelineState = "ok" | "failed";
+export type ConversionPipelineState = "ok" | "failed" | "installation-succeed";
 export type YTDLPInitializationFailReason = "executable-not-found" | "execution-directory-not-found";
 export type ConvertQuality = "highest" | "lowest" | "highest-video" | "lowest-video" | "highest-audio" | "lowest-audio" | "highest-audio-video" | "lowest-audio-video";
+export type PromptResult = "ok" | "failed";
 
 export enum YTDLPInstallationPromptButton {
 	Yes,

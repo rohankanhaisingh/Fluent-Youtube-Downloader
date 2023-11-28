@@ -16,9 +16,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const appdata_1 = require("../../appdata");
 const utils_1 = require("../../utils");
-const video_stream_1 = __importDefault(require("./video-stream"));
 const video_details_1 = __importDefault(require("./video-details"));
-const ffmpeg_stream_1 = __importDefault(require("./ffmpeg-stream"));
+const ytdlp_1 = require("./ytdlp");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
         const settings = (0, appdata_1.readSettingsFile)();
@@ -51,15 +50,37 @@ function execute(url, qualityString, requestId) {
                 reason: `FileSystemError: Reserved file path is already in use. Path: ${physicalFileDestinationPath}`,
                 state: "failed"
             };
+        const ytdlpInitializationState = (0, ytdlp_1.initializeYtdlp)();
+        if (!ytdlpInitializationState)
+            return {
+                state: "failed",
+                reason: "Could not initialize yt-dlp due to a unknown reason."
+            };
+        if (ytdlpInitializationState === "executable-not-found") {
+            const isInstalled = yield (0, ytdlp_1.promptInstallation)();
+            if (isInstalled instanceof Error)
+                return {
+                    state: "failed",
+                    reason: isInstalled.message
+                };
+            if (!isInstalled)
+                return {
+                    state: "failed",
+                    reason: "User denied the prompt"
+                };
+            return {
+                state: "installation-succeed",
+                reason: "Succesfully installed yt-dlp. You need to restart the application."
+            };
+        }
+        if (ytdlpInitializationState === "execution-directory-not-found")
+            return {
+                state: "failed",
+                reason: "Execution directory could not be found."
+            };
         console.log("Started video stream.");
         return new Promise(function (resolve, reject) {
             return __awaiter(this, void 0, void 0, function* () {
-                const convertStream = yield (0, video_stream_1.default)(url, resolvedQuality);
-                const ffmpegStream = yield (0, ffmpeg_stream_1.default)(convertStream, physicalFileDestinationPath, {
-                    onEnd: function () { resolve({ state: "ok" }); },
-                    onError: function (err) { reject(err); },
-                    onProgress: function (progress) { console.log(progress.targetSize); }
-                });
             });
         });
     });

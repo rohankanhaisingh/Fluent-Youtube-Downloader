@@ -29,6 +29,8 @@ function rest(router) {
         (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
             if (response.state == "ok")
                 return res.status(200).send("hi");
+            if (response.state === "installation-succeed")
+                return (0, app_1.restartApplication)();
             electron_1.dialog.showMessageBox(app_1.mainWindow, {
                 title: "Conversion error",
                 type: "error",

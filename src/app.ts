@@ -109,3 +109,9 @@ export function handleControlEvents(req: Request) {
 			break;
 	}
 }
+
+export function restartApplication() {
+
+	app.relaunch();
+	app.exit();
+}

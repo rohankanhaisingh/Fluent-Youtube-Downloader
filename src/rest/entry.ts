@@ -4,7 +4,7 @@ import { dialog } from "electron";
 import details from "./core/video-details";
 import pipeline from "./core/pipeline";
 
-import { mainWindow } from "../app";
+import { mainWindow, restartApplication } from "../app";
 import { requireLogin } from "../router";
 
 export function rest(router: Router) {
@@ -37,6 +37,9 @@ export function rest(router: Router) {
 
 			if (response.state == "ok")
 				return res.status(200).send("hi");
+
+			if (response.state === "installation-succeed")
+				return restartApplication();
 
 			dialog.showMessageBox(mainWindow, {
 				title: "Conversion error",

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleControlEvents = exports.mainWindow = void 0;
+exports.restartApplication = exports.handleControlEvents = exports.mainWindow = void 0;
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
@@ -97,3 +97,8 @@ function handleControlEvents(req) {
     }
 }
 exports.handleControlEvents = handleControlEvents;
+function restartApplication() {
+    electron_1.app.relaunch();
+    electron_1.app.exit();
+}
+exports.restartApplication = restartApplication;

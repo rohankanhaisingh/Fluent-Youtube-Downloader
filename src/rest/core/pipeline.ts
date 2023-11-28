@@ -6,12 +6,14 @@ import { FfmpegCommand } from "fluent-ffmpeg";
 
 
 import { readSettingsFile } from "../../appdata";
-import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress } from "../../typings";
+import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, YTDLPInitializationFailReason } from "../../typings";
 import { resolveVideoQuality } from "../../utils";
 
 import stream from "./video-stream";
 import details from "./video-details";
 import command from "./ffmpeg-stream";
+
+import { initializeYtdlp, promptInstallation } from "./ytdlp";
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
 
@@ -58,16 +60,55 @@ export default async function execute(url: string, qualityString: ConvertQuality
 		state: "failed"
 	};
 
+	// Initialize ytdlp
+	const ytdlpInitializationState: boolean | YTDLPInitializationFailReason = initializeYtdlp();
+
+	// Return error state if ytdlp failed initting you dunno!
+	if (!ytdlpInitializationState) return {
+		state: "failed",
+		reason: "Could not initialize yt-dlp due to a unknown reason."
+	}
+
+	// If the reason why the init failed is because the executable is not found,
+	// ask the user to install it.
+	if (ytdlpInitializationState === "executable-not-found") {
+
+		const isInstalled: boolean | Error = await promptInstallation();
+
+		if (isInstalled instanceof Error) return {
+			state: "failed",
+			reason: isInstalled.message
+		}
+
+		if (!isInstalled) return {
+			state: "failed",
+			reason: "User denied the prompt"
+		}
+
+		return {
+			state: "installation-succeed",
+			reason: "Succesfully installed yt-dlp. You need to restart the application."
+		}
+	}
+
+	if (ytdlpInitializationState === "execution-directory-not-found") return {
+		state: "failed",
+		reason: "Execution directory could not be found."
+	}
+
 	console.log("Started video stream.");
+
+	// Create the youtube converting stream.
+	// const convertStream: Readable = await stream(url, resolvedQuality);
 
 	return new Promise(async function (resolve, reject) {
 
-		const convertStream: Readable = await stream(url, resolvedQuality);
+		// const convertStream: Readable = await stream(url, resolvedQuality);
 
-		const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
-			onEnd: function () { resolve({state: "ok"}) },
-			onError: function (err: Error) { reject(err) },
-			onProgress: function (progress: StreamConversionProgress) { console.log(progress.targetSize); }
-		});
+		//const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
+		//	onEnd: function () { resolve({state: "ok"}) },
+		//	onError: function (err: Error) { reject(err) },
+		//	onProgress: function (progress: StreamConversionProgress) { console.log(progress.targetSize); }
+		//});
 	});
 }
