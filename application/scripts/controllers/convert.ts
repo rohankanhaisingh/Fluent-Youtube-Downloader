@@ -1,4 +1,7 @@
 import { Ease } from "@babahgee/easings";
+import { v4 } from "uuid";
+
+import { renderSelects } from "../handlers/dom-generator";
 
 interface Thumbnail {
 	url: string;
@@ -56,6 +59,8 @@ const urlInputField: HTMLDivElement | null = document.querySelector("#input-url"
 	videoInfoContainer: HTMLDivElement | null = document.querySelector("#video-info"),
 	convertPage: HTMLDivElement | null = document.querySelector(".page-convert");
 
+renderSelects();
+
 async function submitVideoRequest(url: string) {
 
 	if (url.length === 0) return;
@@ -108,6 +113,7 @@ function createSkeletonDom() {
             <div class="convert-results__result__info__title"></div>
             <div class="convert-results__result__info__author"></div>
             <div class="convert-results__result__info__description"></div>
+            <div class="convert-results__result__info__button"></div>
             <div class="convert-results__result__info__button"></div>
             <div class="convert-results__result__info__button"></div>
         </div>
@@ -191,6 +197,22 @@ function displayVideoInfo(videoDetails: VideoDetails) {
 	videoInfoContainer.replaceChildren(contentElement);
 }
 
+function downloadVideo(url: string, quality: string, resultDomElement: HTMLDivElement) {
+
+	const requestId: string = v4();
+
+	const words: string[] = quality.toLocaleLowerCase().split(" ");
+	const constructedWord = words.join("-");
+
+	fetch("/rest/download", {
+		body: JSON.stringify({ url, requestId, quality }),
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		}
+	});
+}
+
 function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDivElement) {
 
 	if (resultsContainer === null) return;
@@ -207,6 +229,14 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 			<div class="convert-results__result__info__author"><img src="${videoDetails.author.thumbnails.pop()?.url}" alt="Author" />${videoDetails.author.user} - ${videoDetails.author.subscriber_count} subscribers</div>
 			<div class="convert-results__result__info__description">${videoDetails.description}</div>
 			<div class="convert-results__result__info__button" id="button-convert">Convert</div>
+			<option-select class="convert-results__result__info__select" id="select-quality">
+                <option active="true">Highest quality</option>
+                <option>Lowest quality</option>
+                <option>Highest audio</option>
+                <option>Lowest audio</option>
+                <option>Highest audio & video</option>
+                <option>Lowest audio & video</option>
+            </option-select>
 			<div class="convert-results__result__info__button" id="button-info">Info</div>
 		</div>
 	`;
@@ -214,7 +244,15 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 	const convertButton = mainElement.querySelector("#button-convert") as HTMLDivElement;
 	const infoButton = mainElement.querySelector("#button-info") as HTMLDivElement;
 
-	console.log(videoDetails);
+	convertButton.addEventListener("click", function () {
+
+		const qualityButton = mainElement.querySelector("#select-quality") as HTMLDivElement; 
+		const qualityValue: string | null = qualityButton.getAttribute("value");
+
+		if (qualityValue === null) return;
+
+		downloadVideo(videoDetails.video_url, qualityValue, mainElement);
+	});
 
 	infoButton.addEventListener("click", function () {
 
@@ -222,6 +260,8 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 	});
 
 	skeletonDomElement.replaceWith(mainElement);
+
+	renderSelects();
 
 	return mainElement;
 }

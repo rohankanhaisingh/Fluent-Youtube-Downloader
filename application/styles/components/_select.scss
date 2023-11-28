@@ -1,0 +1,171 @@
+@use "../utilities/_constants" as constants;
+@use "../utilities/_mixins" as mixins;
+@use "../utilities/_accents" as accents;
+
+$selectWidth: 180px;
+$selectHeight: 20px;
+
+$selectHorizontalPadding: 10px;
+$selectVerticalPadding: 5px;
+
+$selectPadding: $selectVerticalPadding $selectHorizontalPadding;
+
+$selectBackgroundColor: rgb(255 255 255);
+$selectBorderColor: rgb(0 0 0 / 8%);
+$selectBorderTopColor: rgb(0 0 0 / 2%);
+
+@keyframes dropdown-fadein {
+    0% {
+        opacity: 0;
+        -moz-transform: scale(0.98);
+        -ms-transform: scale(0.98);
+        -o-transform: scale(0.98);
+        -webkit-transform: scale(0.98);
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        -moz-transform: none;
+        -ms-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+.styled-select {
+    width: $selectWidth;
+    height: $selectHeight;
+    padding: $selectPadding;
+    position: relative;
+    border-radius: 5px;
+    background: $selectBackgroundColor;
+    border: 1px solid $selectBorderColor;
+    border-top: 1px solid $selectBorderTopColor;
+    user-select: none;
+    font-size: 13px;
+
+    > .current-value {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: auto $selectHeight;
+        gap: 10px;
+
+        > .text {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        > .icon {
+            width: $selectHeight;
+            height: $selectHeight;
+
+            img {
+                @include mixins.StaticIcon;
+                width: 10px;
+                height: 10px;
+                padding: 5px;
+            }
+        }
+    }
+
+    > .dropdown {
+        width: calc(100% - ($selectHorizontalPadding * 2));
+        height: auto;
+        position: absolute;
+        display: none;
+        grid-auto-rows: 30px;
+        gap: 2px;
+        left: 0;
+        top: -10px;
+        z-index: 1;
+        padding: $selectPadding;
+        background: $selectBackgroundColor;
+        border: 1px solid $selectBorderColor;
+        border-top: 1px solid $selectBorderTopColor;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+        -moz-animation: dropdown-fadein constants.$transitionDuration constants.$transitionKey;
+        -o-animation: dropdown-fadein constants.$transitionDuration constants.$transitionKey;
+        -webkit-animation: dropdown-fadein constants.$transitionDuration constants.$transitionKey;
+        animation: dropdown-fadein constants.$transitionDuration constants.$transitionKey;
+
+        > .option {
+            width: calc(100% - 10px);
+            height: 20px;
+            position: relative;
+            content: "";
+            padding: 5px 0 5px 10px;
+            border-radius: 5px;
+
+            &:not(.active):hover {
+                background: accents.$neutralButtonHover;
+
+                &::before {
+                    height: 30%;
+                }
+            }
+
+            &:not(.active):active {
+
+                &::before {
+                    height: 30%;
+                    width: 3px;
+                }
+
+                .side-menu__button__icon img {
+                    -moz-transform: scale(.8);
+                    -ms-transform: scale(.8);
+                    -o-transform: scale(.8);
+                    -webkit-transform: scale(.8);
+                    transform: scale(.8);
+                }
+            }
+
+            &.active {
+                background: accents.$neutralButtonActive;
+
+                &::before {
+                    height: 60%;
+                    width: 3px;
+                }
+            }
+
+            &::before {
+                width: 1px;
+                height: 0;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                content: "";
+                margin: auto;
+                border-radius: 5px;
+                background: accents.$neutralButtonNipple;
+                z-index: 1;
+                -moz-transition: height .3s, width .3s ease;
+                -o-transition: height .3s, width .3s ease;
+                -webkit-transition: height .3s, width .3s ease;
+                transition: height .3s, width .3s ease;
+                -moz-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+                -o-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+                -webkit-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+                transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+            }
+        }
+    }
+
+    &.in-dropdown {
+        border: none;
+
+        > .dropdown {
+            display: grid;
+        }
+    }
+
+    &:not(.in-dropdown):hover {
+        background: accents.$neutralButtonHover;
+    }
+}

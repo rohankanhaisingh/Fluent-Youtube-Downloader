@@ -67,6 +67,7 @@
     <Content Include="application\res\media\icons\windows-icon-copy.png" />
     <Content Include="application\res\media\icons\windows-icon-countdown_clock.png" />
     <Content Include="application\res\media\icons\windows-icon-dots.png" />
+    <Content Include="application\res\media\icons\windows-icon-down.png" />
     <Content Include="application\res\media\icons\windows-icon-eye.png" />
     <Content Include="application\res\media\icons\windows-icon-file-settings.png" />
     <Content Include="application\res\media\icons\windows-icon-close.png" />
@@ -91,6 +92,7 @@
     <Content Include="application\res\media\icons\windows-icon-youtube.png" />
     <Content Include="application\scripts\tsconfig.json" />
     <Content Include="application\styles\components\_input-field.scss" />
+    <Content Include="application\styles\components\_select.scss" />
     <Content Include="application\styles\components\_spinner.scss" />
     <Content Include="application\styles\components\_toggle.scss" />
     <Content Include="application\styles\components\_tooltip.scss" />

@@ -179,3 +179,87 @@ export function renderInputFields() {
 		inputField.replaceWith(root);
 	}
 }
+
+export function renderSelects() {
+
+	const selectElements: NodeListOf<HTMLElement> = document.querySelectorAll("option-select");
+
+	selectElements.forEach(function (selectElement: HTMLElement) {
+
+		// Get the options of the select element.
+		const elementOptions: NodeListOf<HTMLOptionElement> = selectElement.querySelectorAll("option");
+
+		// Filter active options.
+		const activeOption: HTMLOptionElement[] = Array.from(elementOptions).filter(element => element.getAttribute("active") === "true");
+
+		const selectAttributes: string[] = selectElement.getAttributeNames();
+
+		const rootElement = document.createElement("div");
+
+		selectAttributes.forEach(function (attribute: string) {
+
+			const attributeValue: string | null = selectElement.getAttribute(attribute);
+
+			if (attributeValue === null) return;
+
+			rootElement.setAttribute(attribute, attributeValue);
+		});
+
+		rootElement.classList.add("styled-select");
+		rootElement.setAttribute("value", activeOption.length > 0 ? activeOption[0].innerText : "");
+
+		// Current value.
+		const currentValue = document.createElement("div");
+		currentValue.className = "current-value";
+
+		const currentValueText = document.createElement("div");
+		currentValueText.className = "text";
+		currentValueText.innerText = activeOption.length > 0 ? activeOption[0].innerText : "No value given";
+
+		const currentValueIcon = document.createElement("div");
+		currentValueIcon.className = "icon";
+		currentValueIcon.innerHTML = '<img src="/static/media/icons/windows-icon-down.png" alt="Open options" />';
+
+		currentValue.appendChild(currentValueText);
+		currentValue.appendChild(currentValueIcon);
+
+		currentValue.addEventListener("click", function () {
+
+			if (!rootElement.classList.contains("in-dropdown"))
+				rootElement.classList.add("in-dropdown");
+		});
+
+		// Dropdown
+		const dropdown = document.createElement("div");
+		dropdown.className = "dropdown";
+
+		elementOptions.forEach(function (element: HTMLOptionElement) {
+
+			const optionElement = document.createElement("div");
+			optionElement.className = "option";
+
+			if (element.getAttribute("active") === "true")
+				optionElement.classList.add("active");
+
+			optionElement.innerText = element.innerText;
+
+			optionElement.addEventListener("click", function () {
+
+				dropdown.querySelectorAll(".option").forEach(em => em.classList.remove("active"));
+
+				currentValueText.innerText = optionElement.innerText;
+				rootElement.setAttribute("value", optionElement.innerText);
+
+				optionElement.classList.add("active");
+				rootElement.classList.remove("in-dropdown");
+			});
+
+			dropdown.appendChild(optionElement);
+		});
+
+		rootElement.appendChild(currentValue);
+		rootElement.appendChild(dropdown);
+
+		selectElement.replaceWith(rootElement);
+	});
+}
