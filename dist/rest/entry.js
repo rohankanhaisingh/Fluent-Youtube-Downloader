@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rest = void 0;
 const electron_1 = require("electron");
 const video_details_1 = __importDefault(require("./core/video-details"));
+const pipeline_1 = __importDefault(require("./core/pipeline"));
 const app_1 = require("../app");
 const router_1 = require("../router");
 function rest(router) {
@@ -24,9 +25,20 @@ function rest(router) {
         });
     });
     router.post("/rest/download", router_1.requireLogin, function (req, res) {
-        const { url, requestId } = req.body;
-        console.log(url);
-        res.status(200).send("hi");
+        const { url, requestId, quality } = req.body;
+        (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
+            if (response.state == "ok")
+                return res.status(200).send("hi");
+            electron_1.dialog.showMessageBox(app_1.mainWindow, {
+                title: "Conversion error",
+                type: "error",
+                message: "Something went wrong while converting a video.",
+                detail: response.reason,
+            });
+            res.status(500).send(response.reason);
+        }).catch(function (err) {
+            res.status(500).send(err.message);
+        });
     });
 }
 exports.rest = rest;

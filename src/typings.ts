@@ -2,7 +2,9 @@ export type RequestedControlEvent = "maximize" | "minimize" | "close";
 export type ApplicationWindowTheme = "fluent-light-purple";
 export type ApplicationSettingsStatus = "failed" | "ok";
 export type YTDLPInitializationState = "ok" | "failed";
+export type ConversionPipelineState = "ok" | "failed";
 export type YTDLPInitializationFailReason = "executable-not-found" | "execution-directory-not-found";
+export type ConvertQuality = "highest" | "lowest" | "highest-video" | "lowest-video" | "highest-audio" | "lowest-audio" | "highest-audio-video" | "lowest-audio-video";
 
 export enum YTDLPInstallationPromptButton {
 	Yes,
@@ -53,4 +55,24 @@ export interface YTDLPInitializationResponse {
 	readonly state: YTDLPInitializationState;
 	readonly message?: string;
 	readonly reason?: YTDLPInitializationFailReason;
+}
+
+export interface StreamConversionProgress {
+	readonly frames: number;
+	readonly currentFps: number;
+	readonly currentKbps: number;
+	readonly targetSize: number;
+	readonly timemark: string;
+}
+
+export interface ConversionPipeline {
+	readonly state: ConversionPipelineState;
+	readonly reason?: string;
+}
+
+export interface StreamConvesionEvents {
+	onError?: (err: Error, hasAborted: boolean) => void;
+	onProgress?: (progress: StreamConversionProgress) => void;
+	onEnd?: () => void;
+	onAbort?: (reason: string, hasAborted: boolean) => void;
 }

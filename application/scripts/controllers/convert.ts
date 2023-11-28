@@ -204,8 +204,10 @@ function downloadVideo(url: string, quality: string, resultDomElement: HTMLDivEl
 	const words: string[] = quality.toLocaleLowerCase().split(" ");
 	const constructedWord = words.join("-");
 
+	console.log(constructedWord);
+
 	fetch("/rest/download", {
-		body: JSON.stringify({ url, requestId, quality }),
+		body: JSON.stringify({ url, requestId, quality: constructedWord }),
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -230,12 +232,14 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 			<div class="convert-results__result__info__description">${videoDetails.description}</div>
 			<div class="convert-results__result__info__button" id="button-convert">Convert</div>
 			<option-select class="convert-results__result__info__select" id="select-quality">
-                <option active="true">Highest quality</option>
-                <option>Lowest quality</option>
+                <option active="true">Highest</option>
+                <option>Lowest</option>
+                <option>Highest video</option>
+                <option>Lowest video</option>
                 <option>Highest audio</option>
                 <option>Lowest audio</option>
-                <option>Highest audio & video</option>
-                <option>Lowest audio & video</option>
+                <option>Highest audio video</option>
+                <option>Lowest audio video</option>
             </option-select>
 			<div class="convert-results__result__info__button" id="button-info">Info</div>
 		</div>

@@ -2,6 +2,8 @@ import { Router, Request, Response } from "express";
 import { dialog } from "electron";
 
 import details from "./core/video-details";
+import pipeline from "./core/pipeline";
+
 import { mainWindow } from "../app";
 import { requireLogin } from "../router";
 
@@ -29,10 +31,25 @@ export function rest(router: Router) {
 
 	router.post("/rest/download", requireLogin, function (req: Request, res: Response) {
 
-		const { url, requestId } = req.body;
+		const { url, requestId, quality } = req.body;
 
-		console.log(url);
+		pipeline(url, quality, requestId).then(function (response) {
 
-		res.status(200).send("hi");
+			if (response.state == "ok")
+				return res.status(200).send("hi");
+
+			dialog.showMessageBox(mainWindow, {
+				title: "Conversion error",
+				type: "error",
+				message: "Something went wrong while converting a video.",
+				detail: response.reason,
+			});
+
+			res.status(500).send(response.reason);
+
+		}).catch(function (err: Error) {
+
+			res.status(500).send(err.message);
+		});
 	});
 }

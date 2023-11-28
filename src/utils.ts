@@ -1,3 +1,5 @@
+import { ConvertQuality } from "./typings";
+
 export function getNestedValue(obj: any, propString: string) {
 
     const props = propString.split('.');
@@ -34,4 +36,19 @@ export function setNestedValue(obj: any, propString: any, value: any) {
 
     if (currentObj && currentObj.hasOwnProperty(lastProp)) 
         currentObj[lastProp] = value;
+}
+
+export function resolveVideoQuality(givenQualityString: ConvertQuality) {
+    switch (givenQualityString) {
+        case "highest-audio":
+            return "highestaudio";
+        case "lowest-audio":
+            return "lowestaudio";
+        case "highest-video":
+            return "highestvideo";
+        case "lowest-video":
+            return "lowestvideo";
+        default:
+            return givenQualityString;
+    }
 }

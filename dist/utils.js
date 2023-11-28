@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setNestedValue = exports.getNestedValue = void 0;
+exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
 function getNestedValue(obj, propString) {
     const props = propString.split('.');
     let currentObj = obj;
@@ -31,3 +31,18 @@ function setNestedValue(obj, propString, value) {
         currentObj[lastProp] = value;
 }
 exports.setNestedValue = setNestedValue;
+function resolveVideoQuality(givenQualityString) {
+    switch (givenQualityString) {
+        case "highest-audio":
+            return "highestaudio";
+        case "lowest-audio":
+            return "lowestaudio";
+        case "highest-video":
+            return "highestvideo";
+        case "lowest-video":
+            return "lowestvideo";
+        default:
+            return givenQualityString;
+    }
+}
+exports.resolveVideoQuality = resolveVideoQuality;

@@ -143,27 +143,31 @@ exports.checkPathVariables = checkPathVariables;
 function readSettingsFile() {
     if (!constants_1.APPDATA_PATH)
         return {
+            status: "failed",
             reason: "Cannot read the application settings file since the 'AppData' folder does not exist.",
             error: new Error("Cannot initialize the application since the 'AppData' folder does not exist.")
         };
     if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
         return {
+            status: "failed",
             reason: `Cannot read the application's settings file since the '${constants_1.APPDATA_DIRECTORY_NAME}' folder does not exist.`,
             error: new Error(`Cannot read the application's settings file since the '${constants_1.APPDATA_DIRECTORY_NAME}' folder does not exist.`)
         };
     if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application")))
         return {
+            status: "failed",
             reason: `Cannot read the application settings file since the 'Application' folder in ${constants_1.APPDATA_DIRECTORY_NAME} does not exist.`,
             error: new Error(`Cannot read the application settings file since the 'Application' folder in ${constants_1.APPDATA_DIRECTORY_NAME} does not exist.`)
         };
     if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json")))
         return {
+            status: "failed",
             reason: `Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${constants_1.APPDATA_DIRECTORY_NAME}/Application`,
             error: new Error(`Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${constants_1.APPDATA_DIRECTORY_NAME}/Application`)
         };
     const fileContent = fs_1.default.readFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), "utf-8");
     const parsedFileContent = JSON.parse(fileContent);
-    return parsedFileContent;
+    return Object.assign(Object.assign({}, parsedFileContent), { status: "ok" });
 }
 exports.readSettingsFile = readSettingsFile;
 function updateSettingsFile(key, value) {

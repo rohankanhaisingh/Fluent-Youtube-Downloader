@@ -79,3 +79,6 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 
 /** The file name of the yt-dlp executable. */
 export const YTDLP_EXECUTABLE_FILENAME: string = "yt-dlp.exe";
+
+/** The maximum size in megabytes the file can have. */
+export const MAX_FILE_SIZE: number = 210;

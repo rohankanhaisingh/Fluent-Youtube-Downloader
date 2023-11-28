@@ -177,6 +177,9 @@
     <TypeScriptCompile Include="src\appdata.ts" />
     <TypeScriptCompile Include="src\auto-launch.ts" />
     <TypeScriptCompile Include="src\constants.ts" />
+    <TypeScriptCompile Include="src\rest\core\abort.ts" />
+    <TypeScriptCompile Include="src\rest\core\ffmpeg-stream.ts" />
+    <TypeScriptCompile Include="src\rest\core\video-stream.ts" />
     <TypeScriptCompile Include="src\rest\core\ytdlp.ts" />
     <TypeScriptCompile Include="src\rest\core\pipeline.ts" />
     <TypeScriptCompile Include="src\rest\core\video-details.ts" />

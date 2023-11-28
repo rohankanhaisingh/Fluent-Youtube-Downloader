@@ -177,21 +177,25 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 	// Recursively checks if the entire path exists or not.
 
 	if (!APPDATA_PATH) return {
+		status: "failed",
 		reason: "Cannot read the application settings file since the 'AppData' folder does not exist.",
 		error: new Error("Cannot initialize the application since the 'AppData' folder does not exist.")
 	} as ReadSettingsFail;
 
 	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return {
+		status: "failed",
 		reason: `Cannot read the application's settings file since the '${APPDATA_DIRECTORY_NAME}' folder does not exist.`,
 		error: new Error(`Cannot read the application's settings file since the '${APPDATA_DIRECTORY_NAME}' folder does not exist.`)
 	} as ReadSettingsFail;
 
 	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application"))) return {
+		status: "failed",
 		reason: `Cannot read the application settings file since the 'Application' folder in ${APPDATA_DIRECTORY_NAME} does not exist.`,
 		error: new Error(`Cannot read the application settings file since the 'Application' folder in ${APPDATA_DIRECTORY_NAME} does not exist.`)
 	} as ReadSettingsFail;
 
 	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"))) return {
+		status: "failed",
 		reason: `Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${APPDATA_DIRECTORY_NAME}/Application`,
 		error: new Error(`Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${APPDATA_DIRECTORY_NAME}/Application`)
 	} as ReadSettingsFail;
@@ -201,7 +205,10 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 
 	const parsedFileContent = JSON.parse(fileContent);
 
-	return parsedFileContent;
+	return {
+		...parsedFileContent,
+		status: "ok"
+	} as ApplicationSettings;
 } 
 
 export function updateSettingsFile(key: string, value: string | boolean) {
