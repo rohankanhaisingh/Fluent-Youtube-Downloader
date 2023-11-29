@@ -40,7 +40,6 @@ function execute(convertStream, destinationPath, events) {
                 yield (0, abort_1.default)(command, convertStream, destinationPath);
                 console.log("Reached max file size");
             }
-            console.log(downloadedBytes);
             if (events.onProgress)
                 events.onProgress(progress);
         });

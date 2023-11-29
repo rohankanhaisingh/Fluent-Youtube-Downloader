@@ -20,6 +20,7 @@ const video_stream_1 = __importDefault(require("./video-stream"));
 const video_details_1 = __importDefault(require("./video-details"));
 const ffmpeg_stream_1 = __importDefault(require("./ffmpeg-stream"));
 const ytdlp_1 = require("./ytdlp");
+const socket_1 = require("../../socket");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
         const settings = (0, appdata_1.readSettingsFile)();
@@ -97,6 +98,7 @@ function execute(url, qualityString, requestId) {
                     },
                     onError: function (err) { reject(err); },
                     onProgress: function (progress) {
+                        (0, socket_1.emit)("app/yt-dlp/convert-progress", { requestId, progress });
                     }
                 });
             });

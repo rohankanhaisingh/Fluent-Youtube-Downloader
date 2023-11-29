@@ -99,7 +99,6 @@ function createYtdlpStream(videoUrl, videoQuality, installPath) {
     }
     const commandString = `--format ${videoQuality} ${videoUrl} --output ${path_1.default.join(physicalFilePath, "output.mp4")}`;
     const process = child_process_1.default.exec(`${physicalFilePath} ${commandString}`).stdout;
-    console.log(process);
     return process;
 }
 exports.createYtdlpStream = createYtdlpStream;
