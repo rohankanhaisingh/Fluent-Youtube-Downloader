@@ -92,4 +92,9 @@ export function listen() {
 
 
 	});
+
+	client.on("app/yt-dlp/convert-progress", function (data) {
+
+		console.log(data);
+	});
 }
