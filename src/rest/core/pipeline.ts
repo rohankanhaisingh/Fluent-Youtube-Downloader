@@ -14,6 +14,7 @@ import details from "./video-details";
 import command from "./ffmpeg-stream";
 
 import { createYtdlpStream, initializeYtdlp, promptInstallation } from "./ytdlp";
+import { emit } from "../../socket";
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
 
@@ -128,7 +129,8 @@ export default async function execute(url: string, qualityString: ConvertQuality
 			},
 			onError: function (err: Error) { reject(err) },
 			onProgress: function (progress: StreamConversionProgress) {
-				// console.log(progress.targetSize);
+
+				emit("app/yt-dlp/convert-progress", { requestId, progress });
 			}
 		});
 	});
