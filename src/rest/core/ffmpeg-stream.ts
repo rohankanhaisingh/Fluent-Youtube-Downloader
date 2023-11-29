@@ -12,8 +12,7 @@ ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export default function execute(convertStream: Readable, destinationPath: string, events: StreamConvesionEvents) {
 
-	const command: FfmpegCommand = ffmpeg()
-		.input(convertStream)
+	const command: FfmpegCommand = ffmpeg(convertStream)
 		.addOption("-preset", "ultrafast")
 		.save(destinationPath);
 
