@@ -232,14 +232,11 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 			<div class="convert-results__result__info__description">${videoDetails.description}</div>
 			<div class="convert-results__result__info__button" id="button-convert">Convert</div>
 			<option-select class="convert-results__result__info__select" id="select-quality">
-                <option active="true">Highest</option>
-                <option>Lowest</option>
-                <option>Highest video</option>
-                <option>Lowest video</option>
-                <option>Highest audio</option>
-                <option>Lowest audio</option>
-                <option>Highest audio video</option>
-                <option>Lowest audio video</option>
+                <option active="true">bestvideo+bestaudio</option>
+                <option>Best</option>
+                <option>Worst</option>
+                <option>Bestvideo</option>
+                <option>Bestaudio</option>
             </option-select>
 			<div class="convert-results__result__info__button" id="button-info">Info</div>
 		</div>

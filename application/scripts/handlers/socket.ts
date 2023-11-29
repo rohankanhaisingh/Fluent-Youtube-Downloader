@@ -4,6 +4,8 @@
 
 import socket, { Socket } from "socket.io-client";
 
+const appLoader = document.querySelector(".app-loader") as HTMLDivElement;
+
 declare global {
 	interface Window {
 		client: Socket | null;
@@ -71,5 +73,23 @@ export function post(channel: string, data: any) {
 		client.once("response-" + channel, function (data) {
 			resolve(data);
 		});
+	});
+}
+
+export function listen() {
+
+	const client = window.client;
+
+	if (client === null || !client) return;
+
+	client.on("app/yt-dlp/download-started", function (data) {
+
+		if (appLoader.classList.contains("fadeout"))
+			appLoader.classList.remove("fadeout");
+	});
+
+	client.on("app/yt-dlp/download-progress", function (percentage: number) {
+
+
 	});
 }

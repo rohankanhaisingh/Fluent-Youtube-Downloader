@@ -12,9 +12,9 @@ ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export default function execute(convertStream: Readable, destinationPath: string, events: StreamConvesionEvents) {
 
-	const command: FfmpegCommand = ffmpeg(convertStream)
-		.audioCodec('aac')
-		.audioBitrate(128)
+	const command: FfmpegCommand = ffmpeg()
+		.input(convertStream)
+		.addOption("-preset", "ultrafast")
 		.save(destinationPath);
 
 	let hasStoppedProcess: boolean = false;

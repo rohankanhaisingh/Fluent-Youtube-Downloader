@@ -18,9 +18,9 @@ const constants_1 = require("../../constants");
 const abort_1 = __importDefault(require("./abort"));
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 function execute(convertStream, destinationPath, events) {
-    const command = (0, fluent_ffmpeg_1.default)(convertStream)
-        .audioCodec('aac')
-        .audioBitrate(128)
+    const command = (0, fluent_ffmpeg_1.default)()
+        .input(convertStream)
+        .addOption("-preset", "ultrafast")
         .save(destinationPath);
     let hasStoppedProcess = false;
     command.on("error", function (err) {
@@ -40,6 +40,7 @@ function execute(convertStream, destinationPath, events) {
                 yield (0, abort_1.default)(command, convertStream, destinationPath);
                 console.log("Reached max file size");
             }
+            console.log(downloadedBytes);
             if (events.onProgress)
                 events.onProgress(progress);
         });

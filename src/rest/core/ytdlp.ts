@@ -3,9 +3,13 @@ import fs from "fs";
 import path from "path";
 import tar from "tar";
 import axios from "axios";
+import cp from "child_process";
+import stream from "stream";
 
 import { TAR_FILE_NAME, YTDLP_EXECUTABLE_FILENAME } from "../../constants";
 import { PromptResult, YTDLPInitializationFailReason, YTDLPInitializationResponse, YTDLPInstallationPromptButton } from "../../typings";
+import { sokkie, emit } from "../../socket";
+import { mainWindow } from "../../app";
 
 export function checkForInstallation(): YTDLPInitializationResponse {
 
@@ -62,23 +66,39 @@ export function downloadYtdlp(): Promise<boolean> {
 
 	return new Promise(async function (resolve, reject) {
 
-		const { dialog } = electron;
-
 		const url: string = "https://github.com/yt-dlp/yt-dlp/releases/download/2023.11.16/yt-dlp.exe";
 
 		const response = await axios({ method: "GET", responseType: "stream", url });
 
+		const fileSize = parseInt(response.headers["content-length"]);
+
 		// This path will end with '.exe' so the directory must be parsed.
 		const executionPath: string = electron.app.getPath("exe");
-
+		
 		// Get the directory name,
 		const directoryName: string = path.dirname(executionPath);
 
 		// Check if the directory exist.
-		if (!fs.existsSync(directoryName)) reject(new Error(`Directory ${directoryName} does not exit.`));
+		if (!fs.existsSync(directoryName))
+			reject(new Error(`Directory ${directoryName} does not exit.`));
 
-		// TODO: Implement a progress thingy.
-		// response.data.on('data', function (chunk: Buffer) { });
+		// Let the client know that the download has started.
+		emit("app/yt-dlp/download-started", { fileSize, directoryName });
+
+		let downloadedSize: number = 0;
+
+		response.data.on("data", function (chunk: Buffer) {
+
+			downloadedSize += chunk.length;
+
+			const percentage = 100 / fileSize * downloadedSize;
+
+			// The client also has to know at what percentage the download currently is.
+			emit("app/yt-dlp/download-progress", percentage);
+
+			// Epic windows progress bar
+			mainWindow.setProgressBar(1 / 100 * percentage);
+		});
 
 		// Construct the file path.
 		const filePath: string = path.join(directoryName, YTDLP_EXECUTABLE_FILENAME);
@@ -90,7 +110,6 @@ export function downloadYtdlp(): Promise<boolean> {
 
 		fileStream.on("finish", function () {
 
-			console.log(`Release downloaded to: ${directoryName}.`);
 			resolve(true);
 		});
 
@@ -99,6 +118,37 @@ export function downloadYtdlp(): Promise<boolean> {
 			reject(err);
 		});
 	});
+}
+
+export function createYtdlpStream(videoUrl: string, videoQuality: string, installPath: string): null | stream.Readable  {
+
+	// Checks if the yt-dlp executable exists.
+	const executionPath: string = electron.app.getPath("exe");
+
+	const directoryName: string = path.dirname(executionPath);
+
+	// Checks if the directory actually exists.
+	if (!fs.existsSync(directoryName)) {
+
+		console.log("Directory name does not exist.");
+		return null;
+	}
+
+	// And now it finally checks if the file exists.
+	const physicalFilePath: string = path.join(directoryName, YTDLP_EXECUTABLE_FILENAME);
+
+	if (!fs.existsSync(physicalFilePath)) {
+
+		console.log(`${physicalFilePath} does not exist.`);
+		return null;
+	}
+
+	// This string contains the arguments that will be used for the command.
+	const commandString: string = `--format ${videoQuality} ${videoUrl} --output ${path.join(physicalFilePath, "output.mp4")}`;
+
+	const process = cp.exec(`${physicalFilePath} ${commandString}`).stdout as stream.Readable;
+
+	return process;
 }
 
 /**

@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rest = void 0;
 const electron_1 = require("electron");
+const path_1 = __importDefault(require("path"));
 const video_details_1 = __importDefault(require("./core/video-details"));
 const pipeline_1 = __importDefault(require("./core/pipeline"));
 const app_1 = require("../app");
 const router_1 = require("../router");
+const constants_1 = require("../constants");
 function rest(router) {
     router.post("/rest/video-details", router_1.requireLogin, function (req, res) {
         const { url } = req.body;
@@ -29,8 +31,15 @@ function rest(router) {
         (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
             if (response.state == "ok")
                 return res.status(200).send("hi");
-            if (response.state === "installation-succeed")
+            if (response.state === "installation-succeed") {
+                new electron_1.Notification({
+                    title: "Fluent Youtube Downloader",
+                    subtitle: "Fluent Youtube Downloader",
+                    icon: path_1.default.join(constants_1.ROOT_PATH, "icon.ico"),
+                    body: "yt-dlp has been succesfully downloaded. Fluent Youtube Downloader will now restart.",
+                }).show();
                 return (0, app_1.restartApplication)();
+            }
             electron_1.dialog.showMessageBox(app_1.mainWindow, {
                 title: "Conversion error",
                 type: "error",

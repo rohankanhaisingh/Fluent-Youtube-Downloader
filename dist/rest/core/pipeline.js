@@ -16,7 +16,9 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const appdata_1 = require("../../appdata");
 const utils_1 = require("../../utils");
+const video_stream_1 = __importDefault(require("./video-stream"));
 const video_details_1 = __importDefault(require("./video-details"));
+const ffmpeg_stream_1 = __importDefault(require("./ffmpeg-stream"));
 const ytdlp_1 = require("./ytdlp");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -30,7 +32,7 @@ function execute(url, qualityString, requestId) {
         if (casting.path.downloadPath === null)
             return {
                 state: "failed",
-                reason: `NullReferenceError: Download path is set to null. Path: ${casting.path.downloadPath}`
+                reason: `NullReferenceError: Download path is set to null. Path: ${casting.path.downloadPath}. Configure the download path in the settings.`
             };
         if (!fs_1.default.existsSync(casting.path.downloadPath))
             return {
@@ -78,9 +80,25 @@ function execute(url, qualityString, requestId) {
                 state: "failed",
                 reason: "Execution directory could not be found."
             };
-        console.log("Started video stream.");
+        console.log("Found yt-dlp executable.");
+        const convertStream = (0, ytdlp_1.createYtdlpStream)(url, qualityString, physicalFileDestinationPath);
+        if (convertStream === null)
+            throw new Error("NullReferenceError: 'convertStream' has defined as null");
         return new Promise(function (resolve, reject) {
             return __awaiter(this, void 0, void 0, function* () {
+                const convertStream = yield (0, video_stream_1.default)(url, resolvedQuality);
+                const start = Date.now();
+                const ffmpegStream = yield (0, ffmpeg_stream_1.default)(convertStream, physicalFileDestinationPath, {
+                    onEnd: function () {
+                        const end = Date.now();
+                        const difference = end - start;
+                        console.log(difference / 1000 + "seconds");
+                        resolve({ state: "ok" });
+                    },
+                    onError: function (err) { reject(err); },
+                    onProgress: function (progress) {
+                    }
+                });
             });
         });
     });

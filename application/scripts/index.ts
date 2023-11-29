@@ -4,7 +4,7 @@ import { initializeSideMenu } from "./handlers/side-menu";
 import { renderToggles } from "./handlers/dom-generator";
 import { requestPage } from "./handlers/spa-handler";
 
-import { connectSocket } from "./handlers/socket";
+import { connectSocket, listen } from "./handlers/socket";
 
 const navigationButtons: NodeListOf<HTMLElement> = document.querySelectorAll(".navigation-button");
 const appLoader = document.querySelector(".app-loader") as HTMLDivElement;
@@ -21,9 +21,13 @@ navigationButtons.forEach(function (button: HTMLElement) {
 	});
 });
 
-window.addEventListener("load", function () {
+window.addEventListener("load", async function () {
 
-	connectSocket();
+	// Wait for the promise to be resolved.
+	// The socket has to be connected.
+	await connectSocket();
+
+	listen();
 
 	requestPage("/tabs/convert");
 

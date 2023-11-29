@@ -13,7 +13,7 @@ import stream from "./video-stream";
 import details from "./video-details";
 import command from "./ffmpeg-stream";
 
-import { initializeYtdlp, promptInstallation } from "./ytdlp";
+import { createYtdlpStream, initializeYtdlp, promptInstallation } from "./ytdlp";
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
 
@@ -30,7 +30,7 @@ export default async function execute(url: string, qualityString: ConvertQuality
 	// Check if the download destination path exist.
 	if (casting.path.downloadPath === null) return {
 		state: "failed",
-		reason: `NullReferenceError: Download path is set to null. Path: ${casting.path.downloadPath}`
+		reason: `NullReferenceError: Download path is set to null. Path: ${casting.path.downloadPath}. Configure the download path in the settings.`
 	}
 
 	if (!fs.existsSync(casting.path.downloadPath)) return {
@@ -96,19 +96,40 @@ export default async function execute(url: string, qualityString: ConvertQuality
 		reason: "Execution directory could not be found."
 	}
 
-	console.log("Started video stream.");
+	// The code down below will only run IF
+	// yt-dlp has succesfully initialized.
+
+	console.log("Found yt-dlp executable.");
+
+	const convertStream: Readable | null = createYtdlpStream(url, qualityString, physicalFileDestinationPath);
+
+	if (convertStream === null)
+		throw new Error("NullReferenceError: 'convertStream' has defined as null");
 
 	// Create the youtube converting stream.
 	// const convertStream: Readable = await stream(url, resolvedQuality);
 
 	return new Promise(async function (resolve, reject) {
 
-		// const convertStream: Readable = await stream(url, resolvedQuality);
+		const convertStream: Readable = await stream(url, resolvedQuality);
 
-		//const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
-		//	onEnd: function () { resolve({state: "ok"}) },
-		//	onError: function (err: Error) { reject(err) },
-		//	onProgress: function (progress: StreamConversionProgress) { console.log(progress.targetSize); }
-		//});
+		const start: number = Date.now();
+
+		const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
+			onEnd: function () {
+
+				const end = Date.now();
+
+				const difference = end - start;
+
+				console.log(difference / 1000 + "seconds");
+
+				resolve({ state: "ok" })
+			},
+			onError: function (err: Error) { reject(err) },
+			onProgress: function (progress: StreamConversionProgress) {
+				// console.log(progress.targetSize);
+			}
+		});
 	});
 }

@@ -1,11 +1,13 @@
 import { Router, Request, Response } from "express";
-import { dialog } from "electron";
+import { dialog, Notification } from "electron";
+import path from "path";
 
 import details from "./core/video-details";
 import pipeline from "./core/pipeline";
 
 import { mainWindow, restartApplication } from "../app";
 import { requireLogin } from "../router";
+import { ROOT_PATH } from "../constants";
 
 export function rest(router: Router) {
 
@@ -38,8 +40,17 @@ export function rest(router: Router) {
 			if (response.state == "ok")
 				return res.status(200).send("hi");
 
-			if (response.state === "installation-succeed")
+			if (response.state === "installation-succeed") {
+
+				new Notification({
+					title: "Fluent Youtube Downloader",
+					subtitle: "Fluent Youtube Downloader",
+					icon: path.join(ROOT_PATH, "icon.ico"),
+					body: "yt-dlp has been succesfully downloaded. Fluent Youtube Downloader will now restart.",
+				}).show();
+
 				return restartApplication();
+			}
 
 			dialog.showMessageBox(mainWindow, {
 				title: "Conversion error",

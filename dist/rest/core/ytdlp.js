@@ -12,14 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeYtdlp = exports.promptInstallation = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = void 0;
+exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = void 0;
 const electron_1 = __importDefault(require("electron"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const tar_1 = __importDefault(require("tar"));
 const axios_1 = __importDefault(require("axios"));
+const child_process_1 = __importDefault(require("child_process"));
 const constants_1 = require("../../constants");
 const typings_1 = require("../../typings");
+const socket_1 = require("../../socket");
+const app_1 = require("../../app");
 function checkForInstallation() {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
@@ -54,18 +57,25 @@ exports.extractTarFile = extractTarFile;
 function downloadYtdlp() {
     return new Promise(function (resolve, reject) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { dialog } = electron_1.default;
             const url = "https://github.com/yt-dlp/yt-dlp/releases/download/2023.11.16/yt-dlp.exe";
             const response = yield (0, axios_1.default)({ method: "GET", responseType: "stream", url });
+            const fileSize = parseInt(response.headers["content-length"]);
             const executionPath = electron_1.default.app.getPath("exe");
             const directoryName = path_1.default.dirname(executionPath);
             if (!fs_1.default.existsSync(directoryName))
                 reject(new Error(`Directory ${directoryName} does not exit.`));
+            (0, socket_1.emit)("app/yt-dlp/download-started", { fileSize, directoryName });
+            let downloadedSize = 0;
+            response.data.on("data", function (chunk) {
+                downloadedSize += chunk.length;
+                const percentage = 100 / fileSize * downloadedSize;
+                (0, socket_1.emit)("app/yt-dlp/download-progress", percentage);
+                app_1.mainWindow.setProgressBar(1 / 100 * percentage);
+            });
             const filePath = path_1.default.join(directoryName, constants_1.YTDLP_EXECUTABLE_FILENAME);
             const fileStream = fs_1.default.createWriteStream(filePath);
             response.data.pipe(fileStream);
             fileStream.on("finish", function () {
-                console.log(`Release downloaded to: ${directoryName}.`);
                 resolve(true);
             });
             fileStream.on('error', function (err) {
@@ -75,6 +85,24 @@ function downloadYtdlp() {
     });
 }
 exports.downloadYtdlp = downloadYtdlp;
+function createYtdlpStream(videoUrl, videoQuality, installPath) {
+    const executionPath = electron_1.default.app.getPath("exe");
+    const directoryName = path_1.default.dirname(executionPath);
+    if (!fs_1.default.existsSync(directoryName)) {
+        console.log("Directory name does not exist.");
+        return null;
+    }
+    const physicalFilePath = path_1.default.join(directoryName, constants_1.YTDLP_EXECUTABLE_FILENAME);
+    if (!fs_1.default.existsSync(physicalFilePath)) {
+        console.log(`${physicalFilePath} does not exist.`);
+        return null;
+    }
+    const commandString = `--format ${videoQuality} ${videoUrl} --output ${path_1.default.join(physicalFilePath, "output.mp4")}`;
+    const process = child_process_1.default.exec(`${physicalFilePath} ${commandString}`).stdout;
+    console.log(process);
+    return process;
+}
+exports.createYtdlpStream = createYtdlpStream;
 function promptInstallation() {
     return __awaiter(this, void 0, void 0, function* () {
         const { dialog } = electron_1.default;
