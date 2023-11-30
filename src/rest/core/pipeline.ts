@@ -130,6 +130,8 @@ export default async function execute(url: string, qualityString: ConvertQuality
 			onError: function (err: Error) { reject(err) },
 			onProgress: function (progress: StreamConversionProgress) {
 
+				console.log(progress.targetSize);
+
 				emit("app/yt-dlp/convert-progress", { requestId, progress });
 			}
 		});

@@ -35,3 +35,4 @@ function execute(command, convertStream, destinationPath) {
     });
 }
 exports.default = execute;
+//# sourceMappingURL=abort.js.map

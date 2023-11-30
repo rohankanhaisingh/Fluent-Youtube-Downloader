@@ -9,6 +9,8 @@ import { Request, Response, Router } from "express";
 import { requireLogin } from "./router";
 import { setNestedValue } from "./utils";
 
+export const errorLogs: Error[] = [];
+
 /**
  * Constructs the folder based on a structure map.
  * @param structureMap Structure map
@@ -32,8 +34,15 @@ export function createFolderStructure(structureMap: { [K: string]: any }, curren
 			createFolderStructure(contents, itemPath);
 		} else {
 
-			if(!fs.existsSync(itemPath))
-				fs.writeFileSync(itemPath, contents);
+			if (!fs.existsSync(itemPath)) {
+
+				try {
+					fs.writeFileSync(itemPath, contents);
+				} catch (err) {
+
+					errorLogs.push(err as Error);
+				}
+			}
 		}
 	});
 }
@@ -100,6 +109,7 @@ export function initializeAppData() {
 			type: "error"
 		}); 
 
+		console.log("Error: Could not initialize appdata since variable APPDATA_PATH is set to null.".red);
 		return app.exit();
 	};
 
@@ -108,8 +118,10 @@ export function initializeAppData() {
 	// Checks if the physical path exist on first run.
 	// If the path does not exist, the program will then construct 
 	// the files and directories recursively.
-	if (!fs.existsSync(physicalPath))
+	if (!fs.existsSync(physicalPath)) {
+		console.log(`Warning: '${physicalPath}' does not exist, but will be created.`);
 		createFolderStructure(APPDATA_DIRECTORY_STRUCTURE, path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME));
+	}
 
 	// Checks if physical path is not missing any files or
 	// directories that the application will use later.
@@ -128,6 +140,8 @@ export function initializeAppData() {
 			type: "error"
 		});
 
+		console.log("Error: Could not check for missing files due to an unknown reason. Variable 'missingFiles' received null.".red);
+
 		// Exit the application.
 		return app.exit();
 	}
@@ -135,6 +149,8 @@ export function initializeAppData() {
 	// If there are any missing files, re-create the folder structure on the second run.
 	if (missingFiles.length > 0) 
 		createFolderStructure(APPDATA_DIRECTORY_STRUCTURE, path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME));
+
+	console.log(`Info: Initialized appdata with ${errorLogs.length} error(s).`.gray);
 
 	return true;
 }
@@ -164,6 +180,8 @@ export function checkPathVariables(): ReadSettingsFail {
 		error: new Error(`Cannot read the application's settings file since the settings file (Settings.json) does not exist in ${APPDATA_DIRECTORY_NAME}/Application`),
 		status: "failed",
 	} as ReadSettingsFail;
+
+	console.log("Info: Path variables are correctly set up.".gray);
 
 	return {
 		status: "ok",
@@ -215,7 +233,7 @@ export function updateSettingsFile(key: string, value: string | boolean) {
 
 	const pathStatus = checkPathVariables();
 
-	if (pathStatus.status !== "ok" || !APPDATA_PATH) return;
+	if (pathStatus.status !== "ok" || !APPDATA_PATH) return console.log(`Error: ${pathStatus.reason}`.red);
 
 	const currentSettings = readSettingsFile() as ApplicationSettings;
 
@@ -223,5 +241,6 @@ export function updateSettingsFile(key: string, value: string | boolean) {
 
 	const newFileContent = JSON.stringify(currentSettings, null, "");
 
+	console.log(`Info: Made changes into ${path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json") }.`.gray);
 	fs.writeFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }

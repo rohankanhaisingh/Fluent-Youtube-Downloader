@@ -16,3 +16,4 @@ function execute(videoUrl) {
     });
 }
 exports.default = execute;
+//# sourceMappingURL=video-details.js.map

@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from "electron";
-import { Request } from "express";
+import { application, Request } from "express";
 import path from "path";
 import electronIsDev from "electron-is-dev";
+import colors from "colors";
 
 import { listen, reservedServerAuthToken } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
@@ -12,6 +13,9 @@ import { initializeSystemTray } from "./tray";
 
 export let mainWindow: BrowserWindow;
 
+colors.enable();
+console.log("Info: Starting application...".gray);
+
 // Initializes the application data.
 const initializationState = initializeAppData();
 
@@ -19,15 +23,19 @@ app.once("ready", async function () {
 
 	// The program will close if the application's data has 
 	// failed initializing.
-	if (!initializationState)
+	if (!initializationState) {
+		console.log(`Error: Could not initialize the application it's data due to an uknown reason.`.red);
 		return app.exit();
+	}
 
 	const applicationSettings: ApplicationSettings | ReadSettingsFail = readSettingsFile();
 
 	// The application will close whenever the settings 
 	// file failed reading.
-	if (applicationSettings.status === "failed")
+	if (applicationSettings.status === "failed") {
+		console.log(`Error: ${(applicationSettings as ReadSettingsFail).reason}`.red);
 		return app.exit();
+	}
 
 	// Cast the variable cuz bruh idfk.
 	const settingsCasting = applicationSettings as ApplicationSettings;
@@ -62,6 +70,7 @@ app.once("ready", async function () {
 
 	if (electronIsDev) {
 
+		console.log(`Info: Development environment detected! Will now open DevTools by default.`.gray);
 		mainWindow.webContents.openDevTools();
 	} else {
 
@@ -73,7 +82,11 @@ app.once("ready", async function () {
 
 	const listenState: boolean | number = await listen();
 
-	if (!listenState) return app.exit();
+	if (!listenState) {
+
+		console.log("Error: Could not start local web-server due to an unknown reason.".red);
+		return app.exit();
+	}
 
 	mainWindow.loadURL(`http://localhost:${listenState}`, {
 		extraHeaders: `Accessibility-Type: Electron\nAuthentication-Token: ${reservedServerAuthToken}`

@@ -53,3 +53,4 @@ function rest(router) {
     });
 }
 exports.rest = rest;
+//# sourceMappingURL=entry.js.map

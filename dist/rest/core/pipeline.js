@@ -98,6 +98,7 @@ function execute(url, qualityString, requestId) {
                     },
                     onError: function (err) { reject(err); },
                     onProgress: function (progress) {
+                        console.log(progress.targetSize);
                         (0, socket_1.emit)("app/yt-dlp/convert-progress", { requestId, progress });
                     }
                 });
@@ -106,3 +107,4 @@ function execute(url, qualityString, requestId) {
     });
 }
 exports.default = execute;
+//# sourceMappingURL=pipeline.js.map

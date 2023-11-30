@@ -23,3 +23,4 @@ function emit(channel, data) {
     connectedSocket.emit(channel, data);
 }
 exports.emit = emit;
+//# sourceMappingURL=socket.js.map

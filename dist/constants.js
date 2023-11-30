@@ -65,3 +65,4 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
 exports.YTDLP_EXECUTABLE_FILENAME = "yt-dlp.exe";
 exports.MAX_FILE_SIZE = 210;
 exports.TAR_FILE_NAME = "yt-dlp.tar.gz";
+//# sourceMappingURL=constants.js.map

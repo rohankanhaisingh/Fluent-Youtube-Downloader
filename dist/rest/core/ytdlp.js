@@ -136,3 +136,4 @@ function initializeYtdlp() {
     return installationCheck.reason;
 }
 exports.initializeYtdlp = initializeYtdlp;
+//# sourceMappingURL=ytdlp.js.map

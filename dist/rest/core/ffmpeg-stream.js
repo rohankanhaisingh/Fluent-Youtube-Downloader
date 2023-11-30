@@ -18,8 +18,7 @@ const constants_1 = require("../../constants");
 const abort_1 = __importDefault(require("./abort"));
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 function execute(convertStream, destinationPath, events) {
-    const command = (0, fluent_ffmpeg_1.default)()
-        .input(convertStream)
+    const command = (0, fluent_ffmpeg_1.default)(convertStream)
         .addOption("-preset", "ultrafast")
         .save(destinationPath);
     let hasStoppedProcess = false;
@@ -52,3 +51,4 @@ function execute(convertStream, destinationPath, events) {
     return command;
 }
 exports.default = execute;
+//# sourceMappingURL=ffmpeg-stream.js.map

@@ -16,19 +16,26 @@ exports.restartApplication = exports.handleControlEvents = exports.mainWindow = 
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
+const colors_1 = __importDefault(require("colors"));
 const server_1 = require("./server");
 const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
 const auto_launch_1 = require("./auto-launch");
 const tray_1 = require("./tray");
+colors_1.default.enable();
+console.log("Info: Starting application...".gray);
 const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!initializationState)
+        if (!initializationState) {
+            console.log(`Error: Could not initialize the application it's data due to an uknown reason.`.red);
             return electron_1.app.exit();
+        }
         const applicationSettings = (0, appdata_1.readSettingsFile)();
-        if (applicationSettings.status === "failed")
+        if (applicationSettings.status === "failed") {
+            console.log(`Error: ${applicationSettings.reason}`.red);
             return electron_1.app.exit();
+        }
         const settingsCasting = applicationSettings;
         exports.mainWindow = new electron_1.BrowserWindow({
             width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
@@ -58,6 +65,7 @@ electron_1.app.once("ready", function () {
             }
         });
         if (electron_is_dev_1.default) {
+            console.log(`Info: Development environment detected! Will now open DevTools by default.`.gray);
             exports.mainWindow.webContents.openDevTools();
         }
         else {
@@ -66,8 +74,10 @@ electron_1.app.once("ready", function () {
             (0, auto_launch_1.initializeAutoLaunch)(settingsCasting);
         }
         const listenState = yield (0, server_1.listen)();
-        if (!listenState)
+        if (!listenState) {
+            console.log("Error: Could not start local web-server due to an unknown reason.".red);
             return electron_1.app.exit();
+        }
         exports.mainWindow.loadURL(`http://localhost:${listenState}`, {
             extraHeaders: `Accessibility-Type: Electron\nAuthentication-Token: ${server_1.reservedServerAuthToken}`
         });
@@ -102,3 +112,4 @@ function restartApplication() {
     electron_1.app.exit();
 }
 exports.restartApplication = restartApplication;
+//# sourceMappingURL=app.js.map
