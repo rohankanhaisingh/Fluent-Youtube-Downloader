@@ -56,7 +56,10 @@ server.use(function (req, res, next) {
 	const ipHeader: string[] | string | undefined = req.headers[`x-forwarded-for`],
 		clientHostname: string = req.hostname;
 
-	if (clientHostname !== "localhost") return res.status(403).json("Not allowed");
+	if (clientHostname !== "localhost") {
+		console.log(`Warning: Client tried connecting to local web-server but is black-listed. Hostname: ${clientHostname}.`.yellow);
+		return res.status(403).json("Not allowed");
+	}
 
 	next();
 });
@@ -68,7 +71,7 @@ io.use(function (socket, next) {
 	if (token === reservedServerAuthToken)
 		return next();
 
-	console.log("Not authorized");
+	console.log("Warning: Client tried making a web-socket connected but got rejected.".yellow);
 
 	return next(new Error("Authentication Error"));
 });
@@ -92,10 +95,13 @@ export async function listen(): Promise<boolean | number> {
 	if (portStatus !== "open") {
 
 		httpServer.listen(allocatedServerPort);
+		console.log(`Info: Started listening on port ${allocatedServerPort}.`.gray);
 		return allocatedServerPort;
 	}
 
 	const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
+	console.log(`Error: ${errorTrace.message}`.red);
+
 
 	await electron.dialog.showMessageBox(mainWindow, {
 		type: "error",

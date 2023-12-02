@@ -79,15 +79,17 @@ exports.server.use((0, express_session_1.default)({
 exports.server.use((0, cors_1.default)());
 exports.server.use(function (req, res, next) {
     const ipHeader = req.headers[`x-forwarded-for`], clientHostname = req.hostname;
-    if (clientHostname !== "localhost")
+    if (clientHostname !== "localhost") {
+        console.log(`Warning: Client tried connecting to local web-server but is black-listed. Hostname: ${clientHostname}.`.yellow);
         return res.status(403).json("Not allowed");
+    }
     next();
 });
 exports.io.use(function (socket, next) {
     const token = socket.handshake.auth.token;
     if (token === exports.reservedServerAuthToken)
         return next();
-    console.log("Not authorized");
+    console.log("Warning: Client tried making a web-socket connected but got rejected.".yellow);
     return next(new Error("Authentication Error"));
 });
 (0, socket_1.sokkie)(exports.io);
@@ -99,9 +101,11 @@ function listen() {
         const portStatus = yield portscanner_1.default.checkPortStatus(allocatedServerPort);
         if (portStatus !== "open") {
             exports.httpServer.listen(allocatedServerPort);
+            console.log(`Info: Started listening on port ${allocatedServerPort}.`.gray);
             return allocatedServerPort;
         }
         const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
+        console.log(`Error: ${errorTrace.message}`.red);
         yield electron_1.default.dialog.showMessageBox(app_1.mainWindow, {
             type: "error",
             message: errorTrace.message,
