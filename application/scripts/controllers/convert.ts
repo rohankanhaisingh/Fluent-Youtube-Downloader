@@ -1,7 +1,9 @@
 import { Ease } from "@babahgee/easings";
 import { v4 } from "uuid";
+import { Socket } from "socket.io-client";
 
 import { renderSelects } from "../handlers/dom-generator";
+import { getClient } from "../handlers/socket";
 
 interface Thumbnail {
 	url: string;
@@ -47,10 +49,10 @@ interface VideoDetails {
 	video_url: string;
 }
 
-interface DownloadResponse {
-	readonly fileName: string;
-	readonly fileSize: number;
-	readonly endPoint: string;
+declare global {
+	interface Window {
+		activeDownloads: { [RequestID: string]: ActiveDownload };
+	}
 }
 
 const urlInputField: HTMLDivElement | null = document.querySelector("#input-url"),
@@ -60,6 +62,38 @@ const urlInputField: HTMLDivElement | null = document.querySelector("#input-url"
 	convertPage: HTMLDivElement | null = document.querySelector(".page-convert");
 
 renderSelects();
+
+window.activeDownloads = {};
+
+class ActiveDownload {
+	declare public requestId: string;
+	declare public domElement: HTMLElement;
+
+	constructor(requestId: string, domElement: HTMLElement) {
+
+		this.requestId = requestId;
+		this.domElement = domElement;
+	}
+
+	public setProgress(downloadedBytes: string) {
+
+		if (this.domElement === null) return;
+
+		const downloadText: HTMLDivElement | null = this.domElement.querySelector(".convert-results__result__info__progression__text");
+
+		if (downloadText === null) return;
+
+		downloadText.innerText = `Downloaded ${downloadedBytes}.`;
+	}
+	public setFinishState() {
+
+		if (this.domElement === null) return;
+
+		if (this.domElement.classList.contains("downloading"))
+			this.domElement.classList.remove("downloading");
+	}
+}
+
 
 async function submitVideoRequest(url: string) {
 
@@ -197,24 +231,34 @@ function displayVideoInfo(videoDetails: VideoDetails) {
 	videoInfoContainer.replaceChildren(contentElement);
 }
 
-function downloadVideo(url: string, quality: string, resultDomElement: HTMLDivElement) {
+async function downloadVideo(url: string, quality: string, resultDomElement: HTMLDivElement) {
 
 	const requestId: string = v4();
 
 	const words: string[] = quality.toLocaleLowerCase().split(" ");
 	const constructedWord = words.join("-");
 
-	console.log(constructedWord);
+	if (!resultDomElement.classList.contains("downloading"))
+		resultDomElement.classList.add("downloading");
 
-	fetch("/rest/download", {
+	window.activeDownloads[requestId] = new ActiveDownload(requestId, resultDomElement);
+
+	// Should start the download async.
+	await fetch("/rest/download", {
 		body: JSON.stringify({ url, requestId, quality: constructedWord }),
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
 		}
 	});
-}
 
+	// Will change the dom element anyway.
+	resultDomElement.classList.remove("downloading");
+
+	// Remove the request id.
+	if (typeof window.activeDownloads[requestId] !== "undefined")
+		delete window.activeDownloads[requestId];
+}
 function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDivElement) {
 
 	if (resultsContainer === null) return;
@@ -230,15 +274,27 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 			<div class="convert-results__result__info__title">${videoDetails.title}</div>
 			<div class="convert-results__result__info__author"><img src="${videoDetails.author.thumbnails.pop()?.url}" alt="Author" />${videoDetails.author.user} - ${videoDetails.author.subscriber_count} subscribers</div>
 			<div class="convert-results__result__info__description">${videoDetails.description}</div>
-			<div class="convert-results__result__info__button" id="button-convert">Convert</div>
-			<option-select class="convert-results__result__info__select" id="select-quality">
-                <option active="true">bestvideo+bestaudio</option>
-                <option>Best</option>
-                <option>Worst</option>
-                <option>Bestvideo</option>
-                <option>Bestaudio</option>
-            </option-select>
-			<div class="convert-results__result__info__button" id="button-info">Info</div>
+			<div class="convert-results__result__info__button-container">
+				<div class="convert-results__result__info__button" id="button-convert">Convert</div>
+				<option-select class="convert-results__result__info__select" id="select-quality">
+					<option active="true">bestvideo+bestaudio</option>
+					<option>Best</option>
+					<option>Worst</option>
+					<option>Bestvideo</option>
+					<option>Bestaudio</option>
+				</option-select>
+				<div class="convert-results__result__info__button" id="button-info">Info</div>
+			</div>
+			<div class="convert-results__result__info__progression">
+				<svg class="convert-results__result__info__progression__spinner spinner">
+					<circle>
+						<animateTransform attributeName="transform" type="rotate" values="-90;810" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+						<animate attributeName="stroke-dashoffset" values="0%;0%;-157.080%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+						<animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+					</circle>
+				</svg>
+				<div class="convert-results__result__info__progression__text">Downloaded 0 bytes</div>
+			</div>
 		</div>
 	`;
 
@@ -307,6 +363,5 @@ urlSubmitButton?.addEventListener("click", function () {
 
 	submitVideoRequest(urlInputField.innerText);
 });
-
 urlInputField?.addEventListener("keydown", handleInputField);
 urlInputField?.addEventListener("paste", disableDivEditing);

@@ -99,7 +99,6 @@ export default async function execute(url: string, qualityString: ConvertQuality
 
 	// The code down below will only run IF
 	// yt-dlp has succesfully initialized.
-
 	console.log("Found yt-dlp executable.");
 
 	const convertStream: Readable | null = createYtdlpStream(url, qualityString, physicalFileDestinationPath);
@@ -107,30 +106,22 @@ export default async function execute(url: string, qualityString: ConvertQuality
 	if (convertStream === null)
 		throw new Error("NullReferenceError: 'convertStream' has defined as null");
 
-	// Create the youtube converting stream.
-	// const convertStream: Readable = await stream(url, resolvedQuality);
-
 	return new Promise(async function (resolve, reject) {
 
 		const convertStream: Readable = await stream(url, resolvedQuality);
 
 		const start: number = Date.now();
 
-		const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
+		command(convertStream, physicalFileDestinationPath, {
 			onEnd: function () {
 
 				const end = Date.now();
-
 				const difference = end - start;
-
-				console.log(difference / 1000 + "seconds");
-
+				
 				resolve({ state: "ok" })
 			},
 			onError: function (err: Error) { reject(err) },
 			onProgress: function (progress: StreamConversionProgress) {
-
-				console.log(progress.targetSize);
 
 				emit("app/yt-dlp/convert-progress", { requestId, progress });
 			}

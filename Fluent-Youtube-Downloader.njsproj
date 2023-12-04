@@ -211,6 +211,7 @@
     <TypeScriptCompile Include="application\scripts\handlers\theme.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\titlebar.ts" />
     <TypeScriptCompile Include="application\scripts\index.ts" />
+    <TypeScriptCompile Include="application\scripts\utils.ts" />
     <TypeScriptCompile Include="src\appdata.ts" />
     <TypeScriptCompile Include="src\auto-launch.ts" />
     <TypeScriptCompile Include="src\constants.ts" />

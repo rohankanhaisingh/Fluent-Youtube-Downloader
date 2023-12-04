@@ -89,16 +89,14 @@ function execute(url, qualityString, requestId) {
             return __awaiter(this, void 0, void 0, function* () {
                 const convertStream = yield (0, video_stream_1.default)(url, resolvedQuality);
                 const start = Date.now();
-                const ffmpegStream = yield (0, ffmpeg_stream_1.default)(convertStream, physicalFileDestinationPath, {
+                (0, ffmpeg_stream_1.default)(convertStream, physicalFileDestinationPath, {
                     onEnd: function () {
                         const end = Date.now();
                         const difference = end - start;
-                        console.log(difference / 1000 + "seconds");
                         resolve({ state: "ok" });
                     },
                     onError: function (err) { reject(err); },
                     onProgress: function (progress) {
-                        console.log(progress.targetSize);
                         (0, socket_1.emit)("app/yt-dlp/convert-progress", { requestId, progress });
                     }
                 });
