@@ -18,6 +18,7 @@ const appdata_1 = require("../../appdata");
 const utils_1 = require("../../utils");
 const video_details_1 = __importDefault(require("./video-details"));
 const ffmpeg_stream_1 = require("./ffmpeg-stream");
+const socket_1 = require("../../socket");
 const ytdlp_1 = require("./ytdlp");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -87,10 +88,13 @@ function execute(url, qualityString, requestId) {
             (0, ytdlp_1.extractStreamOutput)(convertStream.stdout, function (event) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (event.isDone) {
-                        if (event.fileDestinations)
-                            yield (0, ffmpeg_stream_1.mergeMediaFilesSync)(event.fileDestinations[0], event.fileDestinations[1], physicalFileDestinationPath);
+                        if (event.fileDestinations) {
+                            (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
+                            yield (0, ffmpeg_stream_1.mergeMediaFilesSync)(requestId, physicalFileDestinationPath);
+                        }
                         return resolve({ state: "ok" });
                     }
+                    (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: event.percentage + "%", requestId });
                 });
             });
         });

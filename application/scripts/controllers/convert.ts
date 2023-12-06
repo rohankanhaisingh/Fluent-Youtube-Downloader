@@ -293,7 +293,7 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 						<animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
 					</circle>
 				</svg>
-				<div class="convert-results__result__info__progression__text">Downloaded 0 bytes</div>
+				<div class="convert-results__result__info__progression__text">Preparing the download...</div>
 			</div>
 		</div>
 	`;

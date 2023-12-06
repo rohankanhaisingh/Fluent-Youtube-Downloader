@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeMediaFilesSync = exports.probeFfmpeg = void 0;
+exports.mergeMediaFilesSync = exports.checkMediaParts = exports.probeFfmpeg = void 0;
 const fs_1 = __importDefault(require("fs"));
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
 const ffmpeg_1 = __importDefault(require("@ffmpeg-installer/ffmpeg"));
@@ -20,6 +20,7 @@ const path_1 = __importDefault(require("path"));
 const electron_1 = __importDefault(require("electron"));
 const constants_1 = require("../../constants");
 const abort_1 = __importDefault(require("./abort"));
+const appdata_1 = require("../../appdata");
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 fluent_ffmpeg_1.default.setFfprobePath(ffmpeg_1.default.path);
 function probeFfmpeg(filePath) {
@@ -33,27 +34,36 @@ function probeFfmpeg(filePath) {
     });
 }
 exports.probeFfmpeg = probeFfmpeg;
-function mergeMediaFilesSync(mediaFile1, mediaFile2, filePath) {
+function checkMediaParts(fileName) {
+    const cacheDirectory = (0, appdata_1.getCacheDirectory)();
+    if (cacheDirectory === null)
+        return [];
+    const files = fs_1.default.readdirSync(cacheDirectory);
+    const matchedFiles = [];
+    for (let file of files)
+        if (file.startsWith(fileName))
+            matchedFiles.push(path_1.default.join(cacheDirectory, file));
+    return matchedFiles;
+}
+exports.checkMediaParts = checkMediaParts;
+function mergeMediaFilesSync(fileId, fileOutputPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const executionPath = electron_1.default.app.getPath("exe");
-        const directoryName = path_1.default.dirname(executionPath);
-        if (!fs_1.default.existsSync(directoryName)) {
-            console.log("Directory name does not exist.");
+        const mediaParts = checkMediaParts(fileId);
+        if (mediaParts.length !== 2) {
+            console.log(`Error: Could not find media files to merge.`.red);
             return null;
         }
-        console.log(`Info: Mergin media files into ${filePath}`);
-        if (!fs_1.default.existsSync(mediaFile1) || !fs_1.default.existsSync(mediaFile2))
-            return null;
-        console.log("Started merge command.");
+        console.log(`Info: Merging files together...`);
         const command = (0, fluent_ffmpeg_1.default)()
-            .input(mediaFile2)
-            .input(mediaFile1)
+            .input(mediaParts[0])
+            .input(mediaParts[1])
             .outputOptions('-c:v libx264')
             .outputOptions('-c:a aac')
-            .save(filePath);
+            .save(fileOutputPath);
         return new Promise(function (resolve, reject) {
             command.on("end", function () {
-                resolve(filePath);
+                console.log(`Info: Done merging files!`.gray);
+                resolve(fileOutputPath);
             });
             command.on("error", function (err) {
                 console.log(`Error: ${err.message}`.red);

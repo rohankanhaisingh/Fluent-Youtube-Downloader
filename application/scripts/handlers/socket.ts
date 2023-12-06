@@ -102,12 +102,12 @@ export function listen() {
 			delete window.activeDownloads[data.requestId];
 	});
 
-	client.on("app/yt-dlp/convert-progress", function (data) {
+	client.on("app/yt-dlp/download-video", function (event) {
 
-		const activeDownload = window.activeDownloads[data.requestId];
+		const activeDownload = window.activeDownloads[event.requestId];
 
 		if (typeof activeDownload === "undefined") return;
 	
-		activeDownload.setProgress(formatBytes(data.progress.targetSize));
+		activeDownload.setProgress(event.percentage);
 	});
 }

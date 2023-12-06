@@ -95,8 +95,10 @@ function extractStreamOutput(stream, callback) {
         const filteredWords = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
         if (filteredWords[0].replace("\r", "") !== "[download]")
             return;
-        if (filteredWords[1].includes("destination"))
+        if (filteredWords[1].includes("destination")) {
+            console.log(`Info: Found destination: ${chunkText}`.gray);
             fileDestinations.push(filteredWords[2].trim());
+        }
         if (!filteredWords[1].includes("%") ||
             !filteredWords[3].includes("kib") ||
             !filteredWords[5].includes("mib/s"))
@@ -106,9 +108,11 @@ function extractStreamOutput(stream, callback) {
         const downloadSpeed = parseFloat(filteredWords[5].replace("mib/s", ""));
         if (percentage === 100)
             completedDownload += 1;
-        if (completedDownload === 2)
-            return callback({ isDone: true, percentage, downloadSpeed, fileDestinations });
         callback({ isDone: false, percentage, downloadSpeed });
+    });
+    stream.on("end", function () {
+        console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+        return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
     });
 }
 exports.extractStreamOutput = extractStreamOutput;
@@ -127,7 +131,7 @@ function createYtdlpStream(videoUrl, videoQuality, requestId) {
     const cacheDirectory = (0, appdata_1.getCacheDirectory)();
     if (cacheDirectory === null)
         return null;
-    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
     console.log(`Info: Starting executable with '${commandString}'.`.gray);
     const process = child_process_1.default.exec(commandString);
     return process;
