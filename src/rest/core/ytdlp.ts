@@ -1,16 +1,15 @@
 import electron from "electron";
 import fs from "fs";
 import path from "path";
-import tar from "tar";
+import tar, { c } from "tar";
 import axios from "axios";
 import cp from "child_process";
 import stream, { Readable } from "stream";
 
-import { TAR_FILE_NAME, YTDLP_EXECUTABLE_FILENAME } from "../../constants";
-import { PromptResult, StreamOutputExtractionEvent, YTDLPInitializationFailReason, YTDLPInitializationResponse, YTDLPInstallationPromptButton } from "../../typings";
-import { sokkie, emit } from "../../socket";
+import { YTDLP_EXECUTABLE_FILENAME } from "../../constants";
+import { StreamOutputExtractionEvent, YTDLPInitializationFailReason, YTDLPInitializationResponse, YTDLPInstallationPromptButton } from "../../typings";
+import { emit } from "../../socket";
 import { mainWindow } from "../../app";
-import { v4 } from "uuid";
 import { getCacheDirectory } from "../../appdata";
 
 export function checkForInstallation(): YTDLPInitializationResponse {
@@ -141,8 +140,11 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 		if (filteredWords[0].replace("\r", "") !== "[download]") return;
 
 		// If yt-dlp determines the physical location of the media files.
-		if (filteredWords[1].includes("destination"))
+		if (filteredWords[1].includes("destination")) {
+
+			console.log(`Info: Found destination: ${chunkText}`.gray);
 			fileDestinations.push(filteredWords[2].trim());
+		}
 
 		// Some other string checking yea
 		if (!filteredWords[1].includes("%") ||
@@ -162,10 +164,13 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 		if (percentage === 100)
 			completedDownload += 1;
 
-		if (completedDownload === 2) 
-			return callback({ isDone: true, percentage, downloadSpeed, fileDestinations });
-
 		callback({ isDone: false, percentage, downloadSpeed });
+	});
+
+	stream.on("end", function () {
+
+		console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+		return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
 	});
 }
 
@@ -199,7 +204,7 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, reques
 		return null;
 
 	// This string contains the arguments that will be used for the command.
-	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
 
 	console.log(`Info: Starting executable with '${commandString}'.`.gray);
 
