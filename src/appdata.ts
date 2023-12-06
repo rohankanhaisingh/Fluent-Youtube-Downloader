@@ -244,3 +244,18 @@ export function updateSettingsFile(key: string, value: string | boolean) {
 	console.log(`Info: Made changes into ${path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json") }.`.gray);
 	fs.writeFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }
+
+/**
+ * Returns the physical path of the cache directory.
+ * @returns
+ */
+export function getCacheDirectory(): string | null {
+
+	if (!APPDATA_PATH) return null;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return null;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Cache"))) return null;
+
+	return path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Cache");
+}

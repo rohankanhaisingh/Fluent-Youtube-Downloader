@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
+exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
@@ -194,4 +194,14 @@ function updateSettingsFile(key, value) {
     fs_1.default.writeFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }
 exports.updateSettingsFile = updateSettingsFile;
+function getCacheDirectory() {
+    if (!constants_1.APPDATA_PATH)
+        return null;
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
+        return null;
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Cache")))
+        return null;
+    return path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Cache");
+}
+exports.getCacheDirectory = getCacheDirectory;
 //# sourceMappingURL=appdata.js.map
