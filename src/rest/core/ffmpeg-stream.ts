@@ -9,6 +9,7 @@ import { StreamConversionProgress, StreamConvesionEvents } from "../../typings";
 import { MAX_FILE_SIZE } from "../../constants";
 
 import abort from "./abort";
+import { getCacheDirectory } from "../../appdata";
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffmpegPath.path);
@@ -28,28 +29,31 @@ export function probeFfmpeg(filePath: string): Promise<FfprobeData> {
 	});
 }
 
-export async function mergeMediaFilesSync(mediaFile1: string, mediaFile2: string, filePath: string): Promise<string | null> {
+export function checkMediaParts(fileName: string): string[] {
 
-	// Checks if the yt-dlp executable exists.
-	const executionPath: string = electron.app.getPath("exe");
+	const cacheDirectory: string | null = getCacheDirectory();
 
-	// Get the directory name.
-	const directoryName: string = path.dirname(executionPath);
+	if (cacheDirectory === null) return [];
 
-	// Checks if the directory actually exists.
-	if (!fs.existsSync(directoryName)) {
+	const files: string[] = fs.readdirSync(cacheDirectory);
 
-		console.log("Directory name does not exist.");
+	const matchedFiles: string[] = [];
+
+	for (let file of files)
+		if (file.startsWith(fileName)) matchedFiles.push(path.join(cacheDirectory, file));
+
+	return matchedFiles;
+}
+
+export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string): Promise<string | null> {
+
+	const mediaParts: string[] = checkMediaParts(fileId);
+
+	if (mediaParts.length !== 2) {
+
+		console.log(`Error: Could not find media files to merge.`.red);
 		return null;
 	}
-
-	console.log(`Info: Mergin media files into ${filePath}`);
-
-	// Check if the media files exist.
-	if (!fs.existsSync(mediaFile1) || !fs.existsSync(mediaFile2))
-		return null;
-
-	console.log("Started merge command.");
 
 	//// Probe media files before attempting to merge.
 	//const probe1 = await probeFfmpeg(mediaFile1);
@@ -59,21 +63,23 @@ export async function mergeMediaFilesSync(mediaFile1: string, mediaFile2: string
 	// this shit doesn't even work because 'show_streams' is
 	// an unrecognized option...
 
+	console.log(`Info: Merging files together...`);
+
 	const command: FfmpegCommand = ffmpeg()
-		.input(mediaFile2)
-		.input(mediaFile1)
+		.input(mediaParts[0])
+		.input(mediaParts[1])
 		.outputOptions('-c:v libx264') // Video codec voor MP4
 		.outputOptions('-c:a aac')     // Audio codec voor MP4
-		.save(filePath);
+		.save(fileOutputPath);
 
 	return new Promise(function (resolve, reject) {
 
 		command.on("end", function () {
 
-			resolve(filePath);
+			console.log(`Info: Done merging files!`.gray);
+			resolve(fileOutputPath);
 		});
 	
-
 		command.on("error", function (err: Error) {
 
 			console.log(`Error: ${err.message}`.red);
