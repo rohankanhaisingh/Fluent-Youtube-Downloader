@@ -23,6 +23,7 @@
     "directories": {
       "output": "build"
     },
+    "asar": false,
     "win": {
       "target": [
         {
