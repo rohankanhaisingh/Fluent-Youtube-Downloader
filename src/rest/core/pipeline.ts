@@ -2,8 +2,7 @@ import fs from "fs";
 import { Readable } from "stream";
 import { MoreVideoDetails } from "ytdl-core";
 import path from "path";
-import { FfmpegCommand } from "fluent-ffmpeg";
-
+import { ChildProcess } from "child_process";
 
 import { readSettingsFile } from "../../appdata";
 import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
@@ -13,9 +12,9 @@ import stream from "./video-stream";
 import details from "./video-details";
 import command, { mergeMediaFilesSync } from "./ffmpeg-stream";
 
-import { createYtdlpStream, extractStreamOutput, initializeYtdlp, promptInstallation } from "./ytdlp";
 import { emit } from "../../socket";
-import { ChildProcess } from "child_process";
+import { createYtdlpStream, extractStreamOutput, initializeYtdlp, promptInstallation } from "./ytdlp";
+
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
 
@@ -114,11 +113,17 @@ export default async function execute(url: string, qualityString: ConvertQuality
 
 			if (event.isDone) {
 
-				if (event.fileDestinations)
-					await mergeMediaFilesSync(event.fileDestinations[0], event.fileDestinations[1], physicalFileDestinationPath);
+				if (event.fileDestinations) {
+					emit("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
+					await mergeMediaFilesSync(requestId, physicalFileDestinationPath);
+				}
 
 				return resolve({ state: "ok" });
 			}
+
+			// Emit the progress of the download to the client.
+			emit("app/yt-dlp/download-video", { percentage: event.percentage + "%", requestId });
 		});
+
 	});
 }
