@@ -6,3 +6,4 @@ var YTDLPInstallationPromptButton;
     YTDLPInstallationPromptButton[YTDLPInstallationPromptButton["Yes"] = 0] = "Yes";
     YTDLPInstallationPromptButton[YTDLPInstallationPromptButton["No"] = 1] = "No";
 })(YTDLPInstallationPromptButton = exports.YTDLPInstallationPromptButton || (exports.YTDLPInstallationPromptButton = {}));
+//# sourceMappingURL=typings.js.map

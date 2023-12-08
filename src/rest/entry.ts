@@ -8,6 +8,7 @@ import pipeline from "./core/pipeline";
 import { mainWindow, restartApplication } from "../app";
 import { requireLogin } from "../router";
 import { ROOT_PATH } from "../constants";
+import { emit } from "../socket";
 
 export function rest(router: Router) {
 
@@ -37,8 +38,18 @@ export function rest(router: Router) {
 
 		pipeline(url, quality, requestId).then(function (response) {
 
-			if (response.state == "ok")
-				return res.status(200).send("hi");
+			if (response.state == "ok") {
+
+				new Notification({
+					title: "Fluent Youtube Downloader",
+					subtitle: "Fluent Youtube Downloader",
+					icon: path.join(ROOT_PATH, "icon.ico"),
+					body: "Video has succesfully been converted.",
+				}).show();
+
+				emit("app/yt-dlp/convert-complete", { requestId });
+				return res.status(200).send("Download completed");
+			}
 
 			if (response.state === "installation-succeed") {
 

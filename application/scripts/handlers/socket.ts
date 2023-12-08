@@ -4,6 +4,8 @@
 
 import socket, { Socket } from "socket.io-client";
 
+import { formatBytes } from "../utils";
+
 const appLoader = document.querySelector(".app-loader") as HTMLDivElement;
 
 declare global {
@@ -88,13 +90,24 @@ export function listen() {
 			appLoader.classList.remove("fadeout");
 	});
 
-	client.on("app/yt-dlp/download-progress", function (percentage: number) {
+	client.on("app/yt-dlp/convert-complete", function (data) {
 
+		const activeDownload = window.activeDownloads[data.requestId];
 
+		if (typeof activeDownload === "undefined") return;
+
+		activeDownload.setFinishState();
+
+		if (typeof window.activeDownloads[data.requestId] !== "undefined")
+			delete window.activeDownloads[data.requestId];
 	});
 
-	client.on("app/yt-dlp/convert-progress", function (data) {
+	client.on("app/yt-dlp/download-video", function (event) {
 
-		console.log(data);
+		const activeDownload = window.activeDownloads[event.requestId];
+
+		if (typeof activeDownload === "undefined") return;
+	
+		activeDownload.setProgress(event.percentage);
 	});
 }

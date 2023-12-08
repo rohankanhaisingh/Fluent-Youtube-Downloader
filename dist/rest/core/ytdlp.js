@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = void 0;
+exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.extractStreamOutput = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = void 0;
 const electron_1 = __importDefault(require("electron"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -23,6 +23,7 @@ const constants_1 = require("../../constants");
 const typings_1 = require("../../typings");
 const socket_1 = require("../../socket");
 const app_1 = require("../../app");
+const appdata_1 = require("../../appdata");
 function checkForInstallation() {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
@@ -85,7 +86,37 @@ function downloadYtdlp() {
     });
 }
 exports.downloadYtdlp = downloadYtdlp;
-function createYtdlpStream(videoUrl, videoQuality, installPath) {
+function extractStreamOutput(stream, callback) {
+    let completedDownload = 0;
+    const fileDestinations = [];
+    stream.on("data", function (chunk) {
+        const chunkText = chunk.toString().toLowerCase();
+        const words = chunkText.split(" ");
+        const filteredWords = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
+        if (filteredWords[0].replace("\r", "") !== "[download]")
+            return;
+        if (filteredWords[1].includes("destination")) {
+            console.log(`Info: Found destination: ${chunkText}`.gray);
+            fileDestinations.push(filteredWords[2].trim());
+        }
+        if (!filteredWords[1].includes("%") ||
+            !filteredWords[3].includes("kib") ||
+            !filteredWords[5].includes("mib/s"))
+            return;
+        const percentage = parseFloat(filteredWords[1].replace("%", ""));
+        const chunkSize = parseFloat(filteredWords[3].replace("kib", ""));
+        const downloadSpeed = parseFloat(filteredWords[5].replace("mib/s", ""));
+        if (percentage === 100)
+            completedDownload += 1;
+        callback({ isDone: false, percentage, downloadSpeed });
+    });
+    stream.on("end", function () {
+        console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+        return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
+    });
+}
+exports.extractStreamOutput = extractStreamOutput;
+function createYtdlpStream(videoUrl, videoQuality, requestId) {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
     if (!fs_1.default.existsSync(directoryName)) {
@@ -97,8 +128,12 @@ function createYtdlpStream(videoUrl, videoQuality, installPath) {
         console.log(`${physicalFilePath} does not exist.`);
         return null;
     }
-    const commandString = `--format ${videoQuality} ${videoUrl} --output ${path_1.default.join(physicalFilePath, "output.mp4")}`;
-    const process = child_process_1.default.exec(`${physicalFilePath} ${commandString}`).stdout;
+    const cacheDirectory = (0, appdata_1.getCacheDirectory)();
+    if (cacheDirectory === null)
+        return null;
+    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
+    console.log(`Info: Starting executable with '${commandString}'.`.gray);
+    const process = child_process_1.default.exec(commandString);
     return process;
 }
 exports.createYtdlpStream = createYtdlpStream;
@@ -136,3 +171,4 @@ function initializeYtdlp() {
     return installationCheck.reason;
 }
 exports.initializeYtdlp = initializeYtdlp;
+//# sourceMappingURL=ytdlp.js.map

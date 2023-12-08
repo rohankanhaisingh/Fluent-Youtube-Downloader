@@ -16,11 +16,10 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const appdata_1 = require("../../appdata");
 const utils_1 = require("../../utils");
-const video_stream_1 = __importDefault(require("./video-stream"));
 const video_details_1 = __importDefault(require("./video-details"));
-const ffmpeg_stream_1 = __importDefault(require("./ffmpeg-stream"));
-const ytdlp_1 = require("./ytdlp");
+const ffmpeg_stream_1 = require("./ffmpeg-stream");
 const socket_1 = require("../../socket");
+const ytdlp_1 = require("./ytdlp");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
         const settings = (0, appdata_1.readSettingsFile)();
@@ -81,28 +80,25 @@ function execute(url, qualityString, requestId) {
                 state: "failed",
                 reason: "Execution directory could not be found."
             };
-        console.log("Found yt-dlp executable.");
-        const convertStream = (0, ytdlp_1.createYtdlpStream)(url, qualityString, physicalFileDestinationPath);
-        if (convertStream === null)
-            throw new Error("NullReferenceError: 'convertStream' has defined as null");
+        console.log("Info: Found yt-dlp executable.".gray);
+        const convertStream = (0, ytdlp_1.createYtdlpStream)(url, qualityString, requestId);
         return new Promise(function (resolve, reject) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const convertStream = yield (0, video_stream_1.default)(url, resolvedQuality);
-                const start = Date.now();
-                const ffmpegStream = yield (0, ffmpeg_stream_1.default)(convertStream, physicalFileDestinationPath, {
-                    onEnd: function () {
-                        const end = Date.now();
-                        const difference = end - start;
-                        console.log(difference / 1000 + "seconds");
-                        resolve({ state: "ok" });
-                    },
-                    onError: function (err) { reject(err); },
-                    onProgress: function (progress) {
-                        (0, socket_1.emit)("app/yt-dlp/convert-progress", { requestId, progress });
+            if (convertStream === null || convertStream.stdout === null)
+                return reject("NullReferenceError: 'convertStream' has defined as null");
+            (0, ytdlp_1.extractStreamOutput)(convertStream.stdout, function (event) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (event.isDone) {
+                        if (event.fileDestinations) {
+                            (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
+                            yield (0, ffmpeg_stream_1.mergeMediaFilesSync)(requestId, physicalFileDestinationPath);
+                        }
+                        return resolve({ state: "ok" });
                     }
+                    (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: event.percentage + "%", requestId });
                 });
             });
         });
     });
 }
 exports.default = execute;
+//# sourceMappingURL=pipeline.js.map

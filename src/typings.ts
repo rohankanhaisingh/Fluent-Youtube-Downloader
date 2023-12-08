@@ -71,6 +71,13 @@ export interface ConversionPipeline {
 	readonly reason?: string;
 }
 
+export interface StreamOutputExtractionEvent {
+	readonly percentage: number;
+	readonly isDone: boolean;
+	readonly downloadSpeed: number;
+	readonly fileDestinations?: string[];
+}
+
 export interface StreamConvesionEvents {
 	onError?: (err: Error, hasAborted: boolean) => void;
 	onProgress?: (progress: StreamConversionProgress) => void;

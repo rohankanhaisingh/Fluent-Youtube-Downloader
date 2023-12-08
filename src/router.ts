@@ -18,21 +18,29 @@ export function requireLogin(req: Request, res: Response, next: NextFunction) {
 
 	if (req.session && req.session.loggedIn) return next();
 
-	res.status(403).send("Not allowed");
+	console.log("Warning: (Unauthorized) - client got tried accessing the server, but got blocked.".yellow);
+	return res.status(403).send("Not allowed");
 }
 
 export function route(router: Router) {
 
 	router.get("/", function (req: Request, res: Response) {
 
-		if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers))
-			return res.status(403).send("Not allowed.");
+		if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers)) {
 
-		if (req.headers["accessibility-type"] !== "Electron")
+			console.log("Warning: Client tried accessing page but got rejected because there is no authentication token specified.".yellow);
+			return res.status(403).redirect("https://www.youtube.com/watch?v=eZe3zNR27bU&ab_channel=ClinicalGecko89");
+		}
+
+		if (req.headers["accessibility-type"] !== "Electron") {
+			console.log("Warning: Client tried accessing page but got rejected because accessibility-type is not 'Electron'.".yellow);
 			return res.status(403).send("Not allowed for non-Electron applications.");
+		}
 
-		if (req.headers["authentication-token"] !== reservedServerAuthToken)
+		if (req.headers["authentication-token"] !== reservedServerAuthToken) {
+			console.log("Warning: Client tried accessing page but got rejected because of authority reasons and stuff you know.".yellow);
 			return res.status(403).send("Bruh");
+		}
 
 		req.session.loggedIn = true;
 

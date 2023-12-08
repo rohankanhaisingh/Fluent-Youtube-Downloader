@@ -1,15 +1,16 @@
 import electron from "electron";
 import fs from "fs";
 import path from "path";
-import tar from "tar";
+import tar, { c } from "tar";
 import axios from "axios";
 import cp from "child_process";
-import stream from "stream";
+import stream, { Readable } from "stream";
 
-import { TAR_FILE_NAME, YTDLP_EXECUTABLE_FILENAME } from "../../constants";
-import { PromptResult, YTDLPInitializationFailReason, YTDLPInitializationResponse, YTDLPInstallationPromptButton } from "../../typings";
-import { sokkie, emit } from "../../socket";
+import { YTDLP_EXECUTABLE_FILENAME } from "../../constants";
+import { StreamOutputExtractionEvent, YTDLPInitializationFailReason, YTDLPInitializationResponse, YTDLPInstallationPromptButton } from "../../typings";
+import { emit } from "../../socket";
 import { mainWindow } from "../../app";
+import { getCacheDirectory } from "../../appdata";
 
 export function checkForInstallation(): YTDLPInitializationResponse {
 
@@ -120,11 +121,65 @@ export function downloadYtdlp(): Promise<boolean> {
 	});
 }
 
-export function createYtdlpStream(videoUrl: string, videoQuality: string, installPath: string): null | stream.Readable  {
+export function extractStreamOutput(stream: stream.Readable, callback: (event: StreamOutputExtractionEvent) => void) {
+
+	// yt-dlp will download two files, the audio and video files.
+	let completedDownload: number = 0;
+
+	const fileDestinations: string[] = [];
+
+	stream.on("data", function (chunk: Buffer) {
+
+		const chunkText = chunk.toString().toLowerCase();
+		
+		const words: string[] = chunkText.split(" ");
+
+		const filteredWords: string[] = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
+		
+		// Check if the first string has '[download]'
+		if (filteredWords[0].replace("\r", "") !== "[download]") return;
+
+		// If yt-dlp determines the physical location of the media files.
+		if (filteredWords[1].includes("destination")) {
+
+			console.log(`Info: Found destination: ${chunkText}`.gray);
+			fileDestinations.push(filteredWords[2].trim());
+		}
+
+		// Some other string checking yea
+		if (!filteredWords[1].includes("%") ||
+			!filteredWords[3].includes("kib") ||
+			!filteredWords[5].includes("mib/s")) return;
+
+		// Percentage of the download.
+		const percentage: number = parseFloat(filteredWords[1].replace("%", ""));
+
+		// Chunk size in KiB.
+		const chunkSize: number = parseFloat(filteredWords[3].replace("kib", ""));
+
+		// Download speed in MiB/s
+		const downloadSpeed: number = parseFloat(filteredWords[5].replace("mib/s", ""));
+
+		// If any of the download is complete.
+		if (percentage === 100)
+			completedDownload += 1;
+
+		callback({ isDone: false, percentage, downloadSpeed });
+	});
+
+	stream.on("end", function () {
+
+		console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+		return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
+	});
+}
+
+export function createYtdlpStream(videoUrl: string, videoQuality: string, requestId: string): null | cp.ChildProcess {
 
 	// Checks if the yt-dlp executable exists.
 	const executionPath: string = electron.app.getPath("exe");
 
+	// Get the directory name.
 	const directoryName: string = path.dirname(executionPath);
 
 	// Checks if the directory actually exists.
@@ -143,10 +198,17 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, instal
 		return null;
 	}
 
-	// This string contains the arguments that will be used for the command.
-	const commandString: string = `--format ${videoQuality} ${videoUrl} --output ${path.join(physicalFilePath, "output.mp4")}`;
+	const cacheDirectory: string | null = getCacheDirectory();
 
-	const process = cp.exec(`${physicalFilePath} ${commandString}`).stdout as stream.Readable;
+	if (cacheDirectory === null)
+		return null;
+
+	// This string contains the arguments that will be used for the command.
+	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
+
+	console.log(`Info: Starting executable with '${commandString}'.`.gray);
+
+	const process = cp.exec(commandString);
 
 	return process;
 }

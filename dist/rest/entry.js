@@ -11,6 +11,7 @@ const pipeline_1 = __importDefault(require("./core/pipeline"));
 const app_1 = require("../app");
 const router_1 = require("../router");
 const constants_1 = require("../constants");
+const socket_1 = require("../socket");
 function rest(router) {
     router.post("/rest/video-details", router_1.requireLogin, function (req, res) {
         const { url } = req.body;
@@ -29,8 +30,16 @@ function rest(router) {
     router.post("/rest/download", router_1.requireLogin, function (req, res) {
         const { url, requestId, quality } = req.body;
         (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
-            if (response.state == "ok")
-                return res.status(200).send("hi");
+            if (response.state == "ok") {
+                new electron_1.Notification({
+                    title: "Fluent Youtube Downloader",
+                    subtitle: "Fluent Youtube Downloader",
+                    icon: path_1.default.join(constants_1.ROOT_PATH, "icon.ico"),
+                    body: "Video has succesfully been converted.",
+                }).show();
+                (0, socket_1.emit)("app/yt-dlp/convert-complete", { requestId });
+                return res.status(200).send("Download completed");
+            }
             if (response.state === "installation-succeed") {
                 new electron_1.Notification({
                     title: "Fluent Youtube Downloader",
@@ -53,3 +62,4 @@ function rest(router) {
     });
 }
 exports.rest = rest;
+//# sourceMappingURL=entry.js.map

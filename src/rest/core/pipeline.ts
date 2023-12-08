@@ -2,19 +2,19 @@ import fs from "fs";
 import { Readable } from "stream";
 import { MoreVideoDetails } from "ytdl-core";
 import path from "path";
-import { FfmpegCommand } from "fluent-ffmpeg";
-
+import { ChildProcess } from "child_process";
 
 import { readSettingsFile } from "../../appdata";
-import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, YTDLPInitializationFailReason } from "../../typings";
+import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
 import { resolveVideoQuality } from "../../utils";
 
 import stream from "./video-stream";
 import details from "./video-details";
-import command from "./ffmpeg-stream";
+import command, { mergeMediaFilesSync } from "./ffmpeg-stream";
 
-import { createYtdlpStream, initializeYtdlp, promptInstallation } from "./ytdlp";
 import { emit } from "../../socket";
+import { createYtdlpStream, extractStreamOutput, initializeYtdlp, promptInstallation } from "./ytdlp";
+
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
 
@@ -99,39 +99,31 @@ export default async function execute(url: string, qualityString: ConvertQuality
 
 	// The code down below will only run IF
 	// yt-dlp has succesfully initialized.
+	console.log("Info: Found yt-dlp executable.".gray);
 
-	console.log("Found yt-dlp executable.");
+	// Will create a ChildProcess steam.
+	const convertStream: ChildProcess | null = createYtdlpStream(url, qualityString, requestId);
 
-	const convertStream: Readable | null = createYtdlpStream(url, qualityString, physicalFileDestinationPath);
+	return new Promise(function (resolve, reject) {
 
-	if (convertStream === null)
-		throw new Error("NullReferenceError: 'convertStream' has defined as null");
+		if (convertStream === null || convertStream.stdout === null)
+			return reject("NullReferenceError: 'convertStream' has defined as null");
 
-	// Create the youtube converting stream.
-	// const convertStream: Readable = await stream(url, resolvedQuality);
+		extractStreamOutput(convertStream.stdout, async function (event: StreamOutputExtractionEvent) {
 
-	return new Promise(async function (resolve, reject) {
+			if (event.isDone) {
 
-		const convertStream: Readable = await stream(url, resolvedQuality);
+				if (event.fileDestinations) {
+					emit("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
+					await mergeMediaFilesSync(requestId, physicalFileDestinationPath);
+				}
 
-		const start: number = Date.now();
-
-		const ffmpegStream: FfmpegCommand = await command(convertStream, physicalFileDestinationPath, {
-			onEnd: function () {
-
-				const end = Date.now();
-
-				const difference = end - start;
-
-				console.log(difference / 1000 + "seconds");
-
-				resolve({ state: "ok" })
-			},
-			onError: function (err: Error) { reject(err) },
-			onProgress: function (progress: StreamConversionProgress) {
-
-				emit("app/yt-dlp/convert-progress", { requestId, progress });
+				return resolve({ state: "ok" });
 			}
+
+			// Emit the progress of the download to the client.
+			emit("app/yt-dlp/download-video", { percentage: event.percentage + "%", requestId });
 		});
+
 	});
 }

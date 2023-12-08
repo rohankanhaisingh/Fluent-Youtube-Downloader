@@ -26,3 +26,4 @@ function initializeSystemTray(settings) {
     appIcon.setContextMenu(contextMenu);
 }
 exports.initializeSystemTray = initializeSystemTray;
+//# sourceMappingURL=tray.js.map

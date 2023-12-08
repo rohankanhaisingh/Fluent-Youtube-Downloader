@@ -1,6 +1,6 @@
 {
   "name": "fluent-youtube-downloader",
-  "version": "0.2.2",
+  "version": "0.3.2",
   "description": "Fluent-Youtube-Downloader",
   "main": "./dist/app.js",
   "author": {
@@ -23,6 +23,7 @@
     "directories": {
       "output": "build"
     },
+    "asar": false,
     "win": {
       "target": [
         {
@@ -63,6 +64,7 @@
     "@types/auto-launch": "^5.0.5",
     "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.5",
+    "@types/colors": "^1.2.1",
     "@types/cors": "^2.8.16",
     "@types/dotenv": "^8.2.0",
     "@types/ejs": "^3.1.5",
@@ -85,6 +87,7 @@
     "electron-is-dev": "^2.0.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "ffmpeg-probe": "^1.0.6",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^10.3.10",
     "node-gyp": "^10.0.1",

@@ -38,3 +38,4 @@ function disableAutoLaunch() {
     });
 }
 exports.disableAutoLaunch = disableAutoLaunch;
+//# sourceMappingURL=auto-launch.js.map

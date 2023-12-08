@@ -143,6 +143,10 @@
                             max-height: 55px;
                         }
 
+                        &__button-container {
+                            display: block;
+                        }
+
                         &__button {
                             width: auto;
                             height: auto;
@@ -163,6 +167,42 @@
 
                         &__select {
                             display: inline-block;
+                        }
+
+                        &__progression {
+                            width: 100%;
+                            height: 30px;
+                            display: none;
+
+                            &__spinner,
+                            &__text {
+                                float: left;
+                                margin-right: 10px;
+                            }
+
+                            &__spinner {
+                                width: 30px;
+                                height: 30px;
+
+                                > circle {
+                                    stroke-width: 3px;
+                                }
+                            }
+
+                            &__text {
+                                font-size: 13px;
+                                line-height: 26px;
+                            }
+                        }
+                    }
+
+                    &.downloading {
+                        .convert-results__result__info__button-container {
+                            display: none;
+                        }
+
+                        .convert-results__result__info__progression {
+                            display: block;
                         }
                     }
 
