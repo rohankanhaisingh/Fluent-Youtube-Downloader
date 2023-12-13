@@ -74,6 +74,13 @@ export function rest(router: Router) {
 
 		}).catch(function (err: Error) {
 
+			dialog.showMessageBox(mainWindow, {
+				title: "FFPMEG pipeline error",
+				type: "error",
+				message: err.message,
+				detail: err.stack
+			})
+
 			res.status(500).send(err.message);
 		});
 	});

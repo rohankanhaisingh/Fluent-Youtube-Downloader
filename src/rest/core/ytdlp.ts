@@ -131,7 +131,7 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 	stream.on("data", function (chunk: Buffer) {
 
 		const chunkText = chunk.toString().toLowerCase();
-		
+	
 		const words: string[] = chunkText.split(" ");
 
 		const filteredWords: string[] = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
@@ -153,7 +153,7 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 
 		// Percentage of the download.
 		const percentage: number = parseFloat(filteredWords[1].replace("%", ""));
-
+	
 		// Chunk size in KiB.
 		const chunkSize: number = parseFloat(filteredWords[3].replace("kib", ""));
 

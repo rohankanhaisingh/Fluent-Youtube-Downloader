@@ -52,7 +52,6 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
         background: accents.$neutralAccentDark;
         overflow: hidden;
 
-
         .content-swappable {
             height: calc($contentHeight - 80px);
             overflow-y: auto;
@@ -65,5 +64,17 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
                 animation: content-fadein .5s constants.$transitionKey;
             }
         }
+    }
+}
+
+// ====================== THEMES ======================
+
+body.theme-dark {
+    .app {
+        background-color: accents.$themedNeutralAccent;
+    }
+
+    .app-content {
+        background: accents.$themedNeutralAccentDark;
     }
 }

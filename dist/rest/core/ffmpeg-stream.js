@@ -21,6 +21,7 @@ const electron_1 = __importDefault(require("electron"));
 const constants_1 = require("../../constants");
 const abort_1 = __importDefault(require("./abort"));
 const appdata_1 = require("../../appdata");
+const app_1 = require("../../app");
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 fluent_ffmpeg_1.default.setFfprobePath(ffmpeg_1.default.path);
 function probeFfmpeg(filePath) {
@@ -57,16 +58,25 @@ function mergeMediaFilesSync(fileId, fileOutputPath) {
         const command = (0, fluent_ffmpeg_1.default)()
             .input(mediaParts[0])
             .input(mediaParts[1])
-            .outputOptions('-c:v libx264')
+            .outputOptions('-c:v copy')
             .outputOptions('-c:a aac')
+            .addOption("-speed", "8")
             .save(fileOutputPath);
         return new Promise(function (resolve, reject) {
             command.on("end", function () {
                 console.log(`Info: Done merging files!`.gray);
                 resolve(fileOutputPath);
             });
+            command.on("progress", function (progress) {
+                console.log(progress.timemark);
+            });
             command.on("error", function (err) {
                 console.log(`Error: ${err.message}`.red);
+                electron_1.default.dialog.showMessageBox(app_1.mainWindow, {
+                    title: "FFMPEG error",
+                    message: err.message + "\nRestarting the application could solve the problem.",
+                    detail: err.stack
+                });
                 reject(err.message);
             });
         });

@@ -4,9 +4,7 @@ import electron, { app } from "electron";
 
 import { APPDATA_PATH, APPDATA_DIRECTORY_NAME, APPDATA_DIRECTORY_STRUCTURE } from "./constants";
 import { mainWindow } from "./app";
-import { ApplicationSettings, ReadSettingsFail } from "./typings";
-import { Request, Response, Router } from "express";
-import { requireLogin } from "./router";
+import { ApplicationSettings, HistoryItem, ReadSettingsFail } from "./typings";
 import { setNestedValue } from "./utils";
 
 export const errorLogs: Error[] = [];
@@ -229,6 +227,12 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
 	} as ApplicationSettings;
 } 
 
+/**
+ * Updates the settings file.
+ * @param key
+ * @param value
+ * @returns
+ */
 export function updateSettingsFile(key: string, value: string | boolean) {
 
 	const pathStatus = checkPathVariables();
@@ -258,4 +262,47 @@ export function getCacheDirectory(): string | null {
 	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Cache"))) return null;
 
 	return path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Cache");
+}
+
+export function getHistory(): HistoryItem[] {
+
+	if (!APPDATA_PATH) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application"))) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json"))) return [];
+
+	const file: string = fs.readFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json"), "utf-8");
+
+	// Try to parse the file content
+	const data: HistoryItem[] = JSON.parse(file);
+
+	return data;
+}
+
+export function createHistoryItem(data: HistoryItem): null | string {
+
+	if (!APPDATA_PATH) return null;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return null;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application"))) return null;
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json"))) return null;
+
+	const filePath: string = path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json");
+
+	// Read the history file.
+	const fileContent: string = fs.readFileSync(filePath, "utf-8");
+
+	const fileData: HistoryItem[] = JSON.parse(fileContent);
+
+	fileData.push(data);
+
+	// Overwrite history file
+	fs.writeFileSync(filePath, JSON.stringify(fileData), "utf-8");
+
+	return filePath;
 }

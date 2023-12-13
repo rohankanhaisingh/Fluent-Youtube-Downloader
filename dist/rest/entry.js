@@ -57,6 +57,12 @@ function rest(router) {
             });
             res.status(500).send(response.reason);
         }).catch(function (err) {
+            electron_1.dialog.showMessageBox(app_1.mainWindow, {
+                title: "FFPMEG pipeline error",
+                type: "error",
+                message: err.message,
+                detail: err.stack
+            });
             res.status(500).send(err.message);
         });
     });

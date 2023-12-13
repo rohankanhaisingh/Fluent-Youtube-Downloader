@@ -72,3 +72,17 @@
         }
     }
 }
+
+body.theme-dark {
+    .settings-category {
+        &__setting {
+            background: accents.$themedNeutralAccent;
+
+            img {
+                -moz-filter: invert(1);
+                -webkit-filter: invert(1);
+                filter: invert(1);
+            }
+        }
+    }
+}

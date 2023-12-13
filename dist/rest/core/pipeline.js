@@ -84,14 +84,25 @@ function execute(url, qualityString, requestId) {
         const convertStream = (0, ytdlp_1.createYtdlpStream)(url, qualityString, requestId);
         return new Promise(function (resolve, reject) {
             if (convertStream === null || convertStream.stdout === null)
-                return reject("NullReferenceError: 'convertStream' has defined as null");
+                return reject(new Error("NullReferenceError: 'convertStream' has defined as null"));
             (0, ytdlp_1.extractStreamOutput)(convertStream.stdout, function (event) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (event.isDone) {
                         if (event.fileDestinations) {
                             (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
-                            yield (0, ffmpeg_stream_1.mergeMediaFilesSync)(requestId, physicalFileDestinationPath);
+                            const mergeState = yield (0, ffmpeg_stream_1.mergeMediaFilesSync)(requestId, physicalFileDestinationPath);
+                            if (mergeState === null)
+                                reject(new Error("NullReferenceError: Something went wrong during the process of merging media files."));
                         }
+                        (0, appdata_1.createHistoryItem)({
+                            fileLocation: physicalFileDestinationPath,
+                            fileName: path_1.default.basename(physicalFileDestinationPath),
+                            requestId: requestId,
+                            timestamp: Date.now(),
+                            fileSize: null,
+                            videoUrl: url,
+                            thumbnailUrl: videoDetails.thumbnails[0].url
+                        });
                         return resolve({ state: "ok" });
                     }
                     (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: event.percentage + "%", requestId });

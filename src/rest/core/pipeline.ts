@@ -4,7 +4,7 @@ import { MoreVideoDetails } from "ytdl-core";
 import path from "path";
 import { ChildProcess } from "child_process";
 
-import { readSettingsFile } from "../../appdata";
+import { createHistoryItem, readSettingsFile } from "../../appdata";
 import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
 import { resolveVideoQuality } from "../../utils";
 
@@ -107,16 +107,31 @@ export default async function execute(url: string, qualityString: ConvertQuality
 	return new Promise(function (resolve, reject) {
 
 		if (convertStream === null || convertStream.stdout === null)
-			return reject("NullReferenceError: 'convertStream' has defined as null");
+			return reject(new Error("NullReferenceError: 'convertStream' has defined as null"));
 
 		extractStreamOutput(convertStream.stdout, async function (event: StreamOutputExtractionEvent) {
 
 			if (event.isDone) {
 
 				if (event.fileDestinations) {
+
 					emit("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
-					await mergeMediaFilesSync(requestId, physicalFileDestinationPath);
+
+					const mergeState: string | null = await mergeMediaFilesSync(requestId, physicalFileDestinationPath);
+
+					if (mergeState === null)
+						reject(new Error("NullReferenceError: Something went wrong during the process of merging media files."));
 				}
+
+				createHistoryItem({
+					fileLocation: physicalFileDestinationPath,
+					fileName: path.basename(physicalFileDestinationPath),
+					requestId: requestId,
+					timestamp: Date.now(),
+					fileSize: null,
+					videoUrl: url,
+					thumbnailUrl: videoDetails.thumbnails[0].url
+				});
 
 				return resolve({ state: "ok" });
 			}

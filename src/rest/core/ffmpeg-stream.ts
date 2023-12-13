@@ -10,6 +10,7 @@ import { MAX_FILE_SIZE } from "../../constants";
 
 import abort from "./abort";
 import { getCacheDirectory } from "../../appdata";
+import { mainWindow } from "../../app";
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffmpegPath.path);
@@ -68,8 +69,9 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 	const command: FfmpegCommand = ffmpeg()
 		.input(mediaParts[0])
 		.input(mediaParts[1])
-		.outputOptions('-c:v libx264') // Video codec voor MP4
+		.outputOptions('-c:v copy') // Video codec voor MP4
 		.outputOptions('-c:a aac')     // Audio codec voor MP4
+		.addOption("-speed", "8")
 		.save(fileOutputPath);
 
 	return new Promise(function (resolve, reject) {
@@ -79,10 +81,21 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 			console.log(`Info: Done merging files!`.gray);
 			resolve(fileOutputPath);
 		});
+
+		command.on("progress", function (progress: StreamConversionProgress) {
+
+			console.log(progress.timemark);
+		});
 	
 		command.on("error", function (err: Error) {
 
 			console.log(`Error: ${err.message}`.red);
+
+			electron.dialog.showMessageBox(mainWindow, {
+				title: "FFMPEG error",
+				message: err.message + "\nRestarting the application could solve the problem.",
+				detail: err.stack
+			})
 
 			reject(err.message);
 		});

@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
+exports.createHistoryItem = exports.getHistory = exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
@@ -204,4 +204,35 @@ function getCacheDirectory() {
     return path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Cache");
 }
 exports.getCacheDirectory = getCacheDirectory;
+function getHistory() {
+    if (!constants_1.APPDATA_PATH)
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application")))
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json")))
+        return [];
+    const file = fs_1.default.readFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json"), "utf-8");
+    const data = JSON.parse(file);
+    return data;
+}
+exports.getHistory = getHistory;
+function createHistoryItem(data) {
+    if (!constants_1.APPDATA_PATH)
+        return null;
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
+        return null;
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application")))
+        return null;
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json")))
+        return null;
+    const filePath = path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json");
+    const fileContent = fs_1.default.readFileSync(filePath, "utf-8");
+    const fileData = JSON.parse(fileContent);
+    fileData.push(data);
+    fs_1.default.writeFileSync(filePath, JSON.stringify(fileData), "utf-8");
+    return filePath;
+}
+exports.createHistoryItem = createHistoryItem;
 //# sourceMappingURL=appdata.js.map

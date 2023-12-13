@@ -1,6 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
+exports.deleteFile = exports.openFile = exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
+const fs_1 = __importDefault(require("fs"));
+const child_process_1 = __importDefault(require("child_process"));
 function getNestedValue(obj, propString) {
     const props = propString.split('.');
     let currentObj = obj;
@@ -46,4 +51,22 @@ function resolveVideoQuality(givenQualityString) {
     }
 }
 exports.resolveVideoQuality = resolveVideoQuality;
+function openFile(filePath) {
+    var _a, _b;
+    const process = child_process_1.default.exec(`"${filePath}"`);
+    (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on("data", function (chunk) {
+        console.log(chunk.toString());
+    });
+    (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on("data", function (chunk) {
+        console.log(chunk.toString());
+    });
+}
+exports.openFile = openFile;
+function deleteFile(filePath) {
+    if (!fs_1.default.existsSync(filePath))
+        throw new Error(`Could not delete ${filePath} since it does not exist.`);
+    fs_1.default.unlinkSync(filePath);
+    return true;
+}
+exports.deleteFile = deleteFile;
 //# sourceMappingURL=utils.js.map

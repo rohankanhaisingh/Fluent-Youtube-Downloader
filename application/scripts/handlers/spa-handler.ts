@@ -1,4 +1,8 @@
-import { cache } from "ejs";
+declare global {
+	interface Window {
+		requestPage: (pageUrl: string) => void;
+	}
+}
 
 const renderContainer: HTMLDivElement | null = document.querySelector(".content-swappable");
 
@@ -172,7 +176,11 @@ export async function requestPage(pageUrl: string) {
 			response.text()
 				.then(function (responseText: string) {
 
+					// if (window.history)
+						// window.history.pushState({ switched: true }, location.href, pageUrl);
+
 					const formattedDocument: Document = formatNewDocument(responseText);
+
 					return swapPageContents(formattedDocument, response);
 				}).catch(function (err) {
 
@@ -184,3 +192,5 @@ export async function requestPage(pageUrl: string) {
 			console.log(err.message);
 		});
 }
+
+window.requestPage = requestPage;

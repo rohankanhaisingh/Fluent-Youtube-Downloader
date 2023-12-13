@@ -1,0 +1,87 @@
+@use "../utilities/_accents" as accents;
+@use "../utilities/_constants" as constants;
+@use "../utilities/_mixins" as mixins;
+
+.history-container {
+    width: 100%;
+    height: auto;
+    margin: 60px 0;
+    display: grid;
+    grid-auto-rows: auto;
+    gap: 20px;
+}
+
+.history-item {
+    width: calc(100% - 20px);
+    height: auto;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 270px auto 280px;
+    grid-gap: 20px;
+    gap: 20px;
+    border-radius: 5px;
+    /*border-left: 5px solid #d6cfe5;*/
+    background: #f7f3ff;
+
+    &__thumbnail {
+        width: auto;
+        height: auto;
+
+        img {
+            @include mixins.StaticIcon;
+            object-fit: cover;
+        }
+    }
+
+    &__filename {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    &__timestamp {
+        font-size: 12px;
+    }
+
+    &__hl {
+        width: 100px;
+        height: 2px;
+        margin: 20px 0;
+        background: #ded7ef;
+        border-radius: 5px;
+    }
+
+    &__detail {
+        font-size: 12px;
+    }
+
+    &__buttons {
+        display: grid;
+        align-content: center;
+        justify-content: center;
+        grid-auto-rows: auto;
+        gap: 5px;
+
+        &__button {
+            width: auto;
+            height: auto;
+            background: #fff;
+            border: 1px solid rgba(0,0,0,.08);
+            border-top: 1px solid rgba(0,0,0,.02);
+            display: inline-block;
+            padding: 5px 40px;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 20px;
+            user-select: none;
+            text-align: center;
+
+            img {
+                @include mixins.StaticIcon;
+            }
+
+            &:hover {
+                background: accents.$neutralButtonHover;
+            }
+        }
+    }
+}

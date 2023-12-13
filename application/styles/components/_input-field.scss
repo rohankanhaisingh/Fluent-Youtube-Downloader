@@ -1,4 +1,5 @@
 @use "../utilities/_constants" as constants;
+@use "../utilities/_accents" as accents;
 
 $inputFieldWidth: 140px;
 $inputFieldHeight: 20px;
@@ -71,6 +72,23 @@ $inputBackgroundColor: #ffffff;
             &::after {
                 display: block;
             }
+        }
+    }
+}
+
+body.theme-dark {
+    .styled-input-field {
+        &__input {
+            background: #383949;
+            border-top: 1px solid #4b4c5f;
+            border-right: 1px solid #4b4c5f;
+            border-left: 1px solid #4b4c5f;
+            border-bottom: 2px solid #353645;
+            color: accents.$themedNeutralTextColor;
+        }
+
+        &::after {
+            background: #aeb0c7;
         }
     }
 }

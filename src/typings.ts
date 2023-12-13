@@ -84,3 +84,13 @@ export interface StreamConvesionEvents {
 	onEnd?: () => void;
 	onAbort?: (reason: string, hasAborted: boolean) => void;
 }
+
+export interface HistoryItem {
+	readonly videoUrl: string | null;
+	readonly requestId: string | null;
+	readonly fileName: string | null;
+	readonly fileSize: number | null;
+	readonly fileLocation: string | null;
+	readonly timestamp: number | null;
+	readonly thumbnailUrl: string | null;
+}

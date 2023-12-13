@@ -202,6 +202,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="application\scripts\controllers\convert.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\download.ts" />
+    <TypeScriptCompile Include="application\scripts\controllers\history.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\home.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\dom-generator.ts" />

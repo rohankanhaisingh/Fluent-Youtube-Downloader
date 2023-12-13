@@ -1,3 +1,6 @@
+import fs from "fs";
+import cp from "child_process";
+
 import { ConvertQuality } from "./typings";
 
 export function getNestedValue(obj: any, propString: string) {
@@ -51,4 +54,29 @@ export function resolveVideoQuality(givenQualityString: ConvertQuality) {
         default:
             return givenQualityString;
     }
+}
+
+export function openFile(filePath: string) {
+
+    const process = cp.exec(`"${filePath}"`);
+
+    process.stdout?.on("data", function (chunk: Buffer) {
+
+		console.log(chunk.toString());
+    });
+
+    process.stderr?.on("data", function (chunk: Buffer) {
+
+	    console.log(chunk.toString());
+    });
+}
+
+export function deleteFile(filePath: string) {
+
+    if (!fs.existsSync(filePath))
+        throw new Error(`Could not delete ${filePath} since it does not exist.`);
+
+    fs.unlinkSync(filePath);
+
+    return true;
 }

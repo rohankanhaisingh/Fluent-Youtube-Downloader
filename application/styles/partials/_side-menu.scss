@@ -2,6 +2,7 @@
 @use "../utilities/_accents" as accents;
 @use "../utilities/_mixins" as mixins;
 
+
 .app-side-menu {
     width: constants.$sideMenuExpandedWidth;
     height: constants.$sideMenuHeight;
@@ -43,7 +44,7 @@
     &__seperator {
         width: 60%;
         height: 2px;
-        background: #ded7ef;
+        background: rgb(0 0 0 / 20%);
         border-radius: 5px;
         margin: 20px auto;
     }
@@ -148,6 +149,34 @@
             -o-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
             -webkit-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
             transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
+        }
+    }
+}
+
+body.theme-dark {
+    .app-side-menu {
+        background-color: accents.$themedNeutralAccent;
+
+        .side-menu {
+            &__button {
+                img {
+                    -moz-filter: invert(1);
+                    -webkit-filter: invert(1);
+                    filter: invert(1);
+                }
+
+                &.active {
+                    background: accents.$themedNeutralAccentDark;
+                }
+
+                &:not(.active):hover {
+                    background: accents.$themedNeutralButtonHover;
+                }
+
+                &::before {
+                    background: accents.$themedNeutralButtonActive;
+                }
+            }
         }
     }
 }

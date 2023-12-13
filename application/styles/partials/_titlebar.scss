@@ -49,3 +49,9 @@
         }
     }
 }
+
+body.theme-dark {
+    .app-titlebar {
+        background-color: accents.$themedNeutralAccent;
+    }
+}

@@ -44,3 +44,18 @@ $toggleThumbSize: 10px;
         }
     }
 }
+
+body.theme-dark {
+    .styled-toggle {
+        border-color: accents.$themedNeutralToggleBorder;
+
+        &__thumb {
+            background: accents.$themedTeutralToggleThumb;
+        }
+
+        &.active {
+            background: accents.$themedTeutralToggleActive;
+            border-color: accents.$themedTeutralToggleActive;
+        }
+    }
+}
