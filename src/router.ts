@@ -5,7 +5,7 @@ import ejs from "ejs";
 import path from "path";
 
 import { VIEWS_PATH } from "./constants";
-import { handleControlEvents } from "./app";
+import { darkMode, handleControlEvents } from "./app";
 import { reservedServerAuthToken } from "./server";
 
 declare module 'express-session' {
@@ -44,7 +44,7 @@ export function route(router: Router) {
 
 		req.session.loggedIn = true;
 
-		res.render("index");
+		res.render("index", { darkMode });
 	});
 
 	router.get("/get-authtoken", requireLogin, function (req: Request, res: Response) {

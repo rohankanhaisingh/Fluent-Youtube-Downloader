@@ -169,3 +169,34 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
         background: accents.$neutralButtonHover;
     }
 }
+
+body.theme-dark {
+
+    .styled-select {
+        background: accents.$themedNeutralAccent;
+        border: 1px solid rgba(255,255,255,.01);
+        border-top: 1px solid rgba(255,255,255,.04);
+
+        &:hover {
+            background: #717389;
+        }
+
+        > .dropdown {
+            background: #717389;
+
+            > .option {
+                &.active {
+                    background: #8f91a5;
+                }
+
+                &:not(.active):hover {
+                    background: #8f91a5;
+                }
+
+                &::before {
+                    background: #e5e1ef;
+                }
+            }
+        }
+    }
+}

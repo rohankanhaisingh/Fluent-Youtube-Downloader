@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.restartApplication = exports.handleControlEvents = exports.mainWindow = void 0;
+exports.restartApplication = exports.handleControlEvents = exports.darkMode = exports.mainWindow = void 0;
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
@@ -37,6 +37,7 @@ electron_1.app.once("ready", function () {
             return electron_1.app.exit();
         }
         const settingsCasting = applicationSettings;
+        exports.darkMode = settingsCasting.window.display.darkMode;
         exports.mainWindow = new electron_1.BrowserWindow({
             width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
             height: settingsCasting.window.resolution.height > 800 ? settingsCasting.window.resolution.height : 800,
@@ -48,11 +49,11 @@ electron_1.app.once("ready", function () {
             maximizable: true,
             fullscreenable: true,
             center: true,
-            backgroundColor: "#f7f5fc",
+            backgroundColor: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
             titleBarStyle: "hidden",
             titleBarOverlay: {
-                color: "#f7f5fc",
-                symbolColor: "#000",
+                color: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
+                symbolColor: settingsCasting.window.display.darkMode ? "#fff" : "#000",
             },
             icon: path_1.default.join(constants_1.ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
             webPreferences: {

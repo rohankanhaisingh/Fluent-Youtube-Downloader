@@ -440,3 +440,32 @@
         }
     }
 }
+
+body.theme-dark {
+
+    .convert__left .grid__input::after {
+        color: accents.$themedNeutralTextColor;
+    }
+
+    .convert__left__content .convert-results__result__info__button {
+        background: accents.$themedNeutralAccent;
+        border: 1px solid rgba(255, 255, 255, 0.01);
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .convert__left__content .convert-results__result::before {
+        background: accents.$themedNeutralAccentDark;
+    }
+
+    .convert__left__content .convert-results__result.skeleton .convert-results__result__thumbnail, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__title, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__author, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__description, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__button {
+        background-color: #434c5f;
+        -moz-animation: none;
+        -o-animation: none;
+        -webkit-animation: none;
+        animation: none;
+    }
+
+    .convert__right, .convert__right .video-info__thumbnail__author, .convert__left .grid {
+        background: accents.$themedNeutralAccent;
+    }
+}

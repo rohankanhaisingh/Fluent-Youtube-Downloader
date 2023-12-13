@@ -23,9 +23,14 @@ export interface ReadSettingsFail {
 	readonly status: ApplicationSettingsStatus;
 }
 
+export interface ApplicationDisplaySettings {
+	readonly theme: ApplicationWindowTheme;
+	readonly darkMode: boolean;
+}
+
 export interface ApplicationWindowSettings {
 	readonly resolution: Resolution;
-	readonly theme: ApplicationWindowTheme;
+	readonly display: ApplicationDisplaySettings;
 }
 
 export interface ApplicationPathSettings {

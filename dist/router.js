@@ -41,7 +41,7 @@ function route(router) {
             return res.status(403).send("Bruh");
         }
         req.session.loggedIn = true;
-        res.render("index");
+        res.render("index", { darkMode: app_1.darkMode });
     });
     router.get("/get-authtoken", requireLogin, function (req, res) {
         res.status(200).send(server_1.reservedServerAuthToken);

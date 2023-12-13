@@ -85,3 +85,15 @@
         }
     }
 }
+
+body.theme-dark {
+    .history-item {
+        background: none;
+    }
+
+    .history-item__buttons__button {
+        background: accents.$themedNeutralAccent;
+        border: 1px solid rgba(255, 255, 255, 0.01);
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+}

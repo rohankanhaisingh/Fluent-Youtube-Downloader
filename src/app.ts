@@ -12,6 +12,8 @@ import { initializeAutoLaunch } from "./auto-launch";
 import { initializeSystemTray } from "./tray";
 
 export let mainWindow: BrowserWindow;
+export let darkMode: boolean;
+
 
 colors.enable();
 console.log("Info: Starting application...".gray);
@@ -40,6 +42,8 @@ app.once("ready", async function () {
 	// Cast the variable cuz bruh idfk.
 	const settingsCasting = applicationSettings as ApplicationSettings;
 
+	darkMode = settingsCasting.window.display.darkMode;
+
 	mainWindow = new BrowserWindow({
 		width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
 		height: settingsCasting.window.resolution.height > 800 ? settingsCasting.window.resolution.height : 800,
@@ -51,11 +55,11 @@ app.once("ready", async function () {
 		maximizable: true,
 		fullscreenable: true,
 		center: true,
-		backgroundColor: "#f7f5fc",
+		backgroundColor: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
 		titleBarStyle: "hidden",
 		titleBarOverlay: {
-			color: "#f7f5fc",
-			symbolColor:"#000",
+			color: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
+			symbolColor: settingsCasting.window.display.darkMode ? "#fff" : "#000",
 		},
 		icon: path.join(ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
 		webPreferences: {
