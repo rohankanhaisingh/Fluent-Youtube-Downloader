@@ -46,35 +46,60 @@ export function checkMediaParts(fileName: string): string[] {
 	return matchedFiles;
 }
 
+export function moveMediaFile(mediaPartPath: string, fileOutputPath: string) {
+
+	if (!fs.existsSync(mediaPartPath))
+		return new Error("Could not move media part since given media part does not exist. Path: " + mediaPartPath);
+
+	if (fs.existsSync(fileOutputPath))
+		return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
+
+	fs.renameSync(mediaPartPath, fileOutputPath);
+
+	return true;
+}
+
 export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string): Promise<string | null> {
 
-	const mediaParts: string[] = checkMediaParts(fileId);
-
-	if (mediaParts.length !== 2) {
-
-		console.log(`Error: Could not find media files to merge.`.red);
-		return null;
-	}
-
-	//// Probe media files before attempting to merge.
-	//const probe1 = await probeFfmpeg(mediaFile1);
-	//const probe2 = await probeFfmpeg(mediaFile2);
-
-	// Alright, fuck probing it then lmaooo
-	// this shit doesn't even work because 'show_streams' is
-	// an unrecognized option...
-
-	console.log(`Info: Merging files together...`);
-
-	const command: FfmpegCommand = ffmpeg()
-		.input(mediaParts[0])
-		.input(mediaParts[1])
-		.outputOptions('-c:v copy') // Video codec voor MP4
-		.outputOptions('-c:a aac')     // Audio codec voor MP4
-		.addOption("-speed", "8")
-		.save(fileOutputPath);
-
 	return new Promise(function (resolve, reject) {
+
+		const mediaParts: string[] = checkMediaParts(fileId);
+
+		// Some video's might come with just one file.
+		// The file must be the complete file.
+		if (mediaParts.length === 1) {
+
+			const moveState: Error | boolean = moveMediaFile(mediaParts[0], fileOutputPath);
+
+			if (moveState)
+				return resolve(fileOutputPath);
+
+			return reject(moveState);
+		}
+
+		if (mediaParts.length !== 2) {
+
+			console.log(`Error: Could not find media files to merge.`.red);
+			return reject(new Error("Could not find media files to merge."));
+		}
+
+		//// Probe media files before attempting to merge.
+		//const probe1 = await probeFfmpeg(mediaFile1);
+		//const probe2 = await probeFfmpeg(mediaFile2);
+
+		// Alright, fuck probing it then lmaooo
+		// this shit doesn't even work because 'show_streams' is
+		// an unrecognized option...
+
+		console.log(`Info: Merging files together...`);
+
+		const command: FfmpegCommand = ffmpeg()
+			.input(mediaParts[0])
+			.input(mediaParts[1])
+			.outputOptions('-c:v copy') // Video codec voor MP4
+			.outputOptions('-c:a aac')     // Audio codec voor MP4
+			.addOption("-speed", "8")
+			.save(fileOutputPath);
 
 		command.on("end", function () {
 
@@ -86,7 +111,7 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 
 			console.log(progress.timemark);
 		});
-	
+
 		command.on("error", function (err: Error) {
 
 			console.log(`Error: ${err.message}`.red);
