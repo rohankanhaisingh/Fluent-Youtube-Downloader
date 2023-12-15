@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeMediaFilesSync = exports.checkMediaParts = exports.probeFfmpeg = void 0;
+exports.mergeMediaFilesSync = exports.moveMediaFile = exports.checkMediaParts = exports.probeFfmpeg = void 0;
 const fs_1 = __importDefault(require("fs"));
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
 const ffmpeg_1 = __importDefault(require("@ffmpeg-installer/ffmpeg"));
@@ -47,22 +47,37 @@ function checkMediaParts(fileName) {
     return matchedFiles;
 }
 exports.checkMediaParts = checkMediaParts;
+function moveMediaFile(mediaPartPath, fileOutputPath) {
+    if (!fs_1.default.existsSync(mediaPartPath))
+        return new Error("Could not move media part since given media part does not exist. Path: " + mediaPartPath);
+    if (fs_1.default.existsSync(fileOutputPath))
+        return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
+    fs_1.default.renameSync(mediaPartPath, fileOutputPath);
+    return true;
+}
+exports.moveMediaFile = moveMediaFile;
 function mergeMediaFilesSync(fileId, fileOutputPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const mediaParts = checkMediaParts(fileId);
-        if (mediaParts.length !== 2) {
-            console.log(`Error: Could not find media files to merge.`.red);
-            return null;
-        }
-        console.log(`Info: Merging files together...`);
-        const command = (0, fluent_ffmpeg_1.default)()
-            .input(mediaParts[0])
-            .input(mediaParts[1])
-            .outputOptions('-c:v copy')
-            .outputOptions('-c:a aac')
-            .addOption("-speed", "8")
-            .save(fileOutputPath);
         return new Promise(function (resolve, reject) {
+            const mediaParts = checkMediaParts(fileId);
+            if (mediaParts.length === 1) {
+                const moveState = moveMediaFile(mediaParts[0], fileOutputPath);
+                if (moveState)
+                    return resolve(fileOutputPath);
+                return reject(moveState);
+            }
+            if (mediaParts.length !== 2) {
+                console.log(`Error: Could not find media files to merge.`.red);
+                return reject(new Error("Could not find media files to merge."));
+            }
+            console.log(`Info: Merging files together...`);
+            const command = (0, fluent_ffmpeg_1.default)()
+                .input(mediaParts[0])
+                .input(mediaParts[1])
+                .outputOptions('-c:v copy')
+                .outputOptions('-c:a aac')
+                .addOption("-speed", "8")
+                .save(fileOutputPath);
             command.on("end", function () {
                 console.log(`Info: Done merging files!`.gray);
                 resolve(fileOutputPath);
