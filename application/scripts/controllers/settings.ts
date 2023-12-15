@@ -57,6 +57,8 @@ function handleDomInputs() {
 
 	const settingsDomElements: NodeListOf<HTMLDivElement> = document.querySelectorAll(".application-setting");
 
+	const downloadPathField = document.getElementById("path.downloadPath");
+
 	settingsDomElements.forEach(function (domElement: HTMLDivElement) {
 
 		if (domElement.classList.contains("styled-toggle")) {
@@ -85,6 +87,22 @@ function handleDomInputs() {
 				postSettingChangeData(settingName, input.value === "" ? null : input.value);
 			});
 		}
+	});
+
+	downloadPathField?.addEventListener("click", function () {
+
+		get("/appdata/select-download-path").then(function (data: string | null) {
+
+			if (data === null) return;
+
+			const inputField: HTMLInputElement | null = downloadPathField.querySelector("input");
+
+			if (inputField === null) return;
+
+			inputField.value = data;
+
+			postSettingChangeData("path.downloadPath", data);
+		});
 	});
 }
 

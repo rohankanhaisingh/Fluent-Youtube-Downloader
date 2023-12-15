@@ -3,8 +3,11 @@
  */
 
 import { Socket, Server } from "socket.io";
+import { dialog } from "electron";
+
 import { getHistory, readSettingsFile, updateSettingsFile } from "./appdata";
 import { deleteFile, openFile } from "./utils";
+import { mainWindow } from "./app";
 
 // Can only assign one socket.
 let connectedSocket: Socket | null = null;
@@ -36,6 +39,15 @@ export function sokkie(io: Server) {
 			const history = getHistory();
 
 			socket.emit("response-/appdata/history", history);
+		});
+
+		socket.on("/appdata/select-download-path", function () {
+
+			dialog.showOpenDialog(mainWindow, {
+				properties: ["openDirectory"]
+			}).then(function (returnValue) {
+				socket.emit("response-/appdata/select-download-path", returnValue.filePaths[0]);
+			});
 		});
 
 		socket.on("app/open-file", function (data) {
