@@ -1,4 +1,3 @@
-@use "../utilities/_accents" as accents;
 @use "../utilities/_constants" as constants;
 @use "../utilities/_mixins" as mixins;
 
@@ -87,7 +86,7 @@
                         width: 20px;
                         height: 100%;
                         /*background: linear-gradient(to right, transparent, accents.$neutralAccentDark, accents.$neutralAccentDark);*/
-                        background: accents.$neutralAccentDark;
+                        background: var(--primary-background-color);
                         position: absolute;
                         right: -20px;
                         top: 0;
@@ -150,9 +149,9 @@
                         &__button {
                             width: auto;
                             height: auto;
-                            background: #fff;
-                            border: 1px solid rgba(0,0,0,.08);
-                            border-top: 1px solid rgba(0,0,0,.02);
+                            background: padding-box linear-gradient(var(--control-background-color), var(--control-background-color)), border-box linear-gradient(var(--control-primary-border-color), var(--control-secondary-border-color));
+                            border: 1px solid transparent;
+                            box-sizing: border-box;
                             display: inline-block;
                             padding: 5px 40px;
                             border-radius: 5px;
@@ -160,8 +159,9 @@
                             line-height: 20px;
                             user-select: none;
 
-                            &:hover {
-                                background: accents.$neutralButtonHover;
+                            &:not(:active):hover {
+                                background: padding-box linear-gradient(var(--control-background-color-hover), var(--control-background-color-hover)), border-box linear-gradient(var(--control-primary-border-color-hover), var(--control-secondary-border-color-hover));
+                                color: var(--control-secondary-text-color);
                             }
                         }
 
@@ -213,8 +213,8 @@
                         .convert-results__result__info__author,
                         .convert-results__result__info__description,
                         .convert-results__result__info__button {
-                            background: linear-gradient(90deg, rgba(255, 255, 255, 0), #e1dbed, rgba(255, 255, 255, 0));
-                            background-color: #dcd6e7;
+                            background: linear-gradient(90deg, rgba(255, 255, 255, 0), var(--skeleton-blink-color), rgba(255, 255, 255, 0));
+                            background-color: var(--skeleton-background-color);
                             background-size: 40px 100%;
                             background-repeat: no-repeat;
                             background-position: left -40px top 0;
@@ -256,7 +256,7 @@
 
         .grid {
             border-radius: 5px;
-            background: accents.$neutralAccentDarker;
+            background: var(--secondary-background-color);
             display: grid;
             grid-template-columns: auto 60px;
 
@@ -278,10 +278,6 @@
                     position: absolute;
                     margin: auto;
                     z-index: 1;
-                    -moz-transition: opacity constants.$transitionDuration constants.$transitionKey;
-                    -o-transition: opacity constants.$transitionDuration constants.$transitionKey;
-                    -webkit-transition: opacity constants.$transitionDuration constants.$transitionKey;
-                    transition: opacity constants.$transitionDuration constants.$transitionKey;
                 }
 
                 &::before {
@@ -299,7 +295,7 @@
                     left: 50px;
                     font-size: 14px;
                     top: 1px;
-                    color: #b4a8c9;
+                    color: rgb(0, 0, 0, .4);
                 }
 
                 &:focus, &:not(:empty) {
@@ -340,7 +336,7 @@
 
     &__right {
         padding: 20px;
-        background: accents.$neutralAccentDarker;
+        background: var(--secondary-background-color);
         border-radius: 5px;
 
         &__scroller {
@@ -374,7 +370,7 @@
                     bottom: 10px;
                     z-index: 1;
                     border-radius: 5px;
-                    background: accents.$neutralAccentDarker;
+                    background: var(--secondary-background-color);
 
                     &__image {
                         width: 30px;
@@ -409,7 +405,7 @@
             &__hl {
                 width: 75px;
                 height: 3px;
-                background: #d2cbe5;
+                background: var(--accent-color);
                 border-radius: 5px;
                 margin: 20px auto;
             }
@@ -438,34 +434,5 @@
                 font-size: 12px;
             }
         }
-    }
-}
-
-body.theme-dark {
-
-    .convert__left .grid__input::after {
-        color: accents.$themedNeutralTextColor;
-    }
-
-    .convert__left__content .convert-results__result__info__button {
-        background: accents.$themedNeutralAccent;
-        border: 1px solid rgba(255, 255, 255, 0.01);
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .convert__left__content .convert-results__result::before {
-        background: accents.$themedNeutralAccentDark;
-    }
-
-    .convert__left__content .convert-results__result.skeleton .convert-results__result__thumbnail, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__title, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__author, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__description, .convert__left__content .convert-results__result.skeleton .convert-results__result__info__button {
-        background-color: #434c5f;
-        -moz-animation: none;
-        -o-animation: none;
-        -webkit-animation: none;
-        animation: none;
-    }
-
-    .convert__right, .convert__right .video-info__thumbnail__author, .convert__left .grid {
-        background: accents.$themedNeutralAccent;
     }
 }

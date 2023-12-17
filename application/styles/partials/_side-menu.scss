@@ -6,7 +6,7 @@
 .app-side-menu {
     width: constants.$sideMenuExpandedWidth;
     height: constants.$sideMenuHeight;
-    background-color: accents.$neutralAccent;
+    background-color: var(--secondary-background-color);
     padding: 0 constants.$sideMenuHorizontalPadding;
     overflow-x: hidden;
     -moz-transition: width constants.$transitionDuration constants.$transitionKey;
@@ -18,7 +18,7 @@
         width: constants.$sideMenuCollapsedWidth;
 
         .side-menu__button.active {
-            background: accents.$neutralAccentDark;
+            background: var(--primary-background-color);
         }
 
         .side-menu__button__text {
@@ -44,7 +44,7 @@
     &__seperator {
         width: 60%;
         height: 2px;
-        background: rgb(0 0 0 / 20%);
+        background: var(--accent-color);
         border-radius: 5px;
         margin: 20px auto;
     }
@@ -52,6 +52,10 @@
     &__disclaimer {
         font-size: 10px;
         width: constants.$sideMenuExpandedWidth;
+
+        a {
+            color: var(--accent-color);
+        }
     }
 
     &__button {
@@ -97,7 +101,7 @@
         }
 
         &.active {
-            background: accents.$neutralButtonActive;
+            background: var(--control-background-color-active);
 
             &::before {
                 height: 60%;
@@ -106,7 +110,7 @@
         }
 
         &:not(.active):hover {
-            background: accents.$neutralButtonHover;
+            background: var(--control-primary-border-color-hover);
 
             &::before {
                 height: 30%;
@@ -139,7 +143,7 @@
             content: "";
             margin: auto;
             border-radius: 5px;
-            background: accents.$neutralButtonNipple;
+            background: var(--accent-color);
             z-index: 1;
             -moz-transition: height .3s, width .3s ease;
             -o-transition: height .3s, width .3s ease;
@@ -149,34 +153,6 @@
             -o-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
             -webkit-transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
             transition: height constants.$transitionDuration, width constants.$transitionDuration constants.$transitionKey;
-        }
-    }
-}
-
-body.theme-dark {
-    .app-side-menu {
-        background-color: accents.$themedNeutralAccent;
-
-        .side-menu {
-            &__button {
-                img {
-                    -moz-filter: invert(1);
-                    -webkit-filter: invert(1);
-                    filter: invert(1);
-                }
-
-                &.active {
-                    background: accents.$themedNeutralAccentDark;
-                }
-
-                &:not(.active):hover {
-                    background: accents.$themedNeutralButtonHover;
-                }
-
-                &::before {
-                    background: accents.$themedNeutralButtonActive;
-                }
-            }
         }
     }
 }

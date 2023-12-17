@@ -1,6 +1,3 @@
-$spinnerStrokeColor: #8a75b5;
-$spinnerStrokeWidth: 6px;
-
 .spinner {
     box-sizing: border-box;
     width: 40px;
@@ -10,11 +7,11 @@ $spinnerStrokeWidth: 6px;
 
     > circle {
         fill: none;
-        stroke: $spinnerStrokeColor;
+        stroke: var(--accent-color);
         cx: 50%;
         cy: 50%;
         r: 50%;
-        stroke-width: $spinnerStrokeWidth;
+        stroke-width: var(--spinner-stoke-width);
         stroke-linecap: round;
         transform-origin: center;
     }

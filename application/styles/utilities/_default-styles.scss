@@ -1,5 +1,4 @@
 @use "../utilities/_constants" as constants;
-@use "../utilities/_accents" as accents;
 
 $fadeinStartTransform: translateY(30px);
 $fadeinStartOpacity: 0;
@@ -47,8 +46,8 @@ html, body {
     margin: 0;
     padding: 0;
     outline: none;
-    font-family: var(--default-font);
-    color: accents.$neutralTextColor;
+    font-family: var(--default-font-family);
+    color: var(--primary-text-color);
 }
 
 div.app {
@@ -183,8 +182,4 @@ div.container {
         margin: 20px 0;
         display: block;
     }
-}
-
-body.theme-dark {
-    color: accents.$themedNeutralTextColor;
 }

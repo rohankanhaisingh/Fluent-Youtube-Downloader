@@ -33,6 +33,8 @@ for (let folder of ENTRY_SCRIPT_FILES) {
     }
 }
 
+console.log(entryPoints);
+
 module.exports = {
     mode: "production",
     watch: true,

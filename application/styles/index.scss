@@ -1,5 +1,4 @@
 @use "./utilities/_constants" as constants;
-@use "./utilities/_accents" as accents;
 @use "./utilities/_mixins" as mixins;
 
 $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVerticalPadding * 2));
@@ -24,7 +23,7 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
 }
 
 .app {
-    background-color: accents.$neutralAccent;
+    background-color: var(--secondary-background-color);
 
     .app-grid-seperator {
         width: 100vw;
@@ -49,7 +48,7 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
         height: calc(100% - 80px);
         padding: 40px;
         border-top-left-radius: 15px;
-        background: accents.$neutralAccentDark;
+        background: var(--primary-background-color);
         overflow: hidden;
 
         .content-swappable {
@@ -64,17 +63,5 @@ $contentHeight: calc(100vh - constants.$titleBarHeight - (constants.$titleBarVer
                 animation: content-fadein .5s constants.$transitionKey;
             }
         }
-    }
-}
-
-// ====================== THEMES ======================
-
-body.theme-dark {
-    .app {
-        background-color: accents.$themedNeutralAccent;
-    }
-
-    .app-content {
-        background: accents.$themedNeutralAccentDark;
     }
 }

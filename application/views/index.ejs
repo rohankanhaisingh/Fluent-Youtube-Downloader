@@ -1,14 +1,14 @@
+<%
+    const darkModeClassString = darkMode ? "app-body electron-body js-enabled theme-dark" : "app-body electron-body js-enabled";
+%>
+
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" dir="ltr" class="fluent-youtube-downloader js-enabled will-update-frequently" data-theme="auto">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" dir="ltr" class="fluent-youtube-downloader js-enabled will-update-frequently" theme="<%- darkMode ? 'dark' : 'white' -%>">
 <head>
     <%- include("components/_head", {title: "Youtube Converter - Rohan Kanhaisingh", description: "Convert Youtube video's"}) -%>
     <link href="/static/styles/index.css" rel="stylesheet" />
     <title>Fluent Youtube Downloader</title>
 </head>
-
-<%
-    const darkModeClassString = darkMode ? "app-body electron-body js-enabled theme-dark" : "app-body electron-body js-enabled";
-%>
 
 <body class="<%- darkModeClassString -%>">
     <div class="app spa-app electron-app side-menu-collapsed">

@@ -1,31 +1,34 @@
-$neutralAccent: #f7f5fc;
-$neutralAccentDark: #f3eefd;
-$neutralAccentDarker: #e2dbef;
+/*
+ 
+    This file contains the standard design
+    variables that will be used by the entire
+    application. Do NOT CHANGE any of these variables.
 
-$neutralTextColor: #000;
+    If you'd like to create or change a theme, head over
+    to the 'themes.scss' file.
+*/
 
-$neutralToggleThumb: #645a7d;
-$neutralToggleBorder: #aaa4b9;
-$neutralToggleActive: #9d93b5;
+$accentColor: #7766a0;
 
-$neutralButtonNipple: #7969a1;
-$neutralButtonActive: #e5e1ef;
-$neutralButtonHover: #f5f2fd;
+// Background colors.
+$primaryBackgroundColor: #f9f9f9;
+$secondaryBackgroundColor: #eaeaea;
+$thirdBackgroundColor: #fff;
 
-$neutralCardBackground: #f0e8ff;
+// Text colors.
+$primaryTextColor: #000;
+$secondaryTextColor: #000;
 
-// Colors for the dark theme
+// Control colors
+$controlBackgroundColor: #fff;
+$controlPrimaryBorderColor: #efefef;
+$controlSecondaryBorderColor: #d6d6d6;
+$controlPrimaryTextColor: inherit;
+$controlSecondaryTextColor: inherit;
+$controlBackgroundColorHover: #f7f7f7;
+$controlPrimaryBorderColorHover: #e5e5e5;
+$controlSecondaryBorderColorHover: #cecece;
+$controlBackgroundColorActive: #e5e5e5;
 
-$themedNeutralAccent: #3d3e51;
-$themedNeutralAccentDark: #323949;
-$themedNeutralAccentDarker: #212129;
-
-$themedNeutralTextColor: #cdcdd1;
-
-$themedNeutralButtonNipple: #9697b1;
-$themedNeutralButtonActive: #e5e1ef;
-$themedNeutralButtonHover: #5e6a85;
-
-$themedNeutralToggleBorder: #65718d;
-$themedTeutralToggleThumb: #65718d;
-$themedTeutralToggleActive: #2c3245;
+$skeletonBackgroundColor: #e9e9e9;
+$skeletonBlinkColor: #f1f1f1;

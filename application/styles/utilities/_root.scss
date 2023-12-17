@@ -1,0 +1,45 @@
+// This file should contain theme includes.
+// Do not change this file unless you know what you're doing.
+
+// Importing default styles.
+@use "./_accents" as accents;
+
+// Importing themes
+@use "../themes/DarkBlueTheme" as DarkBlueTheme;
+@use "../themes/DarkTheme" as DarkTheme;
+
+
+:root {
+    --default-font-family: "Segoe UI", "Lucida Sans","Lucida Sans Regular","Lucida Grande","Lucida Sans Unicode",Geneva,Verdana,sans-serif;
+    --accent-color: #{accents.$accentColor};
+    // Text colors
+    --primary-text-color: #{accents.$primaryTextColor};
+    --secondary-text-color: #{accents.$secondaryTextColor};
+    // Background colors.
+    --primary-background-color: #{accents.$primaryBackgroundColor};
+    --secondary-background-color: #{accents.$secondaryBackgroundColor};
+    --third-background-color: #{accents.$thirdBackgroundColor};
+    --base-font-size: 14px;
+    --design-unit: 4;
+    --border-radius: 4px;
+    --fluent-button-padding: 0px 20px;
+    // Control styles.
+    --control-background-color: #{accents.$controlBackgroundColor};
+    --control-primary-border-color: #{accents.$controlPrimaryBorderColor};
+    --control-secondary-border-color: #{accents.$controlSecondaryBorderColor};
+    --control-primary-text-color: #{accents.$controlPrimaryTextColor};
+    --control-secondary-text-color: #{accents.$controlSecondaryTextColor};
+    --control-background-color-hover: #{accents.$controlBackgroundColorHover};
+    --control-primary-border-color-hover: #{accents.$controlPrimaryBorderColorHover};
+    --control-secondary-border-color-hover: #{accents.$controlSecondaryBorderColorHover};
+    --control-background-color-active: #{accents.$controlBackgroundColorActive};
+    // Spinner
+    --spinner-stoke-width: 5px;
+    // Skeletons
+    --skeleton-background-color: #{accents.$skeletonBackgroundColor};
+    --skeleton-blink-color: #{accents.$skeletonBlinkColor};
+}
+
+html[theme=dark-blue] { @include DarkBlueTheme.CustomTheme; }
+
+html[theme=dark] { @include DarkTheme.CustomTheme; }

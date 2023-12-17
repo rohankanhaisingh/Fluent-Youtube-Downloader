@@ -43,6 +43,9 @@ function route(router) {
         req.session.loggedIn = true;
         res.render("index", { darkMode: app_1.darkMode });
     });
+    router.get("/test", requireLogin, function (req, res) {
+        res.status(200).render("index.test.ejs");
+    });
     router.get("/get-authtoken", requireLogin, function (req, res) {
         res.status(200).send(server_1.reservedServerAuthToken);
     });

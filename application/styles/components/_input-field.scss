@@ -1,11 +1,7 @@
 @use "../utilities/_constants" as constants;
-@use "../utilities/_accents" as accents;
 
 $inputFieldWidth: 140px;
 $inputFieldHeight: 20px;
-$inputBorderColor: #dcdadf;
-$inputBorderBottomColor: #d2cfd7;
-$inputBackgroundColor: #ffffff;
 
 @keyframes input-field-stroke-animation {
     0% {
@@ -31,12 +27,10 @@ $inputBackgroundColor: #ffffff;
         appearance: none;
         position: relative;
         content: "";
-        background: $inputBackgroundColor;
-        border-top: 1px solid $inputBorderColor;
-        border-right: 1px solid $inputBorderColor;
-        border-left: 1px solid $inputBorderColor;
-        border-bottom: 2px solid $inputBorderBottomColor;
+        background: padding-box linear-gradient(var(--control-background-color), var(--control-background-color)), border-box linear-gradient(var(--control-primary-border-color), var(--control-secondary-border-color));
+        border: 1px solid transparent;
         font-family: var(--default-font);
+        color: var(--primary-text-color);
     }
 
     &[is-disabled=true] {
@@ -58,7 +52,7 @@ $inputBackgroundColor: #ffffff;
         bottom: 1px;
         z-index: 1;
         display: none;
-        background: #9072bb;
+        background: var(--accent-color);
         border-bottom-right-radius: 5px;
         border-bottom-left-radius: 5px;
         -moz-animation: input-field-stroke-animation constants.$transitionDuration constants.$transitionKey;
@@ -72,23 +66,6 @@ $inputBackgroundColor: #ffffff;
             &::after {
                 display: block;
             }
-        }
-    }
-}
-
-body.theme-dark {
-    .styled-input-field {
-        &__input {
-            background: #383949;
-            border-top: 1px solid #4b4c5f;
-            border-right: 1px solid #4b4c5f;
-            border-left: 1px solid #4b4c5f;
-            border-bottom: 2px solid #353645;
-            color: accents.$themedNeutralTextColor;
-        }
-
-        &::after {
-            background: #aeb0c7;
         }
     }
 }

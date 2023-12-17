@@ -40,3 +40,4 @@ window.addEventListener("load", async function () {
 		appLoader.classList.add("fadeout");
 	}, 500);
 });
+

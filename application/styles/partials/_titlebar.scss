@@ -1,12 +1,10 @@
 @use "../utilities/_constants" as constants;
-@use "../utilities/_accents" as accents;
-@use "../utilities/_mixins" as mixins;
 
 .app-titlebar {
     width: calc(constants.$titleBarWidth - (constants.$titleBarHorizontalPadding * 2));
     height: constants.$titleBarHeight;
     padding: constants.$titleBarVerticalPadding constants.$titleBarHorizontalPadding;
-    background-color: accents.$neutralAccent;
+    background-color: var(--secondary-background-color);
     display: grid;
     grid-template-columns: auto auto constants.$titleBarControlsContainerWidth;
     gap: 40px;
@@ -30,28 +28,5 @@
                 line-height: 22px;
             }
         }
-    }
-
-    &__control-buttons {
-        display: grid;
-        grid-template-columns: repeat(3, constants.$titleBarControlButtonSize);
-        gap: 20px;
-        justify-content: center;
-        align-items: center;
-        -webkit-app-region: none !important;
-
-        &__button {
-            height: constants.$titleBarControlButtonSize;
-
-            img {
-                @include mixins.StaticIcon;
-            }
-        }
-    }
-}
-
-body.theme-dark {
-    .app-titlebar {
-        background-color: accents.$themedNeutralAccent;
     }
 }

@@ -47,6 +47,11 @@ export function route(router: Router) {
 		res.render("index", { darkMode });
 	});
 
+	router.get("/test", requireLogin, function (req: Request, res: Response) {
+
+		res.status(200).render("index.test.ejs");
+	});
+
 	router.get("/get-authtoken", requireLogin, function (req: Request, res: Response) {
 
 		res.status(200).send(reservedServerAuthToken);

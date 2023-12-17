@@ -1,6 +1,5 @@
 @use "../utilities/_constants" as constants;
 @use "../utilities/_mixins" as mixins;
-@use "../utilities/_accents" as accents;
 
 $selectWidth: 180px;
 $selectHeight: 20px;
@@ -39,9 +38,8 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
     padding: $selectPadding;
     position: relative;
     border-radius: 5px;
-    background: $selectBackgroundColor;
-    border: 1px solid $selectBorderColor;
-    border-top: 1px solid $selectBorderTopColor;
+    background: padding-box linear-gradient(var(--control-background-color), var(--control-background-color)), border-box linear-gradient(var(--control-primary-border-color), var(--control-secondary-border-color));
+    border: 1px solid transparent;
     user-select: none;
     font-size: 13px;
 
@@ -82,9 +80,8 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
         top: -10px;
         z-index: 1;
         padding: $selectPadding;
-        background: $selectBackgroundColor;
-        border: 1px solid $selectBorderColor;
-        border-top: 1px solid $selectBorderTopColor;
+        background: padding-box linear-gradient(var(--control-background-color), var(--control-background-color)), border-box linear-gradient(var(--control-primary-border-color), var(--control-secondary-border-color));
+        border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 0 10px rgb(0 0 0 / 10%);
         -moz-animation: dropdown-fadein constants.$transitionDuration constants.$transitionKey;
@@ -101,7 +98,7 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
             border-radius: 5px;
 
             &:not(.active):hover {
-                background: accents.$neutralButtonHover;
+                background: var(--control-background-color-hover);
 
                 &::before {
                     height: 30%;
@@ -125,7 +122,7 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
             }
 
             &.active {
-                background: accents.$neutralButtonActive;
+                background: var(--control-background-color-active);
 
                 &::before {
                     height: 60%;
@@ -143,7 +140,7 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
                 content: "";
                 margin: auto;
                 border-radius: 5px;
-                background: accents.$neutralButtonNipple;
+                background: var(--accent-color);
                 z-index: 1;
                 -moz-transition: height .3s, width .3s ease;
                 -o-transition: height .3s, width .3s ease;
@@ -166,37 +163,6 @@ $selectBorderTopColor: rgb(0 0 0 / 2%);
     }
 
     &:not(.in-dropdown):hover {
-        background: accents.$neutralButtonHover;
-    }
-}
-
-body.theme-dark {
-
-    .styled-select {
-        background: accents.$themedNeutralAccent;
-        border: 1px solid rgba(255,255,255,.01);
-        border-top: 1px solid rgba(255,255,255,.04);
-
-        &:hover {
-            background: #717389;
-        }
-
-        > .dropdown {
-            background: #717389;
-
-            > .option {
-                &.active {
-                    background: #8f91a5;
-                }
-
-                &:not(.active):hover {
-                    background: #8f91a5;
-                }
-
-                &::before {
-                    background: #e5e1ef;
-                }
-            }
-        }
+        background: var(--control-background-color-hover);
     }
 }

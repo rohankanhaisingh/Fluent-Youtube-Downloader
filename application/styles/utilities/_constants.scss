@@ -1,3 +1,5 @@
+@use "./_accents" as accents;
+
 $transitionKey: cubic-bezier(0.1, 0.9, 0.2, 1);
 $transitionDuration: .3s;
 

@@ -1,12 +1,11 @@
 @use "../utilities/_constants" as constants;
-@use "../utilities/_accents" as accents;
 
 .app-loader {
     width: 100vw;
     height: calc(100vh - constants.$titleBarHeight + (constants.$titleBarVerticalPadding * 2));
     position: fixed;
     z-index: 99999;
-    background-color: accents.$neutralAccent;
+    background-color: var(--primary-background-color);
     user-select: none;
 
     &.fadeout {
@@ -42,12 +41,5 @@
         padding: 10px;
         z-index: 4;
         font-size: 12px;
-    }
-}
-
-body.theme-dark {
-
-    .app-loader {
-        background-color: accents.$themedNeutralAccent;
     }
 }
