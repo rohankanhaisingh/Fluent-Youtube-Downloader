@@ -1,6 +1,6 @@
 {
   "name": "fluent-youtube-downloader",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Fluent-Youtube-Downloader",
   "main": "./dist/app.js",
   "author": {
