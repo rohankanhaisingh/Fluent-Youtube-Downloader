@@ -55,9 +55,9 @@ function createHistoryDomElement(fileName: string, timestamp: string, physicalPa
             <div class="history-item__detail">Request ID: ${requestId}</div>
         </div>
         <div class="history-item__buttons">
-            <div class="history-item__buttons__button" id="download-button">Download</div>
-            <div class="history-item__buttons__button" id="open-button">Open</div>
-            <div class="history-item__buttons__button" id="delete-button">Delete file</div>
+            <fluent-button id="download-button">Download</fluent-button>
+            <fluent-button id="open-button">Open</fluent-button>
+            <fluent-button id="delete-button">Delete file</fluent-button>
         </div>
 	`;
 

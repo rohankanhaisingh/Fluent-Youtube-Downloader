@@ -23,9 +23,12 @@ $controlBackgroundColorActive: #4d494f;
 $skeletonBackgroundColor: #2f2f2f;
 $skeletonBlinkColor: #373737;
 
+$iconFilter: invert(1);
+
 @mixin CustomTheme {
     --default-font-family: "Segoe UI", "Lucida Sans","Lucida Sans Regular","Lucida Grande","Lucida Sans Unicode",Geneva,Verdana,sans-serif;
     --accent-color: #{$accentColor};
+    --icon-filter: #{$iconFilter};
     // Text colors
     --primary-text-color: #{$primaryTextColor};
     --secondary-text-color: #{$secondaryTextColor};

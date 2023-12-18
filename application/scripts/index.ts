@@ -4,6 +4,8 @@ import { initializeSideMenu } from "./handlers/side-menu";
 import { renderToggles } from "./handlers/dom-generator";
 import { requestPage } from "./handlers/spa-handler";
 
+import { initializeFluentDesignSystem } from "./handlers/fluent-renderer";
+
 import { connectSocket, listen } from "./handlers/socket";
 
 const navigationButtons: NodeListOf<HTMLElement> = document.querySelectorAll(".navigation-button");
@@ -34,6 +36,7 @@ window.addEventListener("load", async function () {
 	renderToggles();
 	initializeTitleBar();
 	initializeSideMenu();
+	initializeFluentDesignSystem();
 
 	this.setTimeout(function () {
 

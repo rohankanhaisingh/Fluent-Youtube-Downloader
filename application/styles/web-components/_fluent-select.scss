@@ -1,5 +1,25 @@
 @use "../utilities/_mixins" as mixins;
 
+@keyframes fadein {
+    0% {
+        opacity: 0;
+        -moz-transform: scale(0.98);
+        -ms-transform: scale(0.98);
+        -o-transform: scale(0.98);
+        -webkit-transform: scale(0.98);
+        transform: scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        -moz-transform: none;
+        -ms-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
 :host {
     width: auto;
     height: auto;
@@ -43,6 +63,10 @@
                 @include mixins.StaticIcon;
                 width: var(--fluent-select-icon-size);
                 height: var(--fluent-select-icon-size);
+                margin: auto;
+                -moz-filter: var(--icon-filter);
+                -webkit-filter: var(--icon-filter);
+                filter: var(--icon-filter);
             }
         }
 
@@ -61,6 +85,10 @@
             border: 1px solid transparent;
             border-radius: inherit;
             box-shadow: 0 0 10px rgb(0 0 0 / var(--fluent-select-box-shadow-opacity));
+            -moz-animation: fadein var(--transition-duration) var(--transition-key);
+            -o-animation: fadein var(--transition-duration) var(--transition-key);
+            -webkit-animation: fadein var(--transition-duration) var(--transition-key);
+            animation: fadein var(--transition-duration) var(--transition-key);
 
             ::slotted(fluent-option) {
                 width: calc(100% - 10px);
@@ -89,7 +117,7 @@
                 }
             }
 
-            ::slotted(fluent-option:not(.active):hover) {
+            ::slotted(fluent-option:not([active]):hover) {
                 background: var(--control-background-color-hover);
 
                 &::before {
@@ -97,14 +125,14 @@
                 }
             }
 
-            ::slotted(fluent-option:not(.active):active) {
+            ::slotted(fluent-option:not([active]):active) {
                 &::before {
                     height: 30%;
                     width: 3px;
                 }
             }
 
-            ::slotted(fluent-option.active) {
+            ::slotted(fluent-option[active]) {
                 background: var(--control-background-color-active);
 
                 &::before {

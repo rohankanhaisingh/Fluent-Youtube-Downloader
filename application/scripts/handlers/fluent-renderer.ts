@@ -1,29 +1,43 @@
+import { c } from "tar";
+
+export class OktaiDeBoktai extends HTMLElement{
+	constructor() {
+		super();
+
+		const shadowRoot = this.attachShadow({ mode: "open" });
+		shadowRoot.innerHTML = "<span>Click me</span>";
+
+		shadowRoot.querySelector("span")?.addEventListener("click", function (e) {
+			console.log(e);
+		});
+	}
+
+	static initialize(): void {
+		return customElements.define("oktai-de-boktai", OktaiDeBoktai);
+	}
+}
 
 export class FluentButton extends HTMLElement {
 	constructor() {
 		super();
 
-		this.attachShadow({ mode: "open" });
+		const shadowRoot = this.attachShadow({ mode: "open" });
 
-		const shadowRoot = this.shadowRoot;
+		const buttonElement = document.createElement("button");
+		buttonElement.setAttribute("part", "control");
+		buttonElement.innerHTML = "<span part='content'><slot></slot></span>";
 
-		if (shadowRoot === null) return;
-
-		shadowRoot.innerHTML = FluentButton.constructElement();
-
-		FluentButton.getCss().then(function (text: string) {
-			shadowRoot.innerHTML += `<style>${text}</style>`;
-		});
+		shadowRoot.appendChild(buttonElement);
+		
+		FluentButton.getCss().then(css => FluentButton.setCss(shadowRoot, css));
 	}
 
-	static constructElement(): string {
-		return `
-			<button part="control">
-				<span part="content">
-					<slot></slot>
-				</span>
-			</button>
-		`;
+	static setCss(shadowRoot: ShadowRoot, css: string) {
+
+		const styleSheet = new CSSStyleSheet();
+		styleSheet.replaceSync(css);
+
+		shadowRoot.adoptedStyleSheets.push(styleSheet);
 	}
 
 	static getCss(): Promise<string> {
@@ -55,48 +69,91 @@ export class FluentSelect extends HTMLElement {
 
 		const shadowRoot = this.attachShadow({ mode: "open" });
 
+		FluentSelect.constructElement(shadowRoot);
+		FluentSelect.setEventListeners(shadowRoot, this);
+		FluentSelect.getCss().then(css => FluentSelect.setCss(shadowRoot, css));
+
 		const fluentOptionElements: NodeListOf<HTMLElement> = this.querySelectorAll("fluent-option"),
 			firstOptionElement: HTMLElement = fluentOptionElements[0];
 
-		shadowRoot.innerHTML += FluentSelect.constructElement();
+		const currentValueElement: HTMLDivElement | null = shadowRoot.querySelector("[part=current-value]");
+
+		if (currentValueElement !== null) {
+
+			firstOptionElement.setAttribute("active", "");
+
+			const currentValue: string | null = firstOptionElement.getAttribute("value");
+
+			if (currentValue !== null) {
+
+				(currentValueElement.querySelector("span") as HTMLSpanElement).innerText = currentValue;
+				this.setAttribute("value", (currentValueElement.querySelector("span") as HTMLSpanElement).innerText = currentValue);
+			}
+		}
+	}
+
+	static setEventListeners(shadowRoot: ShadowRoot, mainElement: FluentSelect) {
 
 		const currentValueElement: HTMLDivElement | null = shadowRoot.querySelector("[part=current-value]"),
 			dropdownElement: HTMLDivElement | null = shadowRoot.querySelector("[part=dropdown]");
 
-		if (currentValueElement !== null) {
+		if (currentValueElement === null || dropdownElement === null) return;
 
-			firstOptionElement.classList.add("active");
+		currentValueElement.addEventListener("click", function () {
+			if (!mainElement.classList.contains("in-dropdown"))
+				mainElement.classList.add("in-dropdown");
+		});
 
-			(currentValueElement.querySelector("span") as HTMLSpanElement)
-				.innerText = firstOptionElement.innerText;
-		}
+		const slotElement: HTMLSlotElement | null = dropdownElement.querySelector("slot");
 
-		FluentSelect.setEventListeners(shadowRoot);
-		FluentSelect.getCss().then(function (css: string) {
-			shadowRoot.innerHTML += `<style>${css}</style>`;
+		if (slotElement === null) return;
+
+		const slottedItems: Element[] = slotElement.assignedElements();
+
+		slottedItems.forEach(function (node: Element) {
+
+			node.addEventListener("click", function () {
+
+				slottedItems.forEach(_node => _node.removeAttribute("active"));
+
+				node.setAttribute("active", "");
+
+				const nodeValue: string | null = node.getAttribute("value");
+
+				(currentValueElement.querySelector("span") as HTMLSpanElement)
+					.innerText = nodeValue !== null ? nodeValue : "";
+
+				mainElement.setAttribute("value", nodeValue !== null ? nodeValue : "");
+
+				if (mainElement.classList.contains("in-dropdown"))
+					mainElement.classList.remove("in-dropdown");
+			});
 		});
 	}
 
-	static setEventListeners(shadowRoot: ShadowRoot) {
+	static constructElement(shadowRoot: ShadowRoot) {
+		const controlElement = document.createElement("div");
+		controlElement.setAttribute("part", "control");
 
-		console.log(shadowRoot.querySelector("[part=dropdown]"));
+		const currentValueElement = document.createElement("div");
+		currentValueElement.setAttribute("part", "current-value");
+		currentValueElement.innerHTML = "<span></span><img src='/static/media/icons/windows-icon-down.png' alt='Dropdown'/>";
 
-		console.log(shadowRoot);
+		const dropdownElement = document.createElement("div");
+		dropdownElement.setAttribute("part", "dropdown");
+		dropdownElement.innerHTML = "<slot></slot>";
 
+		controlElement.appendChild(currentValueElement);
+		controlElement.appendChild(dropdownElement);
+		shadowRoot.appendChild(controlElement);
 	}
 
-	static constructElement(): string {
-		return `
-			<div part="control">
-				<div part="current-value">
-					<span></span>
-					<img src="/static/media/icons/windows-icon-down.png" alt="Dropdown"/>
-				</div>
-				<div part="dropdown">
-					<slot></slot>
-				</div>
-			</div>
-		`;
+	static setCss(shadowRoot: ShadowRoot, css: string) {
+
+		const styleSheet = new CSSStyleSheet();
+		styleSheet.replaceSync(css);
+
+		shadowRoot.adoptedStyleSheets.push(styleSheet);
 	}
 
 	static getCss(): Promise<string> {
@@ -127,4 +184,5 @@ export function initializeFluentDesignSystem() {
 
 	FluentButton.initialize();
 	FluentSelect.initialize();
+	OktaiDeBoktai.initialize();
 }
