@@ -12,6 +12,8 @@
 :root {
     --default-font-family: "Segoe UI", "Lucida Sans","Lucida Sans Regular","Lucida Grande","Lucida Sans Unicode",Geneva,Verdana,sans-serif;
     --accent-color: #{accents.$accentColor};
+    --transition-key: cubic-bezier(0.1, 0.9, 0.2, 1);
+    --transition-duration: .3s;
     // Text colors
     --primary-text-color: #{accents.$primaryTextColor};
     --secondary-text-color: #{accents.$secondaryTextColor};
@@ -22,7 +24,20 @@
     --base-font-size: 14px;
     --design-unit: 4;
     --border-radius: 4px;
+    // Fluent button component styles
     --fluent-button-padding: 0px 20px;
+    // Fluent select component styles.
+    --fluent-select-min-width: 180px;
+    --fluent-select-min-height: 20px;
+    --fluent-select-vertical-padding: 5px;
+    --fluent-select-horizontal-padding: 10px;
+    --fluent-select-padding: var(--fluent-select-vertical-padding) var(--fluent-select-horizontal-padding);
+    --fluent-select-gap: 10px;
+    --fluent-select-icon-size: 10px;
+    --fluent-select-grid-auto-rows: 30px;
+    --fluent-select-box-shadow-opacity: 10%;
+    --fluent-select-option-height: 20px;
+    --fleunt-select-option-padding: 5px 0 5px 10px;
     // Control styles.
     --control-background-color: #{accents.$controlBackgroundColor};
     --control-primary-border-color: #{accents.$controlPrimaryBorderColor};

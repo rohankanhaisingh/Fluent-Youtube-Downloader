@@ -1,6 +1,6 @@
-import { FluentButton } from "./handlers/fluent-renderer";
+import { initializeFluentDesignSystem } from "./handlers/fluent-renderer";
 
 window.addEventListener("load", function () {
 
-	FluentButton.initialize();
+	initializeFluentDesignSystem();
 });
