@@ -1,4 +1,5 @@
 import { renderToggles, renderInputFields } from "../handlers/dom-generator";
+import { FluentInput, FluentSelect } from "../handlers/fluent-renderer";
 import { get, getClient, post } from "../handlers/socket";
 
 type ApplicationWindowTheme = "fluent-light-purple";
@@ -55,11 +56,23 @@ function postSettingChangeData(key: string, value: string | boolean | null) {
 
 function handleDomInputs() {
 
-	const settingsDomElements: NodeListOf<HTMLDivElement> = document.querySelectorAll(".application-setting");
+	const settingsDomElements: NodeListOf<HTMLDivElement | FluentInput> = document.querySelectorAll(".application-setting");
 
-	const downloadPathField = document.getElementById("path.downloadPath");
+	const downloadPathField = document.getElementById("path.downloadPath") as FluentInput | null;
 
-	settingsDomElements.forEach(function (domElement: HTMLDivElement) {
+	settingsDomElements.forEach(function (domElement: HTMLDivElement | FluentInput) {
+
+		const settingId: string | null = domElement.getAttribute("id");
+		
+		if (domElement.classList.contains("fluent-input")) {
+
+			const fluentInput = domElement as FluentInput;
+
+			fluentInput.onAttributeChange("value", function (oldValue: string | null, newValue: string | null, record: MutationRecord) {
+
+				if (settingId !== null && newValue !== null) postSettingChangeData(settingId, newValue === "" ? null : newValue);
+			});
+		}
 
 		if (domElement.classList.contains("styled-toggle")) {
 
@@ -73,20 +86,6 @@ function handleDomInputs() {
 				postSettingChangeData(settingName, activeState === "true" ? true : false);
 			});
 		}
-
-		if (domElement.classList.contains("styled-input-field")) {
-
-			const input: HTMLInputElement | null = domElement.querySelector("input");
-
-			if (input !== null) input.addEventListener("change", function () {
-
-				const settingName: null | string = domElement.getAttribute("id");
-
-				if (settingName === null) return;
-
-				postSettingChangeData(settingName, input.value === "" ? null : input.value);
-			});
-		}
 	});
 
 	downloadPathField?.addEventListener("click", function () {
@@ -95,11 +94,7 @@ function handleDomInputs() {
 
 			if (data === null) return;
 
-			const inputField: HTMLInputElement | null = downloadPathField.querySelector("input");
-
-			if (inputField === null) return;
-
-			inputField.value = data;
+			downloadPathField.setValue(data);
 
 			postSettingChangeData("path.downloadPath", data);
 		});
@@ -115,9 +110,9 @@ function handleDomInputs() {
 function visualizeSavedSettings(data: ApplicationSettings): number {
 
 	// Every input item with '.application-setting' as class will be stored.
-	const settingItems: NodeListOf<HTMLDivElement> = document.querySelectorAll(".application-setting");
+	const settingItems: NodeListOf<HTMLDivElement | FluentInput> = document.querySelectorAll(".application-setting");
 
-	settingItems.forEach(function (item: HTMLDivElement) {
+	settingItems.forEach(function (item: HTMLDivElement | FluentInput) {
 
 		// Id of the element should has a string structure 
 		// such as 'obj1.obj2.key' or anything like that.
@@ -141,13 +136,8 @@ function visualizeSavedSettings(data: ApplicationSettings): number {
 
 		if (currentObject === undefined) return;
 
-		if (item.classList.contains("styled-input-field")) {
-
-			const itemInputField: HTMLInputElement | null = item.querySelector("input");
-
-			if (itemInputField !== null && !itemInputField.disabled)
-				itemInputField.value = currentObject === null ? "" : currentObject;
-		}
+		if (item.classList.contains("fluent-input")) 
+			(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
 
 		if (item.classList.contains("styled-toggle")) 
 			item.setAttribute("active", currentObject ? "true" : "false");

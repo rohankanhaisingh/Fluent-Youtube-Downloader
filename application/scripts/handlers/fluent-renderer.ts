@@ -1,5 +1,7 @@
 const loadedStyleSheets: { [K: string]: CSSStyleSheet } = {};
 
+export type OnAttributeChangeCallback = (oldValue: string | null, newValue: string | null, record: MutationRecord) => void;
+
 export class OktaiDeBoktai extends HTMLElement{
 	constructor() {
 		super();
@@ -182,18 +184,58 @@ export class FluentSelect extends HTMLElement {
 }
 
 export class FluentInput extends HTMLElement {
+
+	private attributeChangeEvents: { [K: string]: OnAttributeChangeCallback } = {}; 
+	private mutationObserver = new MutationObserver(mutations => this.handleObserverMutation(mutations));
+
 	constructor() {
 		super();
 
 		const shadowRoot = this.attachShadow({ mode: "open" });
 
-		if(this.getAttribute("value") === null)
-			this.setAttribute("value", "");
+		this.mutationObserver.observe(this, { attributeFilter: ["value"] });
 
 		FluentInput.constructElement(shadowRoot);
 		FluentInput.getCss().then(css => FluentInput.setCss(shadowRoot, css));
 		FluentInput.setEventListeners(shadowRoot, this);
 		FluentInput.setAttributes(shadowRoot, this);
+	}
+
+	private handleObserverMutation(mutationRecord: MutationRecord[]) {
+
+		const self: FluentInput = this;
+
+		mutationRecord.forEach(function (record: MutationRecord) {
+
+			if (record.attributeName === null) return;
+
+			const oldValue: string | null = record.oldValue,
+				newValue: string | null = self.getAttribute(record.attributeName);
+
+			if (typeof self.attributeChangeEvents[record.attributeName] === "function")
+				self.attributeChangeEvents[record.attributeName](oldValue, newValue, record);
+		});
+	}
+
+	public setValue(value: string) {
+
+		const shadowRoot: ShadowRoot | null = this.shadowRoot;
+
+		if (shadowRoot === null) return;
+
+		const inputField: HTMLInputElement | null = shadowRoot.querySelector("[part=input]");
+
+		if (inputField === null) return;
+
+		inputField.setAttribute("value", value);
+		this.setAttribute("value", value);
+	}
+
+	public onAttributeChange(attributeName: string, cb: OnAttributeChangeCallback): FluentInput {
+
+		this.attributeChangeEvents[attributeName] = cb;
+
+		return this;
 	}
 
 	static constructElement(shadowRoot: ShadowRoot) {

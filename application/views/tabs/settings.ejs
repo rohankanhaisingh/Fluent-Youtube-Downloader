@@ -73,7 +73,7 @@
                     <div class="settings-category__setting__text__description">Fluent YouTube Downloader will convert videos into any media file and save them to this directory.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" id="path.downloadPath" placeholder="Not set"></input-field>
+                    <fluent-input class="application-setting fluent-input" spellcheck="false" id="path.downloadPath" placeholder="Not set"></fluent-input>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                     <div class="settings-category__setting__text__description">Fluent Youtube Downloader will look for the ffmpeg.exe file within the given directory path.</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="Auto" disabled id="path.ffmpegPath" placeholder="Not set"></input-field>
+                    <fluent-input class="application-setting fluent-input" spellcheck="false" value="Auto" disabled id="path.ffmpegPath" placeholder="Not set"></fluent-input>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
                     <div class="settings-category__setting__text__description">ExpressJS is used to render the application. The default port is 8000. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <input-field type="text" class="settings-category__setting__value__input-field application-setting" spellcheck="false" value="8000" id="server.port" placeholder="Not set"></input-field>
+                    <fluent-input class="application-setting fluent-input" type="number" spellcheck="false" value="8000" id="server.port" placeholder="Not set"></fluent-input>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                     <div class="settings-category__setting__text__description">Configure options by entering arguments. Be cautious, as this might break the program. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
-                    <fluent-input class="application-setting" type="text" spellcheck="false" id="behavior.startOptions" placeholder="Not set"></fluent-input>
+                    <fluent-input class="application-setting fluent-input" type="text" spellcheck="false" id="behavior.startOptions" placeholder="Not set"></fluent-input>
                 </div>
             </div>
         </div>
