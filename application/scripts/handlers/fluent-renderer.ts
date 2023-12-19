@@ -1,4 +1,4 @@
-import { c } from "tar";
+const loadedStyleSheets: { [K: string]: CSSStyleSheet } = {};
 
 export class OktaiDeBoktai extends HTMLElement{
 	constructor() {
@@ -41,6 +41,7 @@ export class FluentButton extends HTMLElement {
 	}
 
 	static getCss(): Promise<string> {
+
 		return new Promise(function (resolve, reject) {
 			return fetch("/static/styles/web-components/_fluent-button.css", { method: "GET" })
 				.then(function (responseObject) {
@@ -180,9 +181,118 @@ export class FluentSelect extends HTMLElement {
 	}
 }
 
+export class FluentInput extends HTMLElement {
+	constructor() {
+		super();
+
+		const shadowRoot = this.attachShadow({ mode: "open" });
+
+		if(this.getAttribute("value") === null)
+			this.setAttribute("value", "");
+
+		FluentInput.constructElement(shadowRoot);
+		FluentInput.getCss().then(css => FluentInput.setCss(shadowRoot, css));
+		FluentInput.setEventListeners(shadowRoot, this);
+		FluentInput.setAttributes(shadowRoot, this);
+	}
+
+	static constructElement(shadowRoot: ShadowRoot) {
+		const controlElement = document.createElement("div");
+		controlElement.setAttribute("part", "control");
+
+		const contentElement = document.createElement("span");
+		contentElement.setAttribute("part", "content");
+
+		const inputElement = document.createElement("input");
+		inputElement.setAttribute("part", "input");
+
+		contentElement.appendChild(inputElement);
+		controlElement.appendChild(contentElement);
+		shadowRoot.appendChild(controlElement);
+	}
+
+	static setAttributes(shadowRoot: ShadowRoot, mainElement: FluentInput) {
+
+		const inputField: HTMLInputElement | null = shadowRoot.querySelector("[part=input]");
+
+		if (inputField === null) return;
+
+		const reservedAttributes = ["id", "class"];
+
+		const allAttributes: string[] = mainElement.getAttributeNames();
+
+		allAttributes.forEach(function (attributeName: string) {
+
+			if (reservedAttributes.includes(attributeName)) return;
+
+			const attributeValue: string | null = mainElement.getAttribute(attributeName);
+
+			if (attributeValue === null) return;
+
+			inputField.setAttribute(attributeName, attributeValue);
+		});
+	}
+
+	static setEventListeners(shadowRoot: ShadowRoot, mainElement: FluentInput) {
+
+		const inputElement: HTMLInputElement | null = shadowRoot.querySelector("[part=input]");
+
+		if (inputElement === null) return;
+
+		inputElement.addEventListener("focus", function () {
+
+			if (!mainElement.classList.contains("focused"))
+				mainElement.classList.add("focused");
+		});
+
+		inputElement.addEventListener("blur", function () {
+
+			if (mainElement.classList.contains("focused"))
+				mainElement.classList.remove("focused");
+		});
+
+		inputElement.addEventListener("input", function () {
+
+			mainElement.setAttribute("value", inputElement.value);
+		});
+	}
+
+	static setCss(shadowRoot: ShadowRoot, css: string) {
+
+		const styleSheet = new CSSStyleSheet();
+		styleSheet.replaceSync(css);
+
+		shadowRoot.adoptedStyleSheets.push(styleSheet);
+	}
+
+	static getCss(): Promise<string> {
+		return new Promise(function (resolve, reject) {
+			fetch("/static/styles/web-components/_fluent-input.css", { method: "GET" })
+				.then(function (response) {
+					response.text()
+						.then(function (css: string) {
+							resolve(css);
+						})
+						.catch(function (_err: Error) {
+							reject(_err);
+						});
+				})
+				.catch(function (err: Error) {
+					reject(err);
+				});
+			return null;
+		});
+	}
+
+	static initialize() {
+		customElements.define("fluent-input", FluentInput);
+	}
+}
+
 export function initializeFluentDesignSystem() {
 
 	FluentButton.initialize();
 	FluentSelect.initialize();
+	FluentInput.initialize();
 	OktaiDeBoktai.initialize();
 }

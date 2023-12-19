@@ -30,7 +30,7 @@
     // Fluent select component styles.
     --fluent-select-min-width: 180px;
     --fluent-select-min-height: 20px;
-    --fluent-select-vertical-padding: 5px;
+    --fluent-select-vertical-padding: 7px;
     --fluent-select-horizontal-padding: 10px;
     --fluent-select-padding: var(--fluent-select-vertical-padding) var(--fluent-select-horizontal-padding);
     --fluent-select-gap: 10px;
@@ -39,6 +39,11 @@
     --fluent-select-box-shadow-opacity: 10%;
     --fluent-select-option-height: 20px;
     --fleunt-select-option-padding: 5px 0 5px 10px;
+    // Fluent input component styles
+    --fluent-input-padding: 0 10px;
+    --fluent-input-min-height: 30px;
+    --fluent-input-stroke-start-size: 40%;
+    --fluent-input-stroke-size: 2px;
     // Control styles.
     --control-background-color: #{accents.$controlBackgroundColor};
     --control-primary-border-color: #{accents.$controlPrimaryBorderColor};
@@ -57,5 +62,4 @@
 }
 
 html[theme=dark-blue] { @include DarkBlueTheme.CustomTheme; }
-
 html[theme=dark] { @include DarkTheme.CustomTheme; }
