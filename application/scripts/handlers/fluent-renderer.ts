@@ -331,10 +331,64 @@ export class FluentInput extends HTMLElement {
 	}
 }
 
+export class FluentToggle extends HTMLElement {
+	constructor() {
+		super();
+
+		const shadowRoot = this.attachShadow({ mode: "open" });
+
+		FluentToggle.constructElement(shadowRoot);
+		FluentToggle.getCss().then(css => FluentToggle.setCss(shadowRoot, css));
+	}
+
+	static constructElement(shadowRoot: ShadowRoot) {
+		const controlElement = document.createElement("div");
+		controlElement.setAttribute("part", "control");
+
+		const thumbElement = document.createElement("div");
+		thumbElement.setAttribute("part", "thumb");
+
+		controlElement.appendChild(thumbElement);
+		shadowRoot.appendChild(controlElement);
+	}
+
+	static setCss(shadowRoot: ShadowRoot, css: string) {
+
+		const styleSheet = new CSSStyleSheet();
+		styleSheet.replaceSync(css);
+
+		shadowRoot.adoptedStyleSheets.push(styleSheet);
+	}
+
+	static getCss(): Promise<string> {
+		return new Promise(function (resolve, reject) {
+			fetch("/static/styles/web-components/_fluent-toggle.css", { method: "GET" })
+				.then(function (response) {
+					response.text()
+						.then(function (css: string) {
+							resolve(css);
+						})
+						.catch(function (_err: Error) {
+							reject(_err);
+						});
+				})
+				.catch(function (err: Error) {
+					reject(err);
+				});
+			return null;
+		});
+	}
+
+	static initialize() {
+		customElements.define("fluent-toggle", FluentToggle);
+	}
+}
+
 export function initializeFluentDesignSystem() {
 
 	FluentButton.initialize();
 	FluentSelect.initialize();
 	FluentInput.initialize();
+	FluentToggle.initialize();
 	OktaiDeBoktai.initialize();
 }

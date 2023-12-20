@@ -44,6 +44,13 @@
     --fluent-input-min-height: 30px;
     --fluent-input-stroke-start-size: 40%;
     --fluent-input-stroke-size: 2px;
+    // Fluent toggle component styles
+    --fluent-toggle-width: 30px;
+    --fluent-toggle-height: 10px;
+    --fluent-toggle-padding: 7px 10px;
+    --fluent-toggle-border-radius: 15px;
+    --fluent-toggle-thumb-size: 10px;
+    --fluent-toggle-thumb-width-hover: 10px;
     // Control styles.
     --control-background-color: #{accents.$controlBackgroundColor};
     --control-primary-border-color: #{accents.$controlPrimaryBorderColor};
