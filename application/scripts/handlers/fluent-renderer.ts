@@ -89,10 +89,11 @@ export class FluentSelect extends HTMLElement {
 
 			if (currentValue !== null) {
 
-				(currentValueElement.querySelector("span") as HTMLSpanElement).innerText = currentValue;
-				this.setAttribute("value", (currentValueElement.querySelector("span") as HTMLSpanElement).innerText = currentValue);
+				(currentValueElement.querySelector("span") as HTMLSpanElement).innerText = firstOptionElement.innerText;
+				this.setAttribute("value", currentValue);
 			}
 		}
+	
 	}
 
 	static setEventListeners(shadowRoot: ShadowRoot, mainElement: FluentSelect) {
@@ -124,7 +125,7 @@ export class FluentSelect extends HTMLElement {
 				const nodeValue: string | null = node.getAttribute("value");
 
 				(currentValueElement.querySelector("span") as HTMLSpanElement)
-					.innerText = nodeValue !== null ? nodeValue : "";
+					.innerText = node.innerHTML;
 
 				mainElement.setAttribute("value", nodeValue !== null ? nodeValue : "");
 
