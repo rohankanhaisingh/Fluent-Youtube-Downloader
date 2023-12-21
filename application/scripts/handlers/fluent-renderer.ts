@@ -482,33 +482,25 @@ export class FluentSpinner extends HTMLElement{
 
 	static constructElement(shadowRoot: ShadowRoot, mainElement: FluentSpinner) {
 
-		/*
-		  <svg class="spinner" style="margin: 40px auto;">
-                        <circle>
-                            <animateTransform attributeName="transform" type="rotate" values="-90;810" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
-                            <animate attributeName="stroke-dashoffset" values="0%;0%;-157.080%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
-                            <animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
-                        </circle>
-                    </svg>
-		*/
-
-
-		const controlElement = document.createElement("div");
-		controlElement.setAttribute("part", "control");
-
 		const spinnerElement = document.createElement("svg");
 		spinnerElement.setAttribute("part", "spinner");
+		spinnerElement.setAttribute("viewBox", "0 0 16 16");
 
-		spinnerElement.innerHTML = `
-			<circle>
-				<animateTransform attributeName="transform" type="rotate" values="-90;810" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
-				<animate attributeName="stroke-dashoffset" values="0%;0%;-157.080%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
-				<animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
-			</circle>
-		`;
+		const backgroundCircleElement = document.createElement("circle");
+		backgroundCircleElement.setAttribute("part", "background");
+		backgroundCircleElement.setAttribute("cx", "8px");
+		backgroundCircleElement.setAttribute("cy", "8px");
+		backgroundCircleElement.setAttribute("r", "7px");
 
-		controlElement.appendChild(spinnerElement);
-		shadowRoot.appendChild(controlElement);
+		const indicatorCircleElemenet = document.createElement("circle");
+		indicatorCircleElemenet.setAttribute("part", "indicator");
+		indicatorCircleElemenet.setAttribute("cx", "8px");
+		indicatorCircleElemenet.setAttribute("cy", "8px");
+		indicatorCircleElemenet.setAttribute("r", "7px");
+
+		spinnerElement.appendChild(backgroundCircleElement);
+		spinnerElement.appendChild(indicatorCircleElemenet);
+		shadowRoot.appendChild(spinnerElement);
 	}
 
 	static setCss(shadowRoot: ShadowRoot, css: string) {
