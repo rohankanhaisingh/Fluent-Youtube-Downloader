@@ -339,7 +339,91 @@ export class FluentToggle extends HTMLElement {
 		const shadowRoot = this.attachShadow({ mode: "open" });
 
 		FluentToggle.constructElement(shadowRoot);
+		FluentToggle.setEventListeners(shadowRoot, this);
 		FluentToggle.getCss().then(css => FluentToggle.setCss(shadowRoot, css));
+	}
+
+	// Public methods
+	public setActive() {
+
+		if (!this.classList.contains("active"))
+			this.classList.add("active");
+
+		FluentToggle.setActiveAttribute(this);
+		FluentToggle.changeLabelOnClick(this);
+		FluentToggle.dispatchCustomEvent(this, "true");
+	}
+
+	public setInactive() {
+
+		if (this.classList.contains("active"))
+			this.classList.remove("active");
+
+		FluentToggle.setActiveAttribute(this);
+		FluentToggle.changeLabelOnClick(this);
+		FluentToggle.dispatchCustomEvent(this, "false");
+
+	}
+
+	static dispatchCustomEvent(mainElement: FluentToggle, attributeValue: string) {
+
+		const event = new CustomEvent("active", {
+			bubbles: true,
+			detail: { attributeValue}
+		});
+
+		mainElement.dispatchEvent(event);
+	}
+
+	static changeLabelOnClick(mainElement: FluentToggle) {
+
+		const hasActiveClass: boolean = mainElement.classList.contains("active");
+
+		const forAttribute: string | null = mainElement.getAttribute("for");
+
+		if (forAttribute === null) return;
+
+		const targetElement: HTMLElement | null = document.querySelector(forAttribute);
+
+		if (targetElement === null) return;
+
+		const activeValueAttribute: string | null = mainElement.getAttribute("active-value"),
+			inActiveValueAttribute: string | null = mainElement.getAttribute("inactive-value");
+
+		if (activeValueAttribute === null || inActiveValueAttribute === null) return;
+
+		const triggerValue: string = hasActiveClass ? activeValueAttribute : inActiveValueAttribute;
+
+		targetElement.innerText = triggerValue;
+	}
+
+	static setActiveAttribute(mainElement: FluentToggle) {
+
+		const hasActiveClass: boolean = mainElement.classList.contains("active");
+
+		if (hasActiveClass)
+			return mainElement.setAttribute("active", "true");
+
+		mainElement.setAttribute("active", "false");
+	}
+
+	static setEventListeners(shadowRoot: ShadowRoot, mainElement: FluentToggle) {
+
+		mainElement.addEventListener("click", function () {
+
+			if (!mainElement.classList.contains("active")) {
+
+				mainElement.classList.add("active");
+				FluentToggle.dispatchCustomEvent(mainElement, "true");
+			} else {
+
+				mainElement.classList.remove("active");
+				FluentToggle.dispatchCustomEvent(mainElement, "false");
+			}
+
+			FluentToggle.setActiveAttribute(mainElement);
+			FluentToggle.changeLabelOnClick(mainElement);
+		});
 	}
 
 	static constructElement(shadowRoot: ShadowRoot) {
@@ -385,11 +469,86 @@ export class FluentToggle extends HTMLElement {
 	}
 }
 
+export class FluentSpinner extends HTMLElement{
+
+	constructor() {
+		super();
+
+		const shadowRoot = this.attachShadow({ mode: "open" });
+
+		FluentSpinner.constructElement(shadowRoot, this);
+		FluentSpinner.getCss().then(css => FluentSpinner.setCss(shadowRoot, css));
+	}
+
+	static constructElement(shadowRoot: ShadowRoot, mainElement: FluentSpinner) {
+
+		/*
+		  <svg class="spinner" style="margin: 40px auto;">
+                        <circle>
+                            <animateTransform attributeName="transform" type="rotate" values="-90;810" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+                            <animate attributeName="stroke-dashoffset" values="0%;0%;-157.080%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+                            <animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+                        </circle>
+                    </svg>
+		*/
+
+
+		const controlElement = document.createElement("div");
+		controlElement.setAttribute("part", "control");
+
+		const spinnerElement = document.createElement("svg");
+		spinnerElement.setAttribute("part", "spinner");
+
+		spinnerElement.innerHTML = `
+			<circle>
+				<animateTransform attributeName="transform" type="rotate" values="-90;810" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+				<animate attributeName="stroke-dashoffset" values="0%;0%;-157.080%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+				<animate attributeName="stroke-dasharray" values="0% 314.159%;157.080% 157.080%;0% 314.159%" calcMode="spline" keySplines="0.61, 1, 0.88, 1; 0.12, 0, 0.39, 0" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite"></animate>
+			</circle>
+		`;
+
+		controlElement.appendChild(spinnerElement);
+		shadowRoot.appendChild(controlElement);
+	}
+
+	static setCss(shadowRoot: ShadowRoot, css: string) {
+
+		const styleSheet = new CSSStyleSheet();
+		styleSheet.replaceSync(css);
+
+		shadowRoot.adoptedStyleSheets.push(styleSheet);
+	}
+
+	static getCss(): Promise<string> {
+		return new Promise(function (resolve, reject) {
+			fetch("/static/styles/web-components/_fluent-spinner.css", { method: "GET" })
+				.then(function (response) {
+					response.text()
+						.then(function (css: string) {
+							resolve(css);
+						})
+						.catch(function (_err: Error) {
+							reject(_err);
+						});
+				})
+				.catch(function (err: Error) {
+					reject(err);
+				});
+			return null;
+		});
+	}
+
+	static initialize() {
+		customElements.define("fluent-spinner", FluentSpinner);
+	}
+}
+
 export function initializeFluentDesignSystem() {
 
 	FluentButton.initialize();
 	FluentSelect.initialize();
 	FluentInput.initialize();
 	FluentToggle.initialize();
+	FluentSpinner.initialize();
 	OktaiDeBoktai.initialize();
 }

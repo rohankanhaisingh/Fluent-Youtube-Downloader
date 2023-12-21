@@ -23,6 +23,11 @@
         white-space: nowrap;
         align-items: center;
         display: inline-flex;
+        -moz-transition: all var(--transition-duration) var(--transition-key);
+        -o-transition: all var(--transition-duration) var(--transition-key);
+        -webkit-transition: all var(--transition-duration) var(--transition-key);
+        transition: all var(--transition-duration) var(--transition-key);
+
 
         > div[part=thumb] {
             width: var(--fluent-toggle-thumb-size);
@@ -41,6 +46,21 @@
     > div[part=control] {
         > div[part=thumb] {
             width: var(--fluent-toggle-thumb-width-hover);
+        }
+    }
+}
+
+:host(.active) {
+    > div[part=control] {
+        background: var(--accent-color);
+
+        > div[part=thumb] {
+            -moz-transform: translateX(calc(var(--fluent-toggle-width) - (var(--fluent-toggle-horizontal-padding) * 2)));
+            -ms-transform: translateX(calc(var(--fluent-toggle-width) - (var(--fluent-toggle-horizontal-padding) * 2)));
+            -o-transform: translateX(calc(var(--fluent-toggle-width) - (var(--fluent-toggle-horizontal-padding) * 2)));
+            -webkit-transform: translateX(calc(var(--fluent-toggle-width) - (var(--fluent-toggle-horizontal-padding) * 2)));
+            transform: translateX(calc(var(--fluent-toggle-width) - (var(--fluent-toggle-horizontal-padding) * 2)));
+            background: var(--fluent-toggle-active-color);
         }
     }
 }

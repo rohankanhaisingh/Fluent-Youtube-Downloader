@@ -134,6 +134,7 @@
     <Content Include="application\styles\web-components\_fluent-button.scss" />
     <Content Include="application\styles\web-components\_fluent-input.scss" />
     <Content Include="application\styles\web-components\_fluent-select.scss" />
+    <Content Include="application\styles\web-components\_fluent-spinner.scss" />
     <Content Include="application\styles\web-components\_fluent-toggle.scss" />
     <Content Include="application\views\components\_head.ejs" />
     <Content Include="application\views\components\_tooltip.ejs" />

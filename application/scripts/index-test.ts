@@ -1,4 +1,4 @@
-import { initializeFluentDesignSystem } from "./handlers/fluent-renderer";
+import { FluentToggle, initializeFluentDesignSystem } from "./handlers/fluent-renderer";
 
 window.addEventListener("load", function () {
 

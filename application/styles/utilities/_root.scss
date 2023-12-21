@@ -8,7 +8,6 @@
 @use "../themes/DarkBlueTheme" as DarkBlueTheme;
 @use "../themes/DarkTheme" as DarkTheme;
 
-
 :root {
     --default-font-family: "Segoe UI", "Lucida Sans","Lucida Sans Regular","Lucida Grande","Lucida Sans Unicode",Geneva,Verdana,sans-serif;
     --accent-color: #{accents.$accentColor};
@@ -45,12 +44,15 @@
     --fluent-input-stroke-start-size: 40%;
     --fluent-input-stroke-size: 2px;
     // Fluent toggle component styles
-    --fluent-toggle-width: 30px;
+    --fluent-toggle-width: 40px;
     --fluent-toggle-height: 10px;
-    --fluent-toggle-padding: 7px 10px;
+    --fluent-toggle-vertical-padding: 5px;
+    --fluent-toggle-horizontal-padding: 5px;
+    --fluent-toggle-padding: var(--fluent-toggle-vertical-padding) var(--fluent-toggle-horizontal-padding);
     --fluent-toggle-border-radius: 15px;
     --fluent-toggle-thumb-size: 10px;
     --fluent-toggle-thumb-width-hover: 10px;
+    --fluent-toggle-active-color: #fff;
     // Control styles.
     --control-background-color: #{accents.$controlBackgroundColor};
     --control-primary-border-color: #{accents.$controlPrimaryBorderColor};
