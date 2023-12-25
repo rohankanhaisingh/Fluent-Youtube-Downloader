@@ -41,7 +41,7 @@ function route(router) {
             return res.status(403).send("Bruh");
         }
         req.session.loggedIn = true;
-        res.render("index", { darkMode: app_1.darkMode });
+        res.render("index", { applicationTheme: app_1.applicationTheme });
     });
     router.get("/test", requireLogin, function (req, res) {
         res.status(200).render("index.test.ejs");

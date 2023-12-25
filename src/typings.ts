@@ -1,5 +1,5 @@
 export type RequestedControlEvent = "maximize" | "minimize" | "close";
-export type ApplicationWindowTheme = "fluent-light-purple";
+export type ApplicationWindowTheme = "windows_fluent_dark" | "windows_fluent_light";
 export type ApplicationSettingsStatus = "failed" | "ok";
 export type YTDLPInitializationState = "ok" | "failed";
 export type ConversionPipelineState = "ok" | "failed" | "installation-succeed";
@@ -98,4 +98,19 @@ export interface HistoryItem {
 	readonly fileLocation: string | null;
 	readonly timestamp: number | null;
 	readonly thumbnailUrl: string | null;
+}
+
+// Typings specifically made for SocketIO events.
+export namespace SocketIOEvents {
+
+	export interface PostSettingItem {
+		key: string;
+		value: string | null | boolean;
+	}
+
+	export interface ChangeSettings {
+		readonly settings: PostSettingItem[];
+		readonly from: string;
+		readonly userAgent: string;
+	}
 }

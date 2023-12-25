@@ -66,6 +66,7 @@
     <Content Include="application\res\media\icons\windows-color-icon-history.png" />
     <Content Include="application\res\media\icons\windows-color-icon-nodejs.png" />
     <Content Include="application\res\media\icons\windows-color-icon-palette.png" />
+    <Content Include="application\res\media\icons\windows-color-icon-picture.png" />
     <Content Include="application\res\media\icons\windows-color-icon-processor.png" />
     <Content Include="application\res\media\icons\windows-color-icon-search.png" />
     <Content Include="application\res\media\icons\windows-color-icon-settings.png" />

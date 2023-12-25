@@ -60,7 +60,7 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 					"height": 750
 				},
 				"display": {
-					"theme": "fluent-light-purple",
+					"theme": "windows_fluent_light",
 					"darkMode": false,
 				}
 			},

@@ -8,6 +8,7 @@ import { dialog } from "electron";
 import { getHistory, readSettingsFile, updateSettingsFile } from "./appdata";
 import { deleteFile, openFile } from "./utils";
 import { mainWindow } from "./app";
+import { SocketIOEvents } from "./typings";
 
 // Can only assign one socket.
 let connectedSocket: Socket | null = null;
@@ -27,11 +28,14 @@ export function sokkie(io: Server) {
 		});
 
 		// This must be a POST request.
-		socket.on("/appdata/change-settings", function (postData) {
+		socket.on("/appdata/change-settings", function (data: SocketIOEvents.ChangeSettings) {
 
-			const { key, value } = postData; 
+			const { settings } = data; 
 
-			updateSettingsFile(key, value);
+			for (let item of settings)
+				updateSettingsFile(item.key, item.value);
+
+			/*updateSettingsFile(key, value);*/
 		});
 
 		socket.on("/appdata/history", function () {

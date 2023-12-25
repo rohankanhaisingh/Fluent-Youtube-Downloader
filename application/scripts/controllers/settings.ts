@@ -1,11 +1,10 @@
-import { renderToggles, renderInputFields } from "../handlers/dom-generator";
-import { FluentInput, FluentSelect } from "../handlers/fluent-renderer";
+import { FluentButton, FluentComponentType, FluentInput, FluentSelect, FluentToggle, isFluentComponent } from "../handlers/fluent-renderer";
 import { get, getClient, post } from "../handlers/socket";
 
-type ApplicationWindowTheme = "fluent-light-purple";
+type ApplicationWindowTheme = "windows_fluent_dark" | "windows_fluent_light";
 type ApplicationSettingsStatus = "failed" | "ok";
 
- interface Resolution {
+interface Resolution {
 	readonly width: number;
 	readonly height: number;
 }
@@ -45,59 +44,53 @@ interface ApplicationSettings {
 	readonly behavior: ApplicationBehaviorSettings;
 }
 
-function postSettingChangeData(key: string, value: string | boolean | null) {
-
-	post("/appdata/change-settings", {
-		key, value,
-		from: location.href,
-		userAgent: navigator.userAgent
-	});
+interface DOMSettingItem {
+	key: string;
+	value: string | null | boolean;
 }
 
-function handleDomInputs() {
+function saveSettings() {
 
-	const settingsDomElements: NodeListOf<HTMLDivElement | FluentInput> = document.querySelectorAll(".application-setting");
+	const settingElements: NodeListOf<FluentToggle | FluentButton | FluentInput | FluentSelect> = document.querySelectorAll(".application-setting");
 
-	const downloadPathField = document.getElementById("path.downloadPath") as FluentInput | null;
+	const savedSettings: DOMSettingItem[] = [];
 
-	settingsDomElements.forEach(function (domElement: HTMLDivElement | FluentInput) {
+	for (let setting of settingElements) {
 
-		const settingId: string | null = domElement.getAttribute("id");
-		
-		if (domElement.classList.contains("fluent-input")) {
+		const componentType: FluentComponentType | boolean = isFluentComponent(setting);
 
-			const fluentInput = domElement as FluentInput;
+		if (componentType) {
 
-			fluentInput.onAttributeChange("value", function (oldValue: string | null, newValue: string | null, record: MutationRecord) {
+			const settingId: string = setting.id;
+			
+			switch (componentType) {
+				case "FluentToggle":
 
-				if (settingId !== null && newValue !== null) postSettingChangeData(settingId, newValue === "" ? null : newValue);
-			});
+					const isActive: string | null = setting.getAttribute("active");
+
+					if (isActive !== null) {
+
+						savedSettings.push({ key: settingId, value: isActive === "true" ? true : false});
+					} else {
+
+						// Will set false as default if no 'active' attribute has been found.
+						savedSettings.push({ key: settingId, value: false });
+					}
+					break;
+				default:
+
+					savedSettings.push({ key: settingId, value: setting.getAttribute("value") });
+					break;
+			}
 		}
+	};
 
-		if (domElement.classList.contains("styled-toggle")) {
+	console.log(savedSettings);
 
-			domElement.addEventListener("active", function (event: Event) {
-
-				const activeState: null | string = domElement.getAttribute("active");
-				const settingName: null | string = domElement.getAttribute("id");
-
-				if (activeState === null || settingName === null) return;
-
-				postSettingChangeData(settingName, activeState === "true" ? true : false);
-			});
-		}
-	});
-
-	downloadPathField?.addEventListener("click", function () {
-
-		get("/appdata/select-download-path").then(function (data: string | null) {
-
-			if (data === null) return;
-
-			downloadPathField.setValue(data);
-
-			postSettingChangeData("path.downloadPath", data);
-		});
+	post("/appdata/change-settings", {
+		settings: savedSettings,
+		from: location.href,
+		userAgent: navigator.userAgent
 	});
 }
 
@@ -146,18 +139,74 @@ function visualizeSavedSettings(data: ApplicationSettings): number {
 	return 0;
 }
 
+async function loadSettings() {
+
+	const data: ApplicationSettings = await get("/appdata/settings");
+
+	const settingElements: NodeListOf<FluentToggle | FluentButton | FluentInput | FluentSelect> = document.querySelectorAll(".application-setting");
+
+	settingElements.forEach(function (item: FluentInput | FluentSelect | FluentToggle) {
+
+		const componentType: FluentComponentType | boolean = isFluentComponent(item);
+
+		if (!componentType) return;
+
+		// Id of the element should has a string structure 
+		// such as 'obj1.obj2.key' or anything like that.
+		const itemId: string | null = item.getAttribute("id");
+
+		if (itemId === null) return;
+
+		// Split the keys into seperate words.
+		const idKeys = itemId.split(".");
+
+		// Current object must start from the given 'data' paramter
+		// or else this entire loop will break lmfao.
+		// Do not change unless you know a better way to fix this.
+		let currentObject: any = data;
+
+		for (let i = 0; i < idKeys.length; i++) 
+			if (currentObject && currentObject.hasOwnProperty(idKeys[i]))
+				currentObject = currentObject[idKeys[i]];
+		
+		if (currentObject === undefined) return;
+
+		switch (componentType) {
+			case "FluentInput":
+				return (item as FluentInput).setValue(currentObject === null ? "" : currentObject);
+			case "FluentToggle":
+				return (currentObject ? (item as FluentToggle).setActive() : (item as FluentToggle).setInactive());
+				break;
+				
+		}
+
+		//if (componentType === "FluentInput")
+		//	(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
+
+		//if (item.classList.contains("fluent-input"))
+		//	(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
+
+		//if (item.classList.contains("styled-toggle"))
+		//	item.setAttribute("active", currentObject ? "true" : "false");
+	});
+}
+
+function handleSaveButton() {
+
+	const button: FluentButton | null = document.querySelector("#save-settings");
+
+	if (button === null) return;
+
+	button.addEventListener("click", function () {
+
+		saveSettings();
+	});
+}
+
 async function load(): Promise<number> {
 
-	// Custom DOM elements must be rendered before
-	// the rest of the code will run.
-	renderToggles();
-	renderInputFields();
-
-	const request: ApplicationSettings = await get("/appdata/settings");
-
-	visualizeSavedSettings(request);
-
-	handleDomInputs();
+	loadSettings();
+	handleSaveButton();
 
 	return 0;
 }

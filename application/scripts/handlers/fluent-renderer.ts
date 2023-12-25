@@ -1,6 +1,13 @@
 const loadedStyleSheets: { [K: string]: CSSStyleSheet } = {};
 
 export type OnAttributeChangeCallback = (oldValue: string | null, newValue: string | null, record: MutationRecord) => void;
+export type FluentComponentType = "FluentButton" | "FluentSelect" | "FluentInput" | "FluentToggle" | "FluentSpinner";
+
+declare global {
+	interface HTMLElement {
+		componentType: FluentComponentType | undefined;
+	}
+}
 
 export class OktaiDeBoktai extends HTMLElement{
 	constructor() {
@@ -20,6 +27,9 @@ export class OktaiDeBoktai extends HTMLElement{
 }
 
 export class FluentButton extends HTMLElement {
+
+	public componentType: FluentComponentType = "FluentButton";
+
 	constructor() {
 		super();
 
@@ -67,6 +77,9 @@ export class FluentButton extends HTMLElement {
 }
 
 export class FluentSelect extends HTMLElement {
+
+	public componentType: FluentComponentType = "FluentSelect";
+
 	constructor() {
 		super();
 
@@ -185,6 +198,8 @@ export class FluentSelect extends HTMLElement {
 }
 
 export class FluentInput extends HTMLElement {
+
+	public componentType: FluentComponentType = "FluentInput";
 
 	private attributeChangeEvents: { [K: string]: OnAttributeChangeCallback } = {}; 
 	private mutationObserver = new MutationObserver(mutations => this.handleObserverMutation(mutations));
@@ -333,6 +348,9 @@ export class FluentInput extends HTMLElement {
 }
 
 export class FluentToggle extends HTMLElement {
+
+	public componentType: FluentComponentType = "FluentToggle";
+
 	constructor() {
 		super();
 
@@ -469,7 +487,9 @@ export class FluentToggle extends HTMLElement {
 	}
 }
 
-export class FluentSpinner extends HTMLElement{
+export class FluentSpinner extends HTMLElement {
+
+	public componentType: FluentComponentType = "FluentSpinner";
 
 	constructor() {
 		super();
@@ -533,6 +553,14 @@ export class FluentSpinner extends HTMLElement{
 	static initialize() {
 		customElements.define("fluent-spinner", FluentSpinner);
 	}
+}
+
+export function isFluentComponent(component: HTMLElement): FluentComponentType | boolean {
+
+	if (typeof component.componentType === "string")
+		return component.componentType;
+
+	return false;
 }
 
 export function initializeFluentDesignSystem() {

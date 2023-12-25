@@ -46,7 +46,7 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
                     "height": 750
                 },
                 "display": {
-                    "theme": "fluent-light-purple",
+                    "theme": "windows_fluent_light",
                     "darkMode": false,
                 }
             },

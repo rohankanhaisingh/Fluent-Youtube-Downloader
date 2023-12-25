@@ -233,7 +233,7 @@ export function readSettingsFile(): ReadSettingsFail | ApplicationSettings {
  * @param value
  * @returns
  */
-export function updateSettingsFile(key: string, value: string | boolean) {
+export function updateSettingsFile(key: string, value: string | boolean | null) {
 
 	const pathStatus = checkPathVariables();
 

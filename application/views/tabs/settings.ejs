@@ -12,7 +12,7 @@
     <div class="page-settings settings">
 
         <h4 style="margin: 0;">Application settings</h4>
-        <p>Adjust the settings to whatever you prefer. Some settings may take effect when you restart the application.</p>
+        <p>Adjust the settings to whatever you prefer. Some settings may take effect when you restart the application. Do <b>not</b> forget to save the changes!</p>
 
         <div class="settings-category">
             <div class="settings-category__title">Appearance & behavior</div>
@@ -27,7 +27,8 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-auto_start-label">Off</label>
-                    <toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off" id="behavior.autoStart" class="application-setting"></toggle>
+                    <fluent-toggle for="#setting-auto_start-label" active-value="On" inactive-value="Off"  id="behavior.autoStart" class="application-setting" ></fluent-toggle>
+                    <!--<toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off" id="behavior.autoStart" class="application-setting"></toggle>-->
                 </div>
             </div>
 
@@ -41,7 +42,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-system_tray-label">Off</label>
-                    <toggle for="#setting-system_tray-label" active-text="On" inactive-text="Off" id="behavior.systemTray" class="application-setting"></toggle>
+                    <fluent-toggle for="#setting-system_tray-label" active-value="On" inactive-value="Off" id="behavior.systemTray" class="application-setting"></fluent-toggle>
                 </div>
             </div>
 
@@ -55,13 +56,13 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-dark_mode-label">Off</label>
-                    <toggle for="#setting-dark_mode-label" active-text="On" inactive-text="Off" id="window.display.darkMode" class="application-setting"></toggle>
+                    <fluent-toggle for="#setting-dark_mode-label" active-value="On" inactive-value="Off" id="window.display.darkMode" class="application-setting"></fluent-toggle>
                 </div>
             </div>
 
             <div class="settings-category__setting">
                 <div class="settings-category__setting__icon">
-                    <img src="/static/media/icons/windows-color-icon-palette.png" alt="Theme" />
+                    <img src="/static/media/icons/windows-color-icon-picture.png" alt="Theme" />
                 </div>
                 <div class="settings-category__setting__text">
                     <div class="settings-category__setting__text__title">Application theme</div>
@@ -69,9 +70,8 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <fluent-select id="window.display.theme" class="application-setting">
-                        <fluent-option value="windows_fluent_design">Windows Fluent Design</fluent-option>
-                        <fluent-option value="bluey">Bluey</fluent-option>
-                        <fluent-option value="orange_cat">Orange cat</fluent-option>
+                        <fluent-option value="windows_fluent_light">Windows Fluent Light</fluent-option>
+                        <fluent-option value="windows_fluent_dark">Windows Fluent Dark</fluent-option>
                     </fluent-select>
                 </div>
             </div>
@@ -137,5 +137,8 @@
                 </div>
             </div>
         </div>
+
+        <fluent-button id="save-settings">Save settings</fluent-button>
+        <fluent-button id="restore-settings">Restore settings</fluent-button>
     </div>
 </spa-dom-content>

@@ -13,9 +13,10 @@ function sokkie(io) {
             const settingsFile = (0, appdata_1.readSettingsFile)();
             socket.emit("response-/appdata/settings", settingsFile);
         });
-        socket.on("/appdata/change-settings", function (postData) {
-            const { key, value } = postData;
-            (0, appdata_1.updateSettingsFile)(key, value);
+        socket.on("/appdata/change-settings", function (data) {
+            const { settings } = data;
+            for (let item of settings)
+                (0, appdata_1.updateSettingsFile)(item.key, item.value);
         });
         socket.on("/appdata/history", function () {
             const history = (0, appdata_1.getHistory)();

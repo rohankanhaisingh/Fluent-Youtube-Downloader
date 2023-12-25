@@ -6,13 +6,14 @@ import colors from "colors";
 
 import { listen, reservedServerAuthToken } from "./server";
 import { ROOT_PATH, SERVER_PORT } from "./constants";
-import { ApplicationSettings, ReadSettingsFail, RequestedControlEvent } from "./typings";
+import { ApplicationSettings, ApplicationWindowTheme, ReadSettingsFail, RequestedControlEvent } from "./typings";
 import { initializeAppData, readSettingsFile } from "./appdata";
 import { initializeAutoLaunch } from "./auto-launch";
 import { initializeSystemTray } from "./tray";
 
 export let mainWindow: BrowserWindow;
-export let darkMode: boolean;
+export let applicationTheme: ApplicationWindowTheme;
+
 
 
 colors.enable();
@@ -42,7 +43,7 @@ app.once("ready", async function () {
 	// Cast the variable cuz bruh idfk.
 	const settingsCasting = applicationSettings as ApplicationSettings;
 
-	darkMode = settingsCasting.window.display.darkMode;
+	applicationTheme = settingsCasting.window.display.theme;
 
 	mainWindow = new BrowserWindow({
 		width: settingsCasting.window.resolution.width > 1400 ? settingsCasting.window.resolution.width : 1400,
@@ -55,11 +56,10 @@ app.once("ready", async function () {
 		maximizable: true,
 		fullscreenable: true,
 		center: true,
-		backgroundColor: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
+		backgroundColor: "transparent",
 		titleBarStyle: "hidden",
 		titleBarOverlay: {
-			color: settingsCasting.window.display.darkMode ? "#3d3e51" : "#f7f5fc",
-			symbolColor: settingsCasting.window.display.darkMode ? "#fff" : "#000",
+			color: "transparent",
 		},
 		icon: path.join(ROOT_PATH, "application", "res", "media", "app-icons", "icon.png"),
 		webPreferences: {

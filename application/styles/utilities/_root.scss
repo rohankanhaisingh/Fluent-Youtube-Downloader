@@ -71,4 +71,4 @@
 }
 
 html[theme=dark-blue] { @include DarkBlueTheme.CustomTheme; }
-html[theme=dark] { @include DarkTheme.CustomTheme; }
+html[theme=windows_fluent_dark] { @include DarkTheme.CustomTheme; }
