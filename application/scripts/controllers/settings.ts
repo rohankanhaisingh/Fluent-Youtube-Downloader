@@ -85,8 +85,6 @@ function saveSettings() {
 		}
 	};
 
-	console.log(savedSettings);
-
 	post("/appdata/change-settings", {
 		settings: savedSettings,
 		from: location.href,
@@ -94,56 +92,11 @@ function saveSettings() {
 	});
 }
 
-/**
- * Function that visualizes the changes made by the 
- * user based on the Settings.json file.
- * @param data
- * @returns
- */
-function visualizeSavedSettings(data: ApplicationSettings): number {
-
-	// Every input item with '.application-setting' as class will be stored.
-	const settingItems: NodeListOf<HTMLDivElement | FluentInput> = document.querySelectorAll(".application-setting");
-
-	settingItems.forEach(function (item: HTMLDivElement | FluentInput) {
-
-		// Id of the element should has a string structure 
-		// such as 'obj1.obj2.key' or anything like that.
-		const itemId: string | null = item.getAttribute("id");
-
-		if (itemId === null) return;
-
-		// Split the keys into seperate words.
-		const idKeys = itemId.split(".");
-
-		// Current object must start from the given 'data' paramter
-		// or else this entire loop will break lmfao.
-		// Do not change unless you know a better way to fix this.
-		let currentObject: any = data;
-
-		for (let i = 0; i < idKeys.length; i++) {
-
-			if (currentObject && currentObject.hasOwnProperty(idKeys[i])) 
-				currentObject = currentObject[idKeys[i]];
-		}
-
-		if (currentObject === undefined) return;
-
-		if (item.classList.contains("fluent-input")) 
-			(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
-
-		if (item.classList.contains("styled-toggle")) 
-			item.setAttribute("active", currentObject ? "true" : "false");
-	});
-
-	return 0;
-}
-
 async function loadSettings() {
 
 	const data: ApplicationSettings = await get("/appdata/settings");
 
-	const settingElements: NodeListOf<FluentToggle | FluentButton | FluentInput | FluentSelect> = document.querySelectorAll(".application-setting");
+	const settingElements: NodeListOf<any> = document.querySelectorAll(".application-setting");
 
 	settingElements.forEach(function (item: FluentInput | FluentSelect | FluentToggle) {
 
@@ -176,37 +129,26 @@ async function loadSettings() {
 				return (item as FluentInput).setValue(currentObject === null ? "" : currentObject);
 			case "FluentToggle":
 				return (currentObject ? (item as FluentToggle).setActive() : (item as FluentToggle).setInactive());
-				break;
-				
+			case "FluentSelect":
+				return (item as FluentSelect).setOptionValue(currentObject);
 		}
-
-		//if (componentType === "FluentInput")
-		//	(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
-
-		//if (item.classList.contains("fluent-input"))
-		//	(item as FluentInput).setValue(currentObject === null ? "" : currentObject);
-
-		//if (item.classList.contains("styled-toggle"))
-		//	item.setAttribute("active", currentObject ? "true" : "false");
 	});
 }
 
-function handleSaveButton() {
+async function selectDownloadPath() {
 
-	const button: FluentButton | null = document.querySelector("#save-settings");
+	const path = await get("/appdata/select-download-path");
+	const input = document.getElementById("path.downloadPath") as FluentInput;
 
-	if (button === null) return;
-
-	button.addEventListener("click", function () {
-
-		saveSettings();
-	});
+	input.setValue(path);
 }
 
 async function load(): Promise<number> {
 
 	loadSettings();
-	handleSaveButton();
+
+	document.querySelector("#save-settings")?.addEventListener("click", saveSettings);
+	document.querySelector("#select-download-path-button")?.addEventListener("click", selectDownloadPath);
 
 	return 0;
 }

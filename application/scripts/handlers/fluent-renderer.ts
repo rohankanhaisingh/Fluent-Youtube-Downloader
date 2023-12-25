@@ -109,6 +109,47 @@ export class FluentSelect extends HTMLElement {
 	
 	}
 
+	/**
+	 * Public method part of the Fluent Select web component.
+	 * Finds the option based on the specified value and enables it.
+	 * It will return null if the specified value has not been found.
+	 * @param optionValue
+	 */
+	public setOptionValue(optionValue: string): null | Element {
+
+		const shadowRoot: ShadowRoot | null = this.shadowRoot;
+
+		if (shadowRoot === null) return null;
+
+		const currentValueElement: HTMLDivElement | null = shadowRoot.querySelector("[part=current-value]"),
+			dropdownElement: HTMLDivElement | null = shadowRoot.querySelector("[part=dropdown]");
+
+		if (currentValueElement === null || dropdownElement === null) return null;
+
+		const slotElement: HTMLSlotElement | null = dropdownElement.querySelector("slot");
+
+		if (slotElement === null) return null;
+
+		const slottedItems: Element[] = slotElement.assignedElements();
+		const foundItem = slottedItems.filter(item => item.getAttribute("value") === optionValue);
+
+		if (foundItem.length !== 1) return null;
+
+		slottedItems.forEach(_node => _node.removeAttribute("active"));
+
+		const actualItem: Element = foundItem[0],
+			itemValue: string | null = actualItem.getAttribute("value");
+
+		(currentValueElement.querySelector("span") as HTMLSpanElement).innerText = actualItem.innerHTML;
+		actualItem.setAttribute("active", "true");
+
+		this.setAttribute("value", itemValue !== null ? itemValue : "");
+
+		return actualItem;
+	}
+
+	// Static functions
+
 	static setEventListeners(shadowRoot: ShadowRoot, mainElement: FluentSelect) {
 
 		const currentValueElement: HTMLDivElement | null = shadowRoot.querySelector("[part=current-value]"),

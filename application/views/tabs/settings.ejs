@@ -28,7 +28,6 @@
                 <div class="settings-category__setting__value">
                     <label id="setting-auto_start-label">Off</label>
                     <fluent-toggle for="#setting-auto_start-label" active-value="On" inactive-value="Off"  id="behavior.autoStart" class="application-setting" ></fluent-toggle>
-                    <!--<toggle for="#setting-auto_start-label" active-text="On" inactive-text="Off" id="behavior.autoStart" class="application-setting"></toggle>-->
                 </div>
             </div>
 
@@ -56,7 +55,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-dark_mode-label">Off</label>
-                    <fluent-toggle for="#setting-dark_mode-label" active-value="On" inactive-value="Off" id="window.display.darkMode" class="application-setting"></fluent-toggle>
+                    <fluent-toggle for="#setting-dark_mode-label" disabled active-value="On" inactive-value="Off" id="window.display.darkMode" class="application-setting"></fluent-toggle>
                 </div>
             </div>
 
@@ -66,7 +65,7 @@
                 </div>
                 <div class="settings-category__setting__text">
                     <div class="settings-category__setting__text__title">Application theme</div>
-                    <div class="settings-category__setting__text__description">Changes the look of Fluent Youtube Downloader.</div>
+                    <div class="settings-category__setting__text__description">Changes the look of Fluent Youtube Downloader. Requires a restart*</div>
                 </div>
                 <div class="settings-category__setting__value">
                     <fluent-select id="window.display.theme" class="application-setting">
@@ -90,6 +89,7 @@
                     <div class="settings-category__setting__text__description">Fluent YouTube Downloader will convert videos into any media file and save them to this directory.</div>
                 </div>
                 <div class="settings-category__setting__value">
+                    <fluent-button id="select-download-path-button">Set</fluent-button>
                     <fluent-input class="application-setting fluent-input" spellcheck="false" id="path.downloadPath" placeholder="Not set"></fluent-input>
                 </div>
             </div>
