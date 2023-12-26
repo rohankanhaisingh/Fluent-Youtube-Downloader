@@ -1,3 +1,4 @@
+import { FluentButton, FluentInput } from "../handlers/fluent-renderer";
 import { get, getClient, post } from "../handlers/socket";
 
 export interface HistoryItem {
@@ -10,7 +11,9 @@ export interface HistoryItem {
     readonly thumbnailUrl: string;
 }
 
-const historyContainer: HTMLDivElement | null = document.querySelector(".history-container");
+const historyContainer: HTMLDivElement | null = document.querySelector(".history-container"),
+    searchInputField: FluentInput | null = document.querySelector("#search-input-field"),
+    clearHistoryButton: FluentButton | null = document.querySelector("#clear-history-button");
 
 function parseDateText(timestamp: number): string {
 
@@ -83,6 +86,48 @@ function createHistoryDomElement(fileName: string, timestamp: string, physicalPa
     });
 }
 
+function handleSearch() {
+
+    if (searchInputField === null) return;
+
+    searchInputField.addEventListener("input", function () {
+
+        const value: string | null = searchInputField.getAttribute("value");
+
+        if (value === null) return;
+
+        const historyItems: NodeListOf<HTMLDivElement> = document.querySelectorAll(".history-item");
+
+        historyItems.forEach(function (item: HTMLDivElement) {
+
+            const itemFileName: HTMLDivElement | null = item.querySelector(".history-item__filename");
+
+            if (itemFileName === null) return;
+
+            if (!itemFileName.innerText.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+                return item.classList.add("hidden");
+
+            item.classList.remove("hidden");
+        });
+    });
+}
+
+function handleClearHistoryButton() {
+
+    if (clearHistoryButton === null) return;
+
+    clearHistoryButton.addEventListener("click", function () {
+
+        const historyItems: NodeListOf<HTMLDivElement> = document.querySelectorAll(".history-item");
+
+        historyItems.forEach(function (item: HTMLDivElement) {
+
+            item.remove();
+        });
+
+        post("/appdata/clear-history", null);
+    });
+}
 
 async function loadController() {
 
@@ -94,6 +139,9 @@ async function loadController() {
         
         createHistoryDomElement(historyItem.fileName, parseDateText(historyItem.timestamp), historyItem.fileLocation, historyItem.fileSize, historyItem.videoUrl, historyItem.requestId, historyItem.thumbnailUrl);
     });
+
+    handleSearch();
+    handleClearHistoryButton();
 }
 
 loadController();

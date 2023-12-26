@@ -282,6 +282,21 @@ export function getHistory(): HistoryItem[] {
 	return data;
 }
 
+export function clearHistory() {
+
+	if (!APPDATA_PATH) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME))) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application"))) return [];
+
+	if (!fs.existsSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json"))) return [];
+
+	fs.writeFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "History.json"), "[]", "utf-8");
+
+	return true;
+}
+
 export function createHistoryItem(data: HistoryItem): null | string {
 
 	if (!APPDATA_PATH) return null;

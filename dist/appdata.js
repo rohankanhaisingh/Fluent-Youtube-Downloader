@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHistoryItem = exports.getHistory = exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
+exports.createHistoryItem = exports.clearHistory = exports.getHistory = exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
@@ -218,6 +218,19 @@ function getHistory() {
     return data;
 }
 exports.getHistory = getHistory;
+function clearHistory() {
+    if (!constants_1.APPDATA_PATH)
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME)))
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application")))
+        return [];
+    if (!fs_1.default.existsSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json")))
+        return [];
+    fs_1.default.writeFileSync(path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "History.json"), "[]", "utf-8");
+    return true;
+}
+exports.clearHistory = clearHistory;
 function createHistoryItem(data) {
     if (!constants_1.APPDATA_PATH)
         return null;

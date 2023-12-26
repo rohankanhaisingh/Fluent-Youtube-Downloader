@@ -92,6 +92,29 @@ function saveSettings() {
 	});
 }
 
+function handleSearchQuery() {
+
+	const inputField: FluentInput | null = document.querySelector("#settings-search");
+
+	if (inputField === null) return;
+
+	const inputValue: string | null = inputField.getAttribute("value");
+
+	if (inputValue === null) return;
+
+	const categorySettings: NodeListOf<HTMLDivElement> = document.querySelectorAll(".settings-category__setting");
+
+	categorySettings.forEach(function (setting: HTMLDivElement) {
+
+		const settingTextContent = setting.innerText.toLowerCase();
+
+		if (!settingTextContent.includes(inputValue.toLowerCase()))
+			return setting.classList.add("hidden");
+
+		setting.classList.remove("hidden");
+	});
+}
+
 async function loadSettings() {
 
 	const data: ApplicationSettings = await get("/appdata/settings");
@@ -137,7 +160,10 @@ async function loadSettings() {
 
 async function selectDownloadPath() {
 
-	const path = await get("/appdata/select-download-path");
+	const path: string | null = await get("/appdata/select-download-path");
+
+	if (path === null) return;
+
 	const input = document.getElementById("path.downloadPath") as FluentInput;
 
 	input.setValue(path);
@@ -149,6 +175,7 @@ async function load(): Promise<number> {
 
 	document.querySelector("#save-settings")?.addEventListener("click", saveSettings);
 	document.querySelector("#select-download-path-button")?.addEventListener("click", selectDownloadPath);
+	document.querySelector("#settings-search")?.addEventListener("input", handleSearchQuery);
 
 	return 0;
 }

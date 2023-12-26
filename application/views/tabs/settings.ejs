@@ -14,6 +14,11 @@
         <h4 style="margin: 0;">Application settings</h4>
         <p>Adjust the settings to whatever you prefer. Some settings may take effect when you restart the application. Do <b>not</b> forget to save the changes!</p>
 
+        <fluent-input type="search" id="settings-search" placeholder="Enter search query" spellcheck="false" autocomplete="false"></fluent-input>
+
+        <fluent-button id="save-settings">Save settings</fluent-button>
+        <fluent-button id="restore-settings">Restore settings</fluent-button>
+
         <div class="settings-category">
             <div class="settings-category__title">Appearance & behavior</div>
 
@@ -27,7 +32,7 @@
                 </div>
                 <div class="settings-category__setting__value">
                     <label id="setting-auto_start-label">Off</label>
-                    <fluent-toggle for="#setting-auto_start-label" active-value="On" inactive-value="Off"  id="behavior.autoStart" class="application-setting" ></fluent-toggle>
+                    <fluent-toggle for="#setting-auto_start-label" active-value="On" inactive-value="Off" id="behavior.autoStart" class="application-setting"></fluent-toggle>
                 </div>
             </div>
 
@@ -137,8 +142,5 @@
                 </div>
             </div>
         </div>
-
-        <fluent-button id="save-settings">Save settings</fluent-button>
-        <fluent-button id="restore-settings">Restore settings</fluent-button>
     </div>
 </spa-dom-content>

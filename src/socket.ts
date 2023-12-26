@@ -5,7 +5,7 @@
 import { Socket, Server } from "socket.io";
 import { dialog } from "electron";
 
-import { getHistory, readSettingsFile, updateSettingsFile } from "./appdata";
+import { clearHistory, getHistory, readSettingsFile, updateSettingsFile } from "./appdata";
 import { deleteFile, openFile } from "./utils";
 import { mainWindow } from "./app";
 import { SocketIOEvents } from "./typings";
@@ -44,6 +44,12 @@ export function sokkie(io: Server) {
 
 			socket.emit("response-/appdata/history", history);
 		});
+
+		socket.on("/appdata/clear-history", function () {
+
+			clearHistory();
+		});
+
 
 		socket.on("/appdata/select-download-path", function () {
 

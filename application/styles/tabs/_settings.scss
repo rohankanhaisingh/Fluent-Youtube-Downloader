@@ -1,8 +1,20 @@
 @use "../utilities/_constants" as constants;
 @use "../utilities/_mixins" as mixins;
 
+@keyframes setting-fadeout {
+    to {
+        height: 0;
+        padding: 0 20px;
+    }
+}
+
 .page-settings {
     user-select: none !important;
+}
+
+#settings-search {
+    width: 100%;
+    margin: 20px 0;
 }
 
 .settings-category {
@@ -68,6 +80,10 @@
             &__input-field input {
                 width: 100%;
             }
+        }
+
+        &.hidden {
+            display: none;
         }
     }
 }

@@ -22,6 +22,9 @@ function sokkie(io) {
             const history = (0, appdata_1.getHistory)();
             socket.emit("response-/appdata/history", history);
         });
+        socket.on("/appdata/clear-history", function () {
+            (0, appdata_1.clearHistory)();
+        });
         socket.on("/appdata/select-download-path", function () {
             electron_1.dialog.showOpenDialog(app_1.mainWindow, {
                 properties: ["openDirectory"]

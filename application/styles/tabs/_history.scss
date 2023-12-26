@@ -1,6 +1,18 @@
 @use "../utilities/_constants" as constants;
 @use "../utilities/_mixins" as mixins;
 
+.controls {
+    margin: 20px 0 0 0;
+    display: grid;
+    grid-template-columns: auto 400px;
+    grid-gap: 20px;
+    gap: 20px;
+
+    &__buttons {
+
+    }
+}
+
 .history-container {
     width: 100%;
     height: auto;
@@ -64,5 +76,9 @@
         fluent-button {
             width: 150px;
         }
+    }
+
+    &.hidden {
+        display: none;
     }
 }
