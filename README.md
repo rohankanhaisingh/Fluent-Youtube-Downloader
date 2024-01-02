@@ -9,9 +9,9 @@ _Currently on version ``0.3.4``_.
 
 - - -
 
-## ?? About
+## 🚀 About
 
-### ? Motiviation
+### Motiviation
 
 Fluent YouTube Downloader is an open-source Windows application that utilizes the FluentUI design language. Its primary function is to convert YouTube videos into media files.
 
@@ -34,13 +34,13 @@ This software is currently in it's development phase and does not fully work.
 - Using the Fluent design language.
 - Custom theming.
 
-## ?? Pre-released software
+## 🚀 Pre-released software
 
 There are several pre-released versions of this software available to use. You can find them in the 'releases' page of this repository.
 
 Keep in mind that many features won't work because they are simply still in development. new updates are released over time.
 
-## ?? Development environment
+## 🚀 Development environment
 
 ### Install required packages
 
@@ -69,7 +69,7 @@ $ npm run watch-scss
 $ npm run webpack
 ```
 
-## ?? Used resources
+## 🚀 Used resources
 
 Various third-party tools have been used to complete the development of Fluent Youtube Downloader. These third-party tools are open-source and free to use as long as I don't make any profit from Fluent Youtube Downloader.
 
