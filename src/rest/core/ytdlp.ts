@@ -204,7 +204,7 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, reques
 		return null;
 
 	// This string contains the arguments that will be used for the command.
-	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
+	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
 
 	console.log(`Info: Starting executable with '${commandString}'.`.gray);
 

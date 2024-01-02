@@ -131,7 +131,7 @@ function createYtdlpStream(videoUrl, videoQuality, requestId) {
     const cacheDirectory = (0, appdata_1.getCacheDirectory)();
     if (cacheDirectory === null)
         return null;
-    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}`;
+    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
     console.log(`Info: Starting executable with '${commandString}'.`.gray);
     const process = child_process_1.default.exec(commandString);
     return process;
