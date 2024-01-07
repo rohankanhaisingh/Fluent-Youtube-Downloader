@@ -1,6 +1,15 @@
 @use "../utilities/_constants" as constants;
 @use "../utilities/_mixins" as mixins;
 
+@keyframes dialog-fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .app-dialogs {
     display: contents;
 
@@ -11,6 +20,10 @@
         bottom: 0;
         left: 0;
         z-index: 99999;
+        -moz-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+        -o-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+        -webkit-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+        animation: dialog-fadein var(--transition-duration) var(--transition-key);
 
         &__container {
             backdrop-filter: var(--dialog-container-backdrop-filter);
@@ -71,13 +84,25 @@
                 &__container {
                     width: calc(100% - 20px);
                     margin: 10px;
+                    display: grid;
+                    grid-template-columns: 40px auto;
+                    gap: 20px;
                 }
 
-                &__buttons {
-                    margin-top: 20px;
-                    display: flex;
-                    justify-content: right;
-                    gap: 5px;
+                &__icon img {
+                    @include mixins.StaticIcon;
+                    width: 40px;
+                    height: 40px;
+                }
+
+                &__text {
+
+                    &__buttons {
+                        margin-top: 10px;
+                        display: flex;
+                        justify-content: right;
+                        gap: 5px;
+                    }
                 }
             }
         }

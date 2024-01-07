@@ -1,5 +1,6 @@
 import { initializeTitleBar } from "./handlers/titlebar";
 import { initializeSideMenu } from "./handlers/side-menu";
+import { initializeDialogUsage } from "./handlers/dialog";
 
 import { renderToggles } from "./handlers/dom-generator";
 import { requestPage } from "./handlers/spa-handler";
@@ -34,6 +35,8 @@ window.addEventListener("load", async function () {
 	requestPage("/tabs/convert");
 
 	renderToggles();
+
+	initializeDialogUsage();
 	initializeTitleBar();
 	initializeSideMenu();
 	initializeFluentDesignSystem();

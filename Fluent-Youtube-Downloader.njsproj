@@ -60,10 +60,12 @@
     <Content Include="application\res\media\icons\icon.png" />
     <Content Include="application\res\media\icons\windows-color-icon-about.png" />
     <Content Include="application\res\media\icons\windows-color-icon-downloads-folder.png" />
+    <Content Include="application\res\media\icons\windows-color-icon-error.png" />
     <Content Include="application\res\media\icons\windows-color-icon-grid.png" />
     <Content Include="application\res\media\icons\windows-color-icon-hamburger.png" />
     <Content Include="application\res\media\icons\windows-color-icon-help.png" />
     <Content Include="application\res\media\icons\windows-color-icon-history.png" />
+    <Content Include="application\res\media\icons\windows-color-icon-info.png" />
     <Content Include="application\res\media\icons\windows-color-icon-nodejs.png" />
     <Content Include="application\res\media\icons\windows-color-icon-palette.png" />
     <Content Include="application\res\media\icons\windows-color-icon-picture.png" />
@@ -72,6 +74,7 @@
     <Content Include="application\res\media\icons\windows-color-icon-settings.png" />
     <Content Include="application\res\media\icons\windows-color-icon-start.png" />
     <Content Include="application\res\media\icons\windows-color-icon-terminal.png" />
+    <Content Include="application\res\media\icons\windows-color-icon-warning.png" />
     <Content Include="application\res\media\icons\windows-color-icon-youtube.png" />
     <Content Include="application\res\media\icons\windows-icon-18-plus.png" />
     <Content Include="application\res\media\icons\windows-icon-about.png" />
@@ -234,6 +237,7 @@
     <TypeScriptCompile Include="application\scripts\controllers\history.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\home.ts" />
     <TypeScriptCompile Include="application\scripts\controllers\settings.ts" />
+    <TypeScriptCompile Include="application\scripts\handlers\dialog.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\dom-generator.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\fluent-renderer.ts" />
     <TypeScriptCompile Include="application\scripts\handlers\side-menu.ts" />
