@@ -68,6 +68,10 @@
     // Skeletons
     --skeleton-background-color: #{accents.$skeletonBackgroundColor};
     --skeleton-blink-color: #{accents.$skeletonBlinkColor};
+    // Dialog
+    --dialog-container-backdrop-filter: blur(5px);
+    --dialog-container-background: rgb(0, 0, 0, 0.2);
+    --dialog-box-shadow: 0 0 1px rgb(0, 0, 0, .4);
 }
 
 html[theme=dark-blue] { @include DarkBlueTheme.CustomTheme; }

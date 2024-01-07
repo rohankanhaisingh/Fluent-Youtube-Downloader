@@ -112,10 +112,9 @@
     <Content Include="application\styles\components\_toggle.scss" />
     <Content Include="application\styles\components\_tooltip.scss" />
     <Content Include="application\styles\index.scss" />
-    <Content Include="application\styles\partials\_file-converting.scss" />
+    <Content Include="application\styles\partials\_dialog.scss" />
     <Content Include="application\styles\partials\_footer.scss" />
     <Content Include="application\styles\partials\_loader.scss" />
-    <Content Include="application\styles\partials\_navbar.scss" />
     <Content Include="application\styles\partials\_side-menu.scss" />
     <Content Include="application\styles\partials\_titlebar.scss" />
     <Content Include="application\styles\tabs\_convert.scss" />
