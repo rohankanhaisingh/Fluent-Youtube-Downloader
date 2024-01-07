@@ -51,8 +51,18 @@ export default async function execute(url: string, qualityString: ConvertQuality
 	// Need to fetch the video details to grab it's title.
 	const videoDetails: MoreVideoDetails = (await details(url)).videoDetails;
 
+	let videoTitle: string = videoDetails.title;
+
+	// Make sure the delete special characters from the title.
+	const specialCharacters: RegExp = /["\\:*?<>|]/;
+
+	for (let character of videoTitle) {
+		if (specialCharacters.test(character))
+			videoTitle = videoTitle.replace(character, " ");
+	}
+
 	// Try to reserve the file location.
-	const physicalFileDestinationPath = path.join(casting.path.downloadPath, videoDetails.title + ".mp4");
+	let physicalFileDestinationPath = path.join(casting.path.downloadPath, videoTitle + ".mp4");
 
 	// Make sure that the file does not exist already.
 	// Should the file be rewritten if it already exists??????

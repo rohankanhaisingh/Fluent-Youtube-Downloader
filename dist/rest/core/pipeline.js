@@ -46,7 +46,13 @@ function execute(url, qualityString, requestId) {
             };
         const resolvedQuality = (0, utils_1.resolveVideoQuality)(qualityString);
         const videoDetails = (yield (0, video_details_1.default)(url)).videoDetails;
-        const physicalFileDestinationPath = path_1.default.join(casting.path.downloadPath, videoDetails.title + ".mp4");
+        let videoTitle = videoDetails.title;
+        const specialCharacters = /["\\:*?<>|]/;
+        for (let character of videoTitle) {
+            if (specialCharacters.test(character))
+                videoTitle = videoTitle.replace(character, " ");
+        }
+        let physicalFileDestinationPath = path_1.default.join(casting.path.downloadPath, videoTitle + ".mp4");
         if (fs_1.default.existsSync(physicalFileDestinationPath))
             return {
                 reason: `FileSystemError: Reserved file path is already in use. Path: ${physicalFileDestinationPath}`,

@@ -52,7 +52,9 @@ function moveMediaFile(mediaPartPath, fileOutputPath) {
         return new Error("Could not move media part since given media part does not exist. Path: " + mediaPartPath);
     if (fs_1.default.existsSync(fileOutputPath))
         return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
-    fs_1.default.renameSync(mediaPartPath, fileOutputPath);
+    console.log(`Info: Copying ${mediaPartPath} into ${fileOutputPath}`);
+    const mediaPartFileData = fs_1.default.readFileSync(mediaPartPath);
+    fs_1.default.writeFileSync(fileOutputPath, mediaPartFileData);
     return true;
 }
 exports.moveMediaFile = moveMediaFile;
