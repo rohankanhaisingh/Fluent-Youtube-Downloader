@@ -1,3 +1,5 @@
+import { hideActiveDialog, showDialog } from "./dialog";
+
 declare global {
 	interface Window {
 		requestPage: (pageUrl: string) => void;
@@ -170,6 +172,19 @@ export function formatNewDocument(html: string): Document {
 
 export async function requestPage(pageUrl: string) {
 
+	if (typeof window.activeDownloads !== "undefined") {
+
+		const activeDownloadKeys = Object.keys(window.activeDownloads);
+
+		if (activeDownloadKeys.length !== 0)
+			return showDialog("Active download", ["There are still downloads active. Wait until they are succesfully done.", `Active downloads: ${activeDownloadKeys.length}`], "info", [
+				{
+					label: "Close dialog",
+					onClick: hideActiveDialog
+				}
+			]);
+	}
+		
 	fetch(pageUrl, { method: "GET", headers: { "Content-Type": "text/html" } })
 		.then(function (response: Response) {
 

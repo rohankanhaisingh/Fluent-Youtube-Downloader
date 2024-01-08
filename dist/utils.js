@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFile = exports.openFile = exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
 const fs_1 = __importDefault(require("fs"));
 const child_process_1 = __importDefault(require("child_process"));
+const socket_1 = require("./socket");
 function getNestedValue(obj, propString) {
     const props = propString.split('.');
     let currentObj = obj;
@@ -64,7 +65,15 @@ function openFile(filePath) {
 exports.openFile = openFile;
 function deleteFile(filePath) {
     if (!fs_1.default.existsSync(filePath))
-        throw new Error(`Could not delete ${filePath} since it does not exist.`);
+        return (0, socket_1.emit)("app/in-app-dialog", {
+            title: "File not found",
+            message: [
+                "Could not delete file because Fluent Youtube Download could not find it.",
+                `Looking for file: ${filePath}.`,
+                `<code> ${new Error().stack} </code>`
+            ],
+            icon: "error"
+        });
     fs_1.default.unlinkSync(filePath);
     return true;
 }

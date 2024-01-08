@@ -2,9 +2,7 @@ import { FluentButton } from "./fluent-renderer";
 
 const dialogContainer: HTMLDivElement | null = document.querySelector(".app-dialogs");
 
-const activeDialogs: HTMLDivElement[] = [];
-
-
+let activeDialog: HTMLDivElement | null = null;
 
 function constructBaseDomElement() {
 
@@ -29,6 +27,8 @@ function constructBaseDomElement() {
             </div>
         </div>
 	`;
+
+    dialogElement.querySelector<HTMLDivElement>(".dialog__modal__titlebar__icon")?.addEventListener("click", hideActiveDialog);
 
     return dialogElement;
 }
@@ -97,9 +97,13 @@ function setButtons(mainElement: HTMLDivElement, buttons: DialogButton[]) {
 
     buttons.forEach(function (button: DialogButton) {
 
-        const buttonElement: string = `<fluent-button>${button.label}</fluent-button>`;
+        const spanElement = document.createElement("span");
 
-        buttonContainer.innerHTML += buttonElement;
+        spanElement.innerHTML = `<fluent-button>${button.label}</fluent-button>`;
+
+        spanElement.querySelector<FluentButton>("fluent-button")?.addEventListener("click", button.onClick);
+
+        buttonContainer.appendChild(spanElement);
     });
 
     contentTextElement.appendChild(buttonContainer);
@@ -108,6 +112,7 @@ function setButtons(mainElement: HTMLDivElement, buttons: DialogButton[]) {
 declare global {
     interface Window {
         showDialog: (title: string, message: string | string[], icon: DialogIcon, buttons: DialogButton[]) => void;
+        hideActiveDialog: () => void;
     }
 }
 
@@ -122,7 +127,7 @@ export function showDialog(title: string, message: string | string[], icon: Dial
 
     if (dialogContainer === null) return;
 
-    if (activeDialogs.length >= 1) return;
+    if (activeDialog !== null) return;
 
     const baseElement = constructBaseDomElement();
 
@@ -133,10 +138,19 @@ export function showDialog(title: string, message: string | string[], icon: Dial
 
     dialogContainer.appendChild(baseElement);
 
-    activeDialogs.push(dialogContainer);
+    activeDialog = baseElement;
+}
+
+export function hideActiveDialog() {
+
+    if (activeDialog === null) return;
+
+    activeDialog.remove();
+    activeDialog = null;
 }
 
 export function initializeDialogUsage() {
 
     window.showDialog = showDialog;
+    window.hideActiveDialog = hideActiveDialog;
 }

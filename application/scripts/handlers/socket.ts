@@ -3,8 +3,7 @@
  */
 
 import socket, { Socket } from "socket.io-client";
-
-import { formatBytes } from "../utils";
+import { hideActiveDialog, showDialog } from "./dialog";
 
 const appLoader = document.querySelector(".app-loader") as HTMLDivElement;
 
@@ -109,5 +108,15 @@ export function listen() {
 		if (typeof activeDownload === "undefined") return;
 	
 		activeDownload.setProgress(event.percentage);
+	});
+
+	client.on("app/in-app-dialog", function (data) {
+
+		showDialog(data.title, data.message, data.icon, [
+			{
+				label: "Close dialog",
+				onClick: hideActiveDialog
+			}
+		]);
 	});
 }

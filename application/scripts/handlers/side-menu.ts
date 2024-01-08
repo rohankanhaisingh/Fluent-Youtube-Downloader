@@ -1,3 +1,5 @@
+
+
 export function collapseSideMenu() {
 
 	const sideMenu: HTMLDivElement | null = document.querySelector(".app-side-menu"),

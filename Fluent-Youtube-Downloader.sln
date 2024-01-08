@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Fluent-Youtube-Downloader", "Fluent-Youtube-Downloader.njsproj", "{4C9B555F-F2A2-4F24-8D98-B1B885B89A91}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Extension", "..\Extension\Extension.njsproj", "{5D651015-C45C-4A42-AA5A-01F71477928F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4C9B555F-F2A2-4F24-8D98-B1B885B89A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C9B555F-F2A2-4F24-8D98-B1B885B89A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C9B555F-F2A2-4F24-8D98-B1B885B89A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D651015-C45C-4A42-AA5A-01F71477928F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D651015-C45C-4A42-AA5A-01F71477928F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D651015-C45C-4A42-AA5A-01F71477928F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D651015-C45C-4A42-AA5A-01F71477928F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

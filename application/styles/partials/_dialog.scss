@@ -2,11 +2,21 @@
 @use "../utilities/_mixins" as mixins;
 
 @keyframes dialog-fadein {
-    0% {
+    from {
         opacity: 0;
+        -moz-transform: scale(.9);
+        -ms-transform: scale(.9);
+        -o-transform: scale(.9);
+        -webkit-transform: scale(.9);
+        transform: scale(.9);
     }
-    100% {
+    to {
         opacity: 1;
+        -moz-transform: none;
+        -ms-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
     }
 }
 
@@ -20,10 +30,6 @@
         bottom: 0;
         left: 0;
         z-index: 99999;
-        -moz-animation: dialog-fadein var(--transition-duration) var(--transition-key);
-        -o-animation: dialog-fadein var(--transition-duration) var(--transition-key);
-        -webkit-animation: dialog-fadein var(--transition-duration) var(--transition-key);
-        animation: dialog-fadein var(--transition-duration) var(--transition-key);
 
         &__container {
             backdrop-filter: var(--dialog-container-backdrop-filter);
@@ -42,6 +48,10 @@
             background: var(--secondary-background-color);
             border-radius: var(--border-radius);
             box-shadow: var(--dialog-box-shadow);
+            -moz-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+            -o-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+            -webkit-animation: dialog-fadein var(--transition-duration) var(--transition-key);
+            animation: dialog-fadein var(--transition-duration) var(--transition-key);
 
             &__titlebar {
                 width: 100%;
@@ -61,7 +71,6 @@
                 }
 
                 &__icon {
-                    @include mixins.StaticIcon;
                     width: 15px;
                     height: 15px;
                     -moz-filter: var(--icon-filter);

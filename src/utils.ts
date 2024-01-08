@@ -2,6 +2,7 @@ import fs from "fs";
 import cp from "child_process";
 
 import { ConvertQuality } from "./typings";
+import { emit } from "./socket";
 
 export function getNestedValue(obj: any, propString: string) {
 
@@ -74,7 +75,15 @@ export function openFile(filePath: string) {
 export function deleteFile(filePath: string) {
 
     if (!fs.existsSync(filePath))
-        throw new Error(`Could not delete ${filePath} since it does not exist.`);
+        return emit("app/in-app-dialog", {
+            title: "File not found",
+            message: [
+                "Could not delete file because Fluent Youtube Download could not find it.",
+                `Looking for file: ${filePath}.`,
+                `<code> ${new Error().stack} </code>`
+            ],
+            icon: "error"
+        });
 
     fs.unlinkSync(filePath);
 

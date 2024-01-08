@@ -259,6 +259,7 @@ async function downloadVideo(url: string, quality: string, resultDomElement: HTM
 	if (typeof window.activeDownloads[requestId] !== "undefined")
 		delete window.activeDownloads[requestId];
 }
+
 function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDivElement) {
 
 	if (resultsContainer === null) return;
