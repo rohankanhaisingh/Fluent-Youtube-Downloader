@@ -2,7 +2,7 @@
 
 The most efficient open-source Youtube video converter.
 
-_Currently on version ``0.3.4``_.
+_Currently on version ``0.4.1``_.
 
 ![Fluent Youtube Downloader - Light Themed](https://cdn.discordapp.com/attachments/1133720864488165416/1189200903023112343/image.png?ex=659d4ca5&is=658ad7a5&hm=e0a668bb826bcb672c93165e9233eb1f24f355ee59f3eeb3c5c3cd1e1aeb5d19&)
 ![Fluent Youtube Downloader - Dark Themed](https://cdn.discordapp.com/attachments/1133720864488165416/1189200977807556678/image.png?ex=659d4cb7&is=658ad7b7&hm=a900aec6933b717e85190a79d2b047f3176bc11802f35d955d20a7b8fc8525c0&)
