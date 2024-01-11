@@ -5,7 +5,7 @@ import electron, { app } from "electron";
 import { APPDATA_PATH, APPDATA_DIRECTORY_NAME, APPDATA_DIRECTORY_STRUCTURE } from "./constants";
 import { mainWindow } from "./app";
 import { ApplicationSettings, HistoryItem, ReadSettingsFail } from "./typings";
-import { setNestedValue } from "./utils";
+import { logError, logInfo, logWarning, setNestedValue } from "./utils";
 
 export const errorLogs: Error[] = [];
 
@@ -107,7 +107,7 @@ export function initializeAppData() {
 			type: "error"
 		}); 
 
-		console.log("Error: Could not initialize appdata since variable APPDATA_PATH is set to null.".red);
+		logError("Could not initialize appdata since variable APPDATA_PATH is set to null.", "appdata.ts");
 		return app.exit();
 	};
 
@@ -117,7 +117,7 @@ export function initializeAppData() {
 	// If the path does not exist, the program will then construct 
 	// the files and directories recursively.
 	if (!fs.existsSync(physicalPath)) {
-		console.log(`Warning: '${physicalPath}' does not exist, but will be created.`);
+		logWarning(`'${physicalPath}' does not exist, but will be created.`, "appdata.ts");
 		createFolderStructure(APPDATA_DIRECTORY_STRUCTURE, path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME));
 	}
 
@@ -138,7 +138,7 @@ export function initializeAppData() {
 			type: "error"
 		});
 
-		console.log("Error: Could not check for missing files due to an unknown reason. Variable 'missingFiles' received null.".red);
+		logError("Could not check for missing files due to an unknown reason. Variable 'missingFiles' received null.", "appdata.ts");
 
 		// Exit the application.
 		return app.exit();
@@ -148,7 +148,7 @@ export function initializeAppData() {
 	if (missingFiles.length > 0) 
 		createFolderStructure(APPDATA_DIRECTORY_STRUCTURE, path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME));
 
-	console.log(`Info: Initialized appdata with ${errorLogs.length} error(s).`.gray);
+	logWarning(`Initialized appdata with ${errorLogs.length} error(s).`, "appdata.ts");
 
 	return true;
 }
@@ -179,7 +179,7 @@ export function checkPathVariables(): ReadSettingsFail {
 		status: "failed",
 	} as ReadSettingsFail;
 
-	console.log("Info: Path variables are correctly set up.".gray);
+	logInfo("Local path variables has been set up correctly!", "appdata.ts");
 
 	return {
 		status: "ok",
@@ -237,7 +237,7 @@ export function updateSettingsFile(key: string, value: string | boolean | null) 
 
 	const pathStatus = checkPathVariables();
 
-	if (pathStatus.status !== "ok" || !APPDATA_PATH) return console.log(`Error: ${pathStatus.reason}`.red);
+	if (pathStatus.status !== "ok" || !APPDATA_PATH) return logError(pathStatus.reason, "appdata.ts");
 
 	const currentSettings = readSettingsFile() as ApplicationSettings;
 
@@ -245,7 +245,7 @@ export function updateSettingsFile(key: string, value: string | boolean | null) 
 
 	const newFileContent = JSON.stringify(currentSettings, null, "");
 
-	console.log(`Info: Made changes into ${path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json") }.`.gray);
+	logInfo(`Info: Made changes into ${path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json") }.`, "appdata.ts");
 	fs.writeFileSync(path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json"), newFileContent, "utf-8");
 }
 

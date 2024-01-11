@@ -41,6 +41,7 @@ export interface ApplicationPathSettings {
 
 export interface ApplicationServerSettings {
 	readonly port: number;
+	readonly extensionPassword: string | null;
 }
 
 export interface ApplicationBehaviorSettings {
@@ -98,6 +99,25 @@ export interface HistoryItem {
 	readonly fileLocation: string | null;
 	readonly timestamp: number | null;
 	readonly thumbnailUrl: string | null;
+}
+
+export interface ExtensionConnection {
+	readonly from: string;
+	readonly userAgent: string;
+	readonly protocol: string;
+	readonly timestamp: number;
+	readonly serverUrl: string;
+	readonly serverPassword: string | null;
+}
+
+export interface ExtensionConversionPostBody {
+	readonly from: string;
+	readonly userAgent: string;
+	readonly protocol: string;
+	readonly timestamp: number;
+	readonly videoUrl: string;
+	readonly videoQuality: ConvertQuality;
+	readonly requestId: string;
 }
 
 // Typings specifically made for SocketIO events.

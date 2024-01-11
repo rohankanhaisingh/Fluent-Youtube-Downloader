@@ -19,25 +19,27 @@ const path_1 = __importDefault(require("path"));
 const constants_1 = require("./constants");
 const app_1 = require("./app");
 const server_1 = require("./server");
+const extension_1 = require("./extension");
+const utils_1 = require("./utils");
 function requireLogin(req, res, next) {
     if (req.session && req.session.loggedIn)
         return next();
-    console.log("Warning: (Unauthorized) - client got tried accessing the server, but got blocked.".yellow);
+    (0, utils_1.logWarning)("Unauthorized client tried accessing the server but got blocked.", "router.ts");
     return res.status(403).send("Not allowed");
 }
 exports.requireLogin = requireLogin;
 function route(router) {
     router.get("/", function (req, res) {
         if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers)) {
-            console.log("Warning: Client tried accessing page but got rejected because there is no authentication token specified.".yellow);
+            (0, utils_1.logWarning)("Unauthorized client tried accessing application's webpages. Client is now being blocked.", "router.ts");
             return res.status(403).redirect("https://www.youtube.com/watch?v=eZe3zNR27bU&ab_channel=ClinicalGecko89");
         }
         if (req.headers["accessibility-type"] !== "Electron") {
-            console.log("Warning: Client tried accessing page but got rejected because accessibility-type is not 'Electron'.".yellow);
+            (0, utils_1.logWarning)("Unauthorized client tried accessing application's webpage using the wrong headers.", "router.ts");
             return res.status(403).send("Not allowed for non-Electron applications.");
         }
         if (req.headers["authentication-token"] !== server_1.reservedServerAuthToken) {
-            console.log("Warning: Client tried accessing page but got rejected because of authority reasons and stuff you know.".yellow);
+            (0, utils_1.logWarning)("Unauthorized client tried accessing application's webpage using the wrong headers.", "router.ts");
             return res.status(403).send("Bruh");
         }
         req.session.loggedIn = true;
@@ -66,6 +68,7 @@ function route(router) {
                 break;
         }
     });
+    router.use("/extension/", extension_1.handleRequestsFromExtension);
 }
 exports.route = route;
 //# sourceMappingURL=router.js.map

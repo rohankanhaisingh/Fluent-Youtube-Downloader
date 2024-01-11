@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.extractStreamOutput = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = void 0;
+exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.extractStreamOutput = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = exports.parseVideoIdFromUrl = void 0;
 const electron_1 = __importDefault(require("electron"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -24,6 +24,13 @@ const typings_1 = require("../../typings");
 const socket_1 = require("../../socket");
 const app_1 = require("../../app");
 const appdata_1 = require("../../appdata");
+const utils_1 = require("../../utils");
+function parseVideoIdFromUrl(videoUrl) {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = videoUrl.match(regExp);
+    return (match && match[7].length == 11) ? match[7] : videoUrl;
+}
+exports.parseVideoIdFromUrl = parseVideoIdFromUrl;
 function checkForInstallation() {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
@@ -96,7 +103,7 @@ function extractStreamOutput(stream, callback) {
         if (filteredWords[0].replace("\r", "") !== "[download]")
             return;
         if (filteredWords[1].includes("destination")) {
-            console.log(`Info: Found destination: ${chunkText}`.gray);
+            (0, utils_1.logInfo)(`File part destination reserved at: ${filteredWords[2].trim()}`, "ytdlp.ts");
             fileDestinations.push(filteredWords[2].trim());
         }
         if (!filteredWords[1].includes("%") ||
@@ -111,12 +118,13 @@ function extractStreamOutput(stream, callback) {
         callback({ isDone: false, percentage, downloadSpeed });
     });
     stream.on("end", function () {
-        console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+        (0, utils_1.logInfo)(`Executable stream ended.`, "ytdlp.ts");
         return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
     });
 }
 exports.extractStreamOutput = extractStreamOutput;
 function createYtdlpStream(videoUrl, videoQuality, requestId) {
+    var _a;
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
     if (!fs_1.default.existsSync(directoryName)) {
@@ -125,15 +133,21 @@ function createYtdlpStream(videoUrl, videoQuality, requestId) {
     }
     const physicalFilePath = path_1.default.join(directoryName, constants_1.YTDLP_EXECUTABLE_FILENAME);
     if (!fs_1.default.existsSync(physicalFilePath)) {
-        console.log(`${physicalFilePath} does not exist.`);
+        (0, utils_1.logError)(`Cannot start executable since it does not exist at ${physicalFilePath}.`, "ytdlp.ts");
         return null;
     }
     const cacheDirectory = (0, appdata_1.getCacheDirectory)();
     if (cacheDirectory === null)
         return null;
-    const commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
-    console.log(`Info: Starting executable with '${commandString}'.`.gray);
+    const parsedVideoId = parseVideoIdFromUrl(videoUrl);
+    const commandString = `${physicalFilePath} ${parsedVideoId} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+    (0, utils_1.logInfo)(`Starting yt-dlp executable located in ${physicalFilePath}.`, "ytdlp.ts");
+    (0, utils_1.logInfo)(commandString, "ytdlp.ts");
     const process = child_process_1.default.exec(commandString);
+    (_a = process.stderr) === null || _a === void 0 ? void 0 : _a.on("data", function (chunk) {
+        const text = chunk.toString();
+        (0, utils_1.logError)(text, "ytdlp.ts");
+    });
     return process;
 }
 exports.createYtdlpStream = createYtdlpStream;

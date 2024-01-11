@@ -38,7 +38,7 @@ export function rest(router: Router) {
 
 		pipeline(url, quality, requestId).then(function (response) {
 
-			if (response.state == "ok") {
+			if (response.state === "ok") {
 
 				new Notification({
 					title: "Fluent Youtube Downloader",
@@ -63,12 +63,18 @@ export function rest(router: Router) {
 				return restartApplication();
 			}
 
-			dialog.showMessageBox(mainWindow, {
-				title: "Conversion error",
-				type: "error",
-				message: "Something went wrong while converting a video.",
-				detail: response.reason,
+			emit("app/in-app-dialog", {
+				title: "An error occurred",
+				message: response.reason,
+				icon: "error"
 			});
+
+			//dialog.showMessageBox(mainWindow, {
+			//	title: "Conversion error",
+			//	type: "error",
+			//	message: "Something went wrong while converting a video.",
+			//	detail: response.reason,
+			//});
 
 			res.status(500).send(response.reason);
 

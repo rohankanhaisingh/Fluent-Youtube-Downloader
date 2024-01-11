@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFile = exports.openFile = exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
+exports.logWarning = exports.logError = exports.logInfo = exports.formatCurrentTime = exports.deleteFile = exports.openFile = exports.resolveVideoQuality = exports.setNestedValue = exports.getNestedValue = void 0;
 const fs_1 = __importDefault(require("fs"));
 const child_process_1 = __importDefault(require("child_process"));
 const socket_1 = require("./socket");
@@ -78,4 +78,16 @@ function deleteFile(filePath) {
     return true;
 }
 exports.deleteFile = deleteFile;
+function formatCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours(), minutes = now.getMinutes(), seconds = now.getSeconds();
+    return `${hours}:${minutes}:${seconds}`;
+}
+exports.formatCurrentTime = formatCurrentTime;
+const logInfo = (message, from) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[INFO]:`.green + " " + message.trim());
+exports.logInfo = logInfo;
+const logError = (message, from) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[ERROR]:`.red + " " + message.trim());
+exports.logError = logError;
+const logWarning = (message, from) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[WARNING]:`.yellow + " " + message.trim());
+exports.logWarning = logWarning;
 //# sourceMappingURL=utils.js.map

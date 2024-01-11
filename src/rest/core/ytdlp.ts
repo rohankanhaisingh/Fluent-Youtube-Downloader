@@ -11,6 +11,16 @@ import { StreamOutputExtractionEvent, YTDLPInitializationFailReason, YTDLPInitia
 import { emit } from "../../socket";
 import { mainWindow } from "../../app";
 import { getCacheDirectory } from "../../appdata";
+import { logError, logInfo } from "../../utils";
+
+export function parseVideoIdFromUrl(videoUrl: string): string {
+
+	const regExp: RegExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+
+	const match = videoUrl.match(regExp);
+
+	return (match && match[7].length == 11) ? match[7] : videoUrl;
+}
 
 export function checkForInstallation(): YTDLPInitializationResponse {
 
@@ -131,7 +141,7 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 	stream.on("data", function (chunk: Buffer) {
 
 		const chunkText = chunk.toString().toLowerCase();
-	
+
 		const words: string[] = chunkText.split(" ");
 
 		const filteredWords: string[] = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
@@ -142,7 +152,7 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 		// If yt-dlp determines the physical location of the media files.
 		if (filteredWords[1].includes("destination")) {
 
-			console.log(`Info: Found destination: ${chunkText}`.gray);
+			logInfo(`File part destination reserved at: ${filteredWords[2].trim()}`, "ytdlp.ts");
 			fileDestinations.push(filteredWords[2].trim());
 		}
 
@@ -167,9 +177,10 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 		callback({ isDone: false, percentage, downloadSpeed });
 	});
 
+
 	stream.on("end", function () {
 
-		console.log(`Info: Succesfully downloaded two media files. ${fileDestinations}`.gray);
+		logInfo(`Executable stream ended.`, "ytdlp.ts");
 		return callback({ isDone: true, percentage: 100, downloadSpeed: -1, fileDestinations });
 	});
 }
@@ -193,8 +204,7 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, reques
 	const physicalFilePath: string = path.join(directoryName, YTDLP_EXECUTABLE_FILENAME);
 
 	if (!fs.existsSync(physicalFilePath)) {
-
-		console.log(`${physicalFilePath} does not exist.`);
+		logError(`Cannot start executable since it does not exist at ${physicalFilePath}.`, "ytdlp.ts");
 		return null;
 	}
 
@@ -203,12 +213,22 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, reques
 	if (cacheDirectory === null)
 		return null;
 
-	// This string contains the arguments that will be used for the command.
-	const commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+	const parsedVideoId: string = parseVideoIdFromUrl(videoUrl);
 
-	console.log(`Info: Starting executable with '${commandString}'.`.gray);
+	// This string contains the arguments that will be used for the command.
+	const commandString: string = `${physicalFilePath} ${parsedVideoId} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+
+	logInfo(`Starting yt-dlp executable located in ${physicalFilePath}.`, "ytdlp.ts");
+	logInfo(commandString, "ytdlp.ts");
 
 	const process = cp.exec(commandString);
+
+	process.stderr?.on("data", function (chunk: Buffer) {
+
+		const text = chunk.toString();
+
+		logError(text, "ytdlp.ts");
+	});
 
 	return process;
 }

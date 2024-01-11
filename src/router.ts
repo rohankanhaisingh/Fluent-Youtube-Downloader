@@ -7,6 +7,8 @@ import path from "path";
 import { VIEWS_PATH } from "./constants";
 import { applicationTheme, handleControlEvents } from "./app";
 import { reservedServerAuthToken } from "./server";
+import { handleRequestsFromExtension } from "./extension";
+import { logInfo, logWarning } from "./utils";
 
 declare module 'express-session' {
 	interface SessionData {
@@ -18,7 +20,7 @@ export function requireLogin(req: Request, res: Response, next: NextFunction) {
 
 	if (req.session && req.session.loggedIn) return next();
 
-	console.log("Warning: (Unauthorized) - client got tried accessing the server, but got blocked.".yellow);
+	logWarning("Unauthorized client tried accessing the server but got blocked.", "router.ts");
 	return res.status(403).send("Not allowed");
 }
 
@@ -28,17 +30,17 @@ export function route(router: Router) {
 
 		if (!("accessibility-type" in req.headers) || !("authentication-token" in req.headers)) {
 
-			console.log("Warning: Client tried accessing page but got rejected because there is no authentication token specified.".yellow);
+			logWarning("Unauthorized client tried accessing application's webpages. Client is now being blocked.", "router.ts");
 			return res.status(403).redirect("https://www.youtube.com/watch?v=eZe3zNR27bU&ab_channel=ClinicalGecko89");
 		}
 
 		if (req.headers["accessibility-type"] !== "Electron") {
-			console.log("Warning: Client tried accessing page but got rejected because accessibility-type is not 'Electron'.".yellow);
+			logWarning("Unauthorized client tried accessing application's webpage using the wrong headers.", "router.ts");
 			return res.status(403).send("Not allowed for non-Electron applications.");
 		}
 
 		if (req.headers["authentication-token"] !== reservedServerAuthToken) {
-			console.log("Warning: Client tried accessing page but got rejected because of authority reasons and stuff you know.".yellow);
+			logWarning("Unauthorized client tried accessing application's webpage using the wrong headers.", "router.ts");
 			return res.status(403).send("Bruh");
 		}
 
@@ -78,4 +80,7 @@ export function route(router: Router) {
 			case "control-event": handleControlEvents(req); break;
 		}
 	});
+
+	// Requests from the browser extension does not need an in-app auth verification.
+	router.use("/extension/", handleRequestsFromExtension);
 }

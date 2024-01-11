@@ -22,18 +22,19 @@ const constants_1 = require("./constants");
 const appdata_1 = require("./appdata");
 const auto_launch_1 = require("./auto-launch");
 const tray_1 = require("./tray");
+const utils_1 = require("./utils");
 colors_1.default.enable();
-console.log("Info: Starting application...".gray);
+(0, utils_1.logInfo)("Attempting to prepare Fluent Youtube Downloader...", "app.ts");
 const initializationState = (0, appdata_1.initializeAppData)();
 electron_1.app.once("ready", function () {
     return __awaiter(this, void 0, void 0, function* () {
         if (!initializationState) {
-            console.log(`Error: Could not initialize the application it's data due to an uknown reason.`.red);
+            (0, utils_1.logError)("Error: Could not initialize the application it's data due to an uknown reason.", "app.ts");
             return electron_1.app.exit();
         }
         const applicationSettings = (0, appdata_1.readSettingsFile)();
         if (applicationSettings.status === "failed") {
-            console.log(`Error: ${applicationSettings.reason}`.red);
+            (0, utils_1.logError)(applicationSettings.reason, "app.ts");
             return electron_1.app.exit();
         }
         const settingsCasting = applicationSettings;
@@ -65,7 +66,7 @@ electron_1.app.once("ready", function () {
             }
         });
         if (electron_is_dev_1.default) {
-            console.log(`Info: Development environment detected! Will now open DevTools by default.`.gray);
+            (0, utils_1.logInfo)("Development enviroment has been detected. Electron will now open DevTools.", "app.ts");
             exports.mainWindow.webContents.openDevTools();
         }
         else {
@@ -75,7 +76,7 @@ electron_1.app.once("ready", function () {
         }
         const listenState = yield (0, server_1.listen)();
         if (!listenState) {
-            console.log("Error: Could not start local web-server due to an unknown reason.".red);
+            (0, utils_1.logError)("Could not start local web-server due to an unknown reason.", "app.ts");
             return electron_1.app.exit();
         }
         exports.mainWindow.loadURL(`http://localhost:${listenState}`, {

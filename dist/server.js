@@ -52,6 +52,7 @@ const app_1 = require("./app");
 const appdata_1 = require("./appdata");
 const entry_1 = require("./rest/entry");
 const socket_1 = require("./socket");
+const utils_1 = require("./utils");
 exports.server = (0, express_1.default)();
 exports.httpServer = http_1.default.createServer(exports.server);
 exports.router = (0, express_1.Router)();
@@ -80,7 +81,7 @@ exports.server.use((0, cors_1.default)());
 exports.server.use(function (req, res, next) {
     const ipHeader = req.headers[`x-forwarded-for`], clientHostname = req.hostname;
     if (clientHostname !== "localhost") {
-        console.log(`Warning: Client tried connecting to local web-server but is black-listed. Hostname: ${clientHostname}.`.yellow);
+        (0, utils_1.logWarning)(`Unauthorized client tried connecting to local web-server, but is black-listed. Hostname is ${clientHostname}`, "server.ts");
         return res.status(403).json("Not allowed");
     }
     next();
@@ -89,7 +90,7 @@ exports.io.use(function (socket, next) {
     const token = socket.handshake.auth.token;
     if (token === exports.reservedServerAuthToken)
         return next();
-    console.log("Warning: Client tried making a web-socket connected but got rejected.".yellow);
+    (0, utils_1.logWarning)("Unauthorized client tried connecting to a server-side web-socket, and got blocked", "server.ts");
     return next(new Error("Authentication Error"));
 });
 (0, socket_1.sokkie)(exports.io);
@@ -101,11 +102,11 @@ function listen() {
         const portStatus = yield portscanner_1.default.checkPortStatus(allocatedServerPort);
         if (portStatus !== "open") {
             exports.httpServer.listen(allocatedServerPort);
-            console.log(`Info: Started listening on port ${allocatedServerPort}.`.gray);
+            (0, utils_1.logInfo)(`ExpressJS is now running on port ${allocatedServerPort}.`, "server.ts");
             return allocatedServerPort;
         }
         const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
-        console.log(`Error: ${errorTrace.message}`.red);
+        (0, utils_1.logError)(errorTrace.message, "server.ts");
         yield electron_1.default.dialog.showMessageBox(app_1.mainWindow, {
             type: "error",
             message: errorTrace.message,

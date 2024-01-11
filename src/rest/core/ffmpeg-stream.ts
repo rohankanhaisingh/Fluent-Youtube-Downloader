@@ -11,6 +11,7 @@ import { MAX_FILE_SIZE } from "../../constants";
 import abort from "./abort";
 import { getCacheDirectory } from "../../appdata";
 import { mainWindow } from "../../app";
+import { logError, logInfo } from "../../utils";
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffmpegPath.path);
@@ -20,8 +21,6 @@ export function probeFfmpeg(filePath: string): Promise<FfprobeData> {
 	return new Promise(function (resolve, reject) {
 
 		ffmpeg.ffprobe(filePath, function (err: Error, data: FfprobeData) {
-
-			console.log(`Error: ${err.message}`.red);
 
 			if (err) return reject(err.message);
 
@@ -53,10 +52,8 @@ export function moveMediaFile(mediaPartPath: string, fileOutputPath: string) {
 
 	if (fs.existsSync(fileOutputPath))
 		return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
-
-	//fs.renameSync(mediaPartPath, fileOutputPath);
-
-	console.log(`Info: Copying ${mediaPartPath} into ${fileOutputPath}`);
+		
+	logInfo(`Attempting to copy ${mediaPartPath} into ${fileOutputPath}.`, "ffmpeg-stream.ts");
 
 	const mediaPartFileData: Buffer = fs.readFileSync(mediaPartPath);
 
@@ -84,19 +81,11 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 
 		if (mediaParts.length !== 2) {
 
-			console.log(`Error: Could not find media files to merge.`.red);
+			logError("Failed to merge media files. No files has been found.", "ffmpeg-stream.ts");
 			return reject(new Error("Could not find media files to merge."));
 		}
 
-		//// Probe media files before attempting to merge.
-		//const probe1 = await probeFfmpeg(mediaFile1);
-		//const probe2 = await probeFfmpeg(mediaFile2);
-
-		// Alright, fuck probing it then lmaooo
-		// this shit doesn't even work because 'show_streams' is
-		// an unrecognized option...
-
-		console.log(`Info: Merging files together...`);
+		logInfo(`Attempting to merge media files together...`, "ffmpeg-stream.ts");
 
 		const command: FfmpegCommand = ffmpeg()
 			.input(mediaParts[0])
@@ -107,19 +96,15 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 			.save(fileOutputPath);
 
 		command.on("end", function () {
-
-			console.log(`Info: Done merging files!`.gray);
+			logInfo(`Succesfully merged media files into ${fileOutputPath}.`, "ffmpeg-stream.ts");
 			resolve(fileOutputPath);
 		});
 
 		command.on("progress", function (progress: StreamConversionProgress) {
 
-			console.log(progress.timemark);
 		});
 
 		command.on("error", function (err: Error) {
-
-			console.log(`Error: ${err.message}`.red);
 
 			electron.dialog.showMessageBox(mainWindow, {
 				title: "FFMPEG error",
@@ -127,6 +112,7 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 				detail: err.stack
 			})
 
+			logError(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream.ts");
 			reject(err.message);
 		});
 	});
@@ -143,7 +129,7 @@ export default function execute(convertStream: Readable, destinationPath: string
 	// Checks if the directory actually exists.
 	if (!fs.existsSync(directoryName)) {
 
-		console.log("Directory name does not exist.");
+		logError(`The directory of where the local executable should be located at, does not exist. ${directoryName}.`, "ffmpeg-stream.ts");
 		return null;
 	}
 
@@ -172,7 +158,7 @@ export default function execute(convertStream: Readable, destinationPath: string
 
 			await abort(command, convertStream, destinationPath);
 
-			console.log("Reached max file size");
+			logError("File has reached maximum file size.", "ffmpeg-stream.ts");
 		}
 
 		if (events.onProgress) events.onProgress(progress);

@@ -22,6 +22,7 @@ const socket_1 = require("../../socket");
 const ytdlp_1 = require("./ytdlp");
 function execute(url, qualityString, requestId) {
     return __awaiter(this, void 0, void 0, function* () {
+        (0, utils_1.logInfo)(`Starting conversion pipeline using the following arguments: url: ${url}, qualityString: ${qualityString}, requestId: ${requestId}`, "pipeline.ts");
         const settings = (0, appdata_1.readSettingsFile)();
         if (settings.status !== "ok")
             return {
@@ -59,18 +60,16 @@ function execute(url, qualityString, requestId) {
                 state: "failed"
             };
         const ytdlpInitializationState = (0, ytdlp_1.initializeYtdlp)();
-        if (!ytdlpInitializationState)
-            return {
-                state: "failed",
-                reason: "Could not initialize yt-dlp due to a unknown reason."
-            };
+        if (!ytdlpInitializationState) {
+            (0, utils_1.logError)(`Failed initializing yt-dlp due to an unknown reason.`, "pipeline.ts");
+            return { state: "failed", reason: "Could not initialize yt-dlp due to a unknown reason." };
+        }
         if (ytdlpInitializationState === "executable-not-found") {
             const isInstalled = yield (0, ytdlp_1.promptInstallation)();
-            if (isInstalled instanceof Error)
-                return {
-                    state: "failed",
-                    reason: isInstalled.message
-                };
+            if (isInstalled instanceof Error) {
+                (0, utils_1.logError)(`Failed installing yt-dlp.exe. Reason: ${isInstalled.message}.`, "pipeline.ts");
+                return { state: "failed", reason: isInstalled.message };
+            }
             if (!isInstalled)
                 return {
                     state: "failed",
@@ -86,7 +85,7 @@ function execute(url, qualityString, requestId) {
                 state: "failed",
                 reason: "Execution directory could not be found."
             };
-        console.log("Info: Found yt-dlp executable.".gray);
+        (0, utils_1.logInfo)(`Found yt-dlp executable in application's root file.`, "pipeline.ts");
         const convertStream = (0, ytdlp_1.createYtdlpStream)(url, qualityString, requestId);
         return new Promise(function (resolve, reject) {
             if (convertStream === null || convertStream.stdout === null)

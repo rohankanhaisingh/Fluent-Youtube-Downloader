@@ -3,6 +3,8 @@ import cp from "child_process";
 
 import { ConvertQuality } from "./typings";
 import { emit } from "./socket";
+import { min } from "moment";
+import { italic } from "colors";
 
 export function getNestedValue(obj: any, propString: string) {
 
@@ -89,3 +91,18 @@ export function deleteFile(filePath: string) {
 
     return true;
 }
+
+export function formatCurrentTime(): string {
+
+    const now = new Date();
+
+    const hours = now.getHours(),
+        minutes = now.getMinutes(),
+        seconds = now.getSeconds();
+
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+export const logInfo = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[INFO]:`.green + " " + message.trim());
+export const logError = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[ERROR]:`.red + " " + message.trim());
+export const logWarning = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[WARNING]:`.yellow + " " + message.trim());

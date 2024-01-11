@@ -70,7 +70,8 @@ export const APPDATA_DIRECTORY_STRUCTURE: { [K: string]: any } = {
 				"ffmpegPath": null
 			},
 			"server": {
-				"port": 8000
+				"port": 8000,
+				"extensionPassword": null
 			}
 		}),
 		"History.json": "[]"
@@ -84,3 +85,6 @@ export const YTDLP_EXECUTABLE_FILENAME: string = "yt-dlp.exe";
 export const MAX_FILE_SIZE: number = 1024; // In MB
 
 export const TAR_FILE_NAME: string = "yt-dlp.tar.gz";
+
+// How long it should take to send the authentication request.
+export const EXTENSION_CONNECTION_INTERVAL: number = 1000;

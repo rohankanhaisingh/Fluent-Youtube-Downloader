@@ -22,12 +22,12 @@ const constants_1 = require("../../constants");
 const abort_1 = __importDefault(require("./abort"));
 const appdata_1 = require("../../appdata");
 const app_1 = require("../../app");
+const utils_1 = require("../../utils");
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 fluent_ffmpeg_1.default.setFfprobePath(ffmpeg_1.default.path);
 function probeFfmpeg(filePath) {
     return new Promise(function (resolve, reject) {
         fluent_ffmpeg_1.default.ffprobe(filePath, function (err, data) {
-            console.log(`Error: ${err.message}`.red);
             if (err)
                 return reject(err.message);
             return resolve(data);
@@ -52,7 +52,7 @@ function moveMediaFile(mediaPartPath, fileOutputPath) {
         return new Error("Could not move media part since given media part does not exist. Path: " + mediaPartPath);
     if (fs_1.default.existsSync(fileOutputPath))
         return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
-    console.log(`Info: Copying ${mediaPartPath} into ${fileOutputPath}`);
+    (0, utils_1.logInfo)(`Attempting to copy ${mediaPartPath} into ${fileOutputPath}.`, "ffmpeg-stream.ts");
     const mediaPartFileData = fs_1.default.readFileSync(mediaPartPath);
     fs_1.default.writeFileSync(fileOutputPath, mediaPartFileData);
     return true;
@@ -69,10 +69,10 @@ function mergeMediaFilesSync(fileId, fileOutputPath) {
                 return reject(moveState);
             }
             if (mediaParts.length !== 2) {
-                console.log(`Error: Could not find media files to merge.`.red);
+                (0, utils_1.logError)("Failed to merge media files. No files has been found.", "ffmpeg-stream.ts");
                 return reject(new Error("Could not find media files to merge."));
             }
-            console.log(`Info: Merging files together...`);
+            (0, utils_1.logInfo)(`Attempting to merge media files together...`, "ffmpeg-stream.ts");
             const command = (0, fluent_ffmpeg_1.default)()
                 .input(mediaParts[0])
                 .input(mediaParts[1])
@@ -81,19 +81,18 @@ function mergeMediaFilesSync(fileId, fileOutputPath) {
                 .addOption("-speed", "8")
                 .save(fileOutputPath);
             command.on("end", function () {
-                console.log(`Info: Done merging files!`.gray);
+                (0, utils_1.logInfo)(`Succesfully merged media files into ${fileOutputPath}.`, "ffmpeg-stream.ts");
                 resolve(fileOutputPath);
             });
             command.on("progress", function (progress) {
-                console.log(progress.timemark);
             });
             command.on("error", function (err) {
-                console.log(`Error: ${err.message}`.red);
                 electron_1.default.dialog.showMessageBox(app_1.mainWindow, {
                     title: "FFMPEG error",
                     message: err.message + "\nRestarting the application could solve the problem.",
                     detail: err.stack
                 });
+                (0, utils_1.logError)(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream.ts");
                 reject(err.message);
             });
         });
@@ -104,7 +103,7 @@ function execute(convertStream, destinationPath, events) {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
     if (!fs_1.default.existsSync(directoryName)) {
-        console.log("Directory name does not exist.");
+        (0, utils_1.logError)(`The directory of where the local executable should be located at, does not exist. ${directoryName}.`, "ffmpeg-stream.ts");
         return null;
     }
     const command = (0, fluent_ffmpeg_1.default)(convertStream)
@@ -126,7 +125,7 @@ function execute(convertStream, destinationPath, events) {
                     return;
                 hasStoppedProcess = true;
                 yield (0, abort_1.default)(command, convertStream, destinationPath);
-                console.log("Reached max file size");
+                (0, utils_1.logError)("File has reached maximum file size.", "ffmpeg-stream.ts");
             }
             if (events.onProgress)
                 events.onProgress(progress);

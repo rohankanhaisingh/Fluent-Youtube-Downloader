@@ -16,6 +16,7 @@ import { readSettingsFile } from "./appdata";
 import { ApplicationSettings } from "./typings";
 import { rest } from "./rest/entry";
 import { sokkie } from "./socket";
+import { logError, logInfo, logWarning } from "./utils";
 
 export const server: Express = express();
 export const httpServer = http.createServer(server);
@@ -57,7 +58,7 @@ server.use(function (req, res, next) {
 		clientHostname: string = req.hostname;
 
 	if (clientHostname !== "localhost") {
-		console.log(`Warning: Client tried connecting to local web-server but is black-listed. Hostname: ${clientHostname}.`.yellow);
+		logWarning(`Unauthorized client tried connecting to local web-server, but is black-listed. Hostname is ${clientHostname}`, "server.ts");
 		return res.status(403).json("Not allowed");
 	}
 
@@ -71,8 +72,8 @@ io.use(function (socket, next) {
 	if (token === reservedServerAuthToken)
 		return next();
 
-	console.log("Warning: Client tried making a web-socket connected but got rejected.".yellow);
-
+	logWarning("Unauthorized client tried connecting to a server-side web-socket, and got blocked", "server.ts");
+	
 	return next(new Error("Authentication Error"));
 });
 
@@ -95,12 +96,12 @@ export async function listen(): Promise<boolean | number> {
 	if (portStatus !== "open") {
 
 		httpServer.listen(allocatedServerPort);
-		console.log(`Info: Started listening on port ${allocatedServerPort}.`.gray);
+		logInfo(`ExpressJS is now running on port ${allocatedServerPort}.`, "server.ts");
 		return allocatedServerPort;
 	}
 
 	const errorTrace = new Error(`Failed to start local webserver since port ${allocatedServerPort} is already in use.`);
-	console.log(`Error: ${errorTrace.message}`.red);
+	logError(errorTrace.message, "server.ts");
 
 
 	await electron.dialog.showMessageBox(mainWindow, {

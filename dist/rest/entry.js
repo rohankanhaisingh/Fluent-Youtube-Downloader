@@ -30,7 +30,7 @@ function rest(router) {
     router.post("/rest/download", router_1.requireLogin, function (req, res) {
         const { url, requestId, quality } = req.body;
         (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
-            if (response.state == "ok") {
+            if (response.state === "ok") {
                 new electron_1.Notification({
                     title: "Fluent Youtube Downloader",
                     subtitle: "Fluent Youtube Downloader",
@@ -49,11 +49,10 @@ function rest(router) {
                 }).show();
                 return (0, app_1.restartApplication)();
             }
-            electron_1.dialog.showMessageBox(app_1.mainWindow, {
-                title: "Conversion error",
-                type: "error",
-                message: "Something went wrong while converting a video.",
-                detail: response.reason,
+            (0, socket_1.emit)("app/in-app-dialog", {
+                title: "An error occurred",
+                message: response.reason,
+                icon: "error"
             });
             res.status(500).send(response.reason);
         }).catch(function (err) {

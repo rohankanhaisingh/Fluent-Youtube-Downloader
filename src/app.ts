@@ -10,6 +10,7 @@ import { ApplicationSettings, ApplicationWindowTheme, ReadSettingsFail, Requeste
 import { initializeAppData, readSettingsFile } from "./appdata";
 import { initializeAutoLaunch } from "./auto-launch";
 import { initializeSystemTray } from "./tray";
+import { logError, logInfo } from "./utils";
 
 export let mainWindow: BrowserWindow;
 export let applicationTheme: ApplicationWindowTheme;
@@ -17,7 +18,7 @@ export let applicationTheme: ApplicationWindowTheme;
 
 
 colors.enable();
-console.log("Info: Starting application...".gray);
+logInfo("Attempting to prepare Fluent Youtube Downloader...", "app.ts");
 
 // Initializes the application data.
 const initializationState = initializeAppData();
@@ -27,7 +28,7 @@ app.once("ready", async function () {
 	// The program will close if the application's data has 
 	// failed initializing.
 	if (!initializationState) {
-		console.log(`Error: Could not initialize the application it's data due to an uknown reason.`.red);
+		logError("Error: Could not initialize the application it's data due to an uknown reason.", "app.ts");
 		return app.exit();
 	}
 
@@ -36,7 +37,7 @@ app.once("ready", async function () {
 	// The application will close whenever the settings 
 	// file failed reading.
 	if (applicationSettings.status === "failed") {
-		console.log(`Error: ${(applicationSettings as ReadSettingsFail).reason}`.red);
+		logError((applicationSettings as ReadSettingsFail).reason, "app.ts");
 		return app.exit();
 	}
 
@@ -74,7 +75,7 @@ app.once("ready", async function () {
 
 	if (electronIsDev) {
 
-		console.log(`Info: Development environment detected! Will now open DevTools by default.`.gray);
+		logInfo("Development enviroment has been detected. Electron will now open DevTools.", "app.ts");
 		mainWindow.webContents.openDevTools();
 	} else {
 
@@ -88,7 +89,7 @@ app.once("ready", async function () {
 
 	if (!listenState) {
 
-		console.log("Error: Could not start local web-server due to an unknown reason.".red);
+		logError("Could not start local web-server due to an unknown reason.", "app.ts");
 		return app.exit();
 	}
 

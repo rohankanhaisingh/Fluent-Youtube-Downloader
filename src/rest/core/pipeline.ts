@@ -6,7 +6,7 @@ import { ChildProcess } from "child_process";
 
 import { createHistoryItem, readSettingsFile } from "../../appdata";
 import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
-import { resolveVideoQuality } from "../../utils";
+import { logError, logInfo, resolveVideoQuality } from "../../utils";
 
 import stream from "./video-stream";
 import details from "./video-details";
@@ -17,6 +17,8 @@ import { createYtdlpStream, extractStreamOutput, initializeYtdlp, promptInstalla
 
 
 export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
+
+	logInfo(`Starting conversion pipeline using the following arguments: url: ${url}, qualityString: ${qualityString}, requestId: ${requestId}`, "pipeline.ts");
 
 	// Settings must be read before running the entire pipeline.
 	const settings = readSettingsFile();
@@ -75,9 +77,9 @@ export default async function execute(url: string, qualityString: ConvertQuality
 	const ytdlpInitializationState: boolean | YTDLPInitializationFailReason = initializeYtdlp();
 
 	// Return error state if ytdlp failed initting you dunno!
-	if (!ytdlpInitializationState) return {
-		state: "failed",
-		reason: "Could not initialize yt-dlp due to a unknown reason."
+	if (!ytdlpInitializationState) {
+		logError(`Failed initializing yt-dlp due to an unknown reason.`, "pipeline.ts");
+		return { state: "failed", reason: "Could not initialize yt-dlp due to a unknown reason." }
 	}
 
 	// If the reason why the init failed is because the executable is not found,
@@ -86,9 +88,10 @@ export default async function execute(url: string, qualityString: ConvertQuality
 
 		const isInstalled: boolean | Error = await promptInstallation();
 
-		if (isInstalled instanceof Error) return {
-			state: "failed",
-			reason: isInstalled.message
+		if (isInstalled instanceof Error) {
+
+			logError(`Failed installing yt-dlp.exe. Reason: ${isInstalled.message}.`, "pipeline.ts");
+			return { state: "failed", reason: isInstalled.message }
 		}
 
 		if (!isInstalled) return {
@@ -107,9 +110,8 @@ export default async function execute(url: string, qualityString: ConvertQuality
 		reason: "Execution directory could not be found."
 	}
 
-	// The code down below will only run IF
-	// yt-dlp has succesfully initialized.
-	console.log("Info: Found yt-dlp executable.".gray);
+	// The code down below will only run IF the yt-dlp has succesfully initialized.
+	logInfo(`Found yt-dlp executable in application's root file.`, "pipeline.ts");
 
 	// Will create a ChildProcess steam.
 	const convertStream: ChildProcess | null = createYtdlpStream(url, qualityString, requestId);

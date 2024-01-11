@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TAR_FILE_NAME = exports.MAX_FILE_SIZE = exports.YTDLP_EXECUTABLE_FILENAME = exports.APPDATA_DIRECTORY_STRUCTURE = exports.APPDATA_DIRECTORY_NAME = exports.APPDATA_PATH = exports.DOTENV_FILE = exports.SERVER_PORT = exports.ENTRY_SCRIPT_FILES = exports.SCRIPTS_PATH = exports.VIEWS_PATH = exports.APPLICATION_PATH = exports.ROOT_PATH = void 0;
+exports.EXTENSION_CONNECTION_INTERVAL = exports.TAR_FILE_NAME = exports.MAX_FILE_SIZE = exports.YTDLP_EXECUTABLE_FILENAME = exports.APPDATA_DIRECTORY_STRUCTURE = exports.APPDATA_DIRECTORY_NAME = exports.APPDATA_PATH = exports.DOTENV_FILE = exports.SERVER_PORT = exports.ENTRY_SCRIPT_FILES = exports.SCRIPTS_PATH = exports.VIEWS_PATH = exports.APPLICATION_PATH = exports.ROOT_PATH = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 exports.ROOT_PATH = path_1.default.join(__dirname, "../");
@@ -56,7 +56,8 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
                 "ffmpegPath": null
             },
             "server": {
-                "port": 8000
+                "port": 8000,
+                "extensionPassword": null
             }
         }),
         "History.json": "[]"
@@ -65,4 +66,5 @@ exports.APPDATA_DIRECTORY_STRUCTURE = {
 exports.YTDLP_EXECUTABLE_FILENAME = "yt-dlp.exe";
 exports.MAX_FILE_SIZE = 1024;
 exports.TAR_FILE_NAME = "yt-dlp.tar.gz";
+exports.EXTENSION_CONNECTION_INTERVAL = 1000;
 //# sourceMappingURL=constants.js.map
