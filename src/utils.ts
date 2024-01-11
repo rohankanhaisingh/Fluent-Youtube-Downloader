@@ -103,6 +103,6 @@ export function formatCurrentTime(): string {
     return `${hours}:${minutes}:${seconds}`;
 }
 
-export const logInfo = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[INFO]:`.green + " " + message.trim());
-export const logError = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[ERROR]:`.red + " " + message.trim());
-export const logWarning = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.bgWhite.black + ` (from: ${from}) `.gray + `[WARNING]:`.yellow + " " + message.trim());
+export const logInfo = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[INFO]:`.green + " " + message.trim());
+export const logError = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[ERROR]:`.red + " " + message.trim());
+export const logWarning = (message: string, from: string) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[WARNING]:`.yellow + " " + message.trim());

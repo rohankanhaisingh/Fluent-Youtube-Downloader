@@ -11,7 +11,7 @@ import { MAX_FILE_SIZE } from "../../constants";
 import abort from "./abort";
 import { getCacheDirectory } from "../../appdata";
 import { mainWindow } from "../../app";
-import { logError, logInfo } from "../../utils";
+import { logError, logInfo, logWarning } from "../../utils";
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffmpegPath.path);
@@ -45,7 +45,7 @@ export function checkMediaParts(fileName: string): string[] {
 	return matchedFiles;
 }
 
-export function moveMediaFile(mediaPartPath: string, fileOutputPath: string) {
+export function moveMediaFile(mediaPartPath: string, fileOutputPath: string): boolean | Error {
 
 	if (!fs.existsSync(mediaPartPath))
 		return new Error("Could not move media part since given media part does not exist. Path: " + mediaPartPath);
@@ -55,10 +55,14 @@ export function moveMediaFile(mediaPartPath: string, fileOutputPath: string) {
 		
 	logInfo(`Attempting to copy ${mediaPartPath} into ${fileOutputPath}.`, "ffmpeg-stream.ts");
 
-	const mediaPartFileData: Buffer = fs.readFileSync(mediaPartPath);
-
-	fs.writeFileSync(fileOutputPath, mediaPartFileData);
-	return true;
+	try {
+		const mediaPartFileData: Buffer = fs.readFileSync(mediaPartPath);
+		fs.writeFileSync(fileOutputPath, mediaPartFileData);
+		return true;
+	} catch (err) {
+		logError((err as Error).message, "ffmpeg-stream");
+		return err as Error;
+	}
 }
 
 export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string): Promise<string | null> {
@@ -86,6 +90,7 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 		}
 
 		logInfo(`Attempting to merge media files together...`, "ffmpeg-stream.ts");
+		logWarning(`The processing of merging media files can take a while.`, "ffmpeg-stream.ts");
 
 		const command: FfmpegCommand = ffmpeg()
 			.input(mediaParts[0])

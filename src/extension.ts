@@ -14,6 +14,7 @@ import { emit } from "./socket";
 import { mainWindow } from "./app";
 
 export let extensionIsConnected: boolean = false;
+export let activeConversionThread: ExtensionConversionPostBody | null = null;
 
 export function authenticateExtensionConnection(body: ExtensionConnection) {
 
@@ -47,47 +48,58 @@ export function authenticateExtensionConnection(body: ExtensionConnection) {
 	return true;
 }
 
-export function convertVideoFromYoutube(body: ExtensionConversionPostBody) {
+export function convertVideoFromYoutube(body: ExtensionConversionPostBody): Promise<void> {
 
-	// Basically the same authentication pipeline as shown above.
-	if (body.protocol !== "chrome-extension:") 
-		return new Error("The protocol does not matches the standard chrome extension protocol.");
-		
-	const now: number = Date.now(),
-		difference = now - body.timestamp;
+	return new Promise(function (resolve, reject) {
 
-	if (difference >= EXTENSION_CONNECTION_INTERVAL)
-		return new Error(`The delay between the request and the response is more than ${EXTENSION_CONNECTION_INTERVAL}.`);
+		// Basically the same authentication pipeline as shown above.
+		if (body.protocol !== "chrome-extension:")
+			return reject(new Error("The protocol does not matches the standard chrome extension protocol."));
 
-	pipeline(body.videoUrl, body.videoQuality, body.requestId).then(function (response: ConversionPipeline) {
+		const now: number = Date.now(),
+			difference = now - body.timestamp;
 
-		if (response.state === "ok") {
+		if (difference >= EXTENSION_CONNECTION_INTERVAL)
+			return reject(new Error(`The delay between the request and the response is more than ${EXTENSION_CONNECTION_INTERVAL}.`));
 
-			new Notification({
-				title: "Fluent Youtube Downloader",
-				subtitle: "Fluent Youtube Downloader",
-				icon: path.join(ROOT_PATH, "icon.ico"),
-				body: "Video has succesfully been converted.",
-			}).show();
+		activeConversionThread = body;
 
-			emit("app/yt-dlp/convert-complete", { requestId: body.requestId });
-		}
+		pipeline(body.videoUrl, body.videoQuality, body.requestId).then(function (response: ConversionPipeline) {
 
-		if (response.state === "failed") {
+			activeConversionThread = null;
 
-			new Notification({
-				title: "Fluent Youtube Downloader",
-				subtitle: "An error occurred.",
-				icon: path.join(ROOT_PATH, "icon.ico"),
-				body: "Fluent Youtube Download could not download this video. See the application window for more details.",
-			}).show();
+			if (response.state === "ok") {
 
-			emit("app/in-app-dialog", {
-				title: "An error occurred",
-				message: response.reason,
-				icon: "error"
-			});
-		}
+				new Notification({
+					title: "Fluent Youtube Downloader",
+					subtitle: "Fluent Youtube Downloader",
+					icon: path.join(ROOT_PATH, "icon.ico"),
+					body: "Video has succesfully been converted.",
+				}).show();
+
+				emit("app/yt-dlp/convert-complete", { requestId: body.requestId });
+
+				resolve();
+			}
+
+			if (response.state === "failed") {
+
+				new Notification({
+					title: "Fluent Youtube Downloader",
+					subtitle: "An error occurred.",
+					icon: path.join(ROOT_PATH, "icon.ico"),
+					body: "Fluent Youtube Download could not download this video. See the application window for more details.",
+				}).show();
+
+				emit("app/in-app-dialog", {
+					title: "An error occurred",
+					message: response.reason,
+					icon: "error"
+				});
+
+				reject(response.reason);
+			}
+		});
 	});
 }
 
@@ -105,7 +117,17 @@ export function handleRequestsFromExtension(req: Request, res: Response) {
 				: res.status(200).send("Extension authenticated.");
 		case "/convert":
 
-			const downloadResponse = convertVideoFromYoutube(requestBody as ExtensionConversionPostBody);
+			convertVideoFromYoutube(requestBody as ExtensionConversionPostBody)
+				.then(function () {
+					res.status(200).send();
+				})
+				.catch(function (err: Error) {
+					res.status(500).send(err.message);
+				});
+			break;
+		case "/active-thread":
+
+			return res.status(200).json(activeConversionThread);
 
 			break;
 	}

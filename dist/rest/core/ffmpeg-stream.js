@@ -53,9 +53,15 @@ function moveMediaFile(mediaPartPath, fileOutputPath) {
     if (fs_1.default.existsSync(fileOutputPath))
         return new Error("Could not move media part since the given output path is already in use. Path: " + fileOutputPath);
     (0, utils_1.logInfo)(`Attempting to copy ${mediaPartPath} into ${fileOutputPath}.`, "ffmpeg-stream.ts");
-    const mediaPartFileData = fs_1.default.readFileSync(mediaPartPath);
-    fs_1.default.writeFileSync(fileOutputPath, mediaPartFileData);
-    return true;
+    try {
+        const mediaPartFileData = fs_1.default.readFileSync(mediaPartPath);
+        fs_1.default.writeFileSync(fileOutputPath, mediaPartFileData);
+        return true;
+    }
+    catch (err) {
+        (0, utils_1.logError)(err.message, "ffmpeg-stream");
+        return err;
+    }
 }
 exports.moveMediaFile = moveMediaFile;
 function mergeMediaFilesSync(fileId, fileOutputPath) {
