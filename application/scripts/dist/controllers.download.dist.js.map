@@ -1,0 +1,1 @@
+{"version":3,"file":"controllers.download.dist.js","mappings":"mBAAAA,QAAQC,IAAI,6B","sources":["webpack://fluent-youtube-downloader/./application/scripts/controllers/download.ts"],"sourcesContent":["console.log(\"This is the download page.\");"],"names":["console","log"],"sourceRoot":""}
