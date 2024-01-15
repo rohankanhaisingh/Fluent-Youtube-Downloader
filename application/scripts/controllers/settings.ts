@@ -169,6 +169,12 @@ async function selectDownloadPath() {
 	input.setValue(path);
 }
 
+async function restoreSettings() {
+
+	const request = await get("/appdata/restore-settings");
+
+}
+
 async function load(): Promise<number> {
 
 	loadSettings();
@@ -176,6 +182,7 @@ async function load(): Promise<number> {
 	document.querySelector("#save-settings")?.addEventListener("click", saveSettings);
 	document.querySelector("#select-download-path-button")?.addEventListener("click", selectDownloadPath);
 	document.querySelector("#settings-search")?.addEventListener("input", handleSearchQuery);
+	document.querySelector("#restore-settings")?.addEventListener("click", restoreSettings);
 
 	return 0;
 }

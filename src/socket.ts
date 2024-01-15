@@ -5,9 +5,9 @@
 import { Socket, Server } from "socket.io";
 import { dialog } from "electron";
 
-import { clearHistory, getHistory, readSettingsFile, updateSettingsFile } from "./appdata";
+import { clearHistory, getHistory, readSettingsFile, restoreSettings, updateSettingsFile } from "./appdata";
 import { deleteFile, openFile } from "./utils";
-import { mainWindow } from "./app";
+import { mainWindow, restartApplication } from "./app";
 import { SocketIOEvents } from "./typings";
 
 // Can only assign one socket.
@@ -68,6 +68,17 @@ export function sokkie(io: Server) {
 		socket.on("app/delete-file", function (data) {
 
 			deleteFile(data.physicalPath);
+		});
+
+		socket.on("/appdata/restore-settings", function () {
+
+			restoreSettings();
+
+			emit("app/in-app-dialog", {
+				title: "The settings has been restored",
+				message: "You may have to restart the application.",
+				icon: "warning"
+			});
 		});
 	});
 }

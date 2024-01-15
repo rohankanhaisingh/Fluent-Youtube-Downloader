@@ -38,6 +38,14 @@ function sokkie(io) {
         socket.on("app/delete-file", function (data) {
             (0, utils_1.deleteFile)(data.physicalPath);
         });
+        socket.on("/appdata/restore-settings", function () {
+            (0, appdata_1.restoreSettings)();
+            emit("app/in-app-dialog", {
+                title: "The settings has been restored",
+                message: "You may have to restart the application.",
+                icon: "warning"
+            });
+        });
     });
 }
 exports.sokkie = sokkie;

@@ -7,6 +7,7 @@ import { mainWindow } from "./app";
 import { ApplicationSettings, HistoryItem, ReadSettingsFail } from "./typings";
 import { logError, logInfo, logWarning, setNestedValue } from "./utils";
 
+
 export const errorLogs: Error[] = [];
 
 /**
@@ -320,4 +321,24 @@ export function createHistoryItem(data: HistoryItem): null | string {
 	fs.writeFileSync(filePath, JSON.stringify(fileData), "utf-8");
 
 	return filePath;
+}
+
+export function restoreSettings() {
+
+	const checkedPathVariables: ReadSettingsFail = checkPathVariables();
+
+	if (checkedPathVariables.status === "failed" || APPDATA_PATH === undefined)
+		return logError("Could not restore the settings because the check for path variables has failed.", "appdata.ts");
+
+	const settingsPath: string = path.join(APPDATA_PATH, APPDATA_DIRECTORY_NAME, "Application", "Settings.json");
+
+	try {
+
+		fs.unlinkSync(settingsPath);
+		logInfo(`Succesfully deleted ${settingsPath}.`, "appdata.ts");
+
+	} catch (err) {
+
+		logError(`Failed deleting file ${settingsPath}. Error: ${(err as Error).message}`, "appdata.ts");
+	}
 }
