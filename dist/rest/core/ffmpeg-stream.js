@@ -79,6 +79,7 @@ function mergeMediaFilesSync(fileId, fileOutputPath) {
                 return reject(new Error("Could not find media files to merge."));
             }
             (0, utils_1.logInfo)(`Attempting to merge media files together...`, "ffmpeg-stream.ts");
+            (0, utils_1.logWarning)(`The processing of merging media files can take a while.`, "ffmpeg-stream.ts");
             const command = (0, fluent_ffmpeg_1.default)()
                 .input(mediaParts[0])
                 .input(mediaParts[1])
