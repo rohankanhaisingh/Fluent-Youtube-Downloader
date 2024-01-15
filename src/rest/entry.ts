@@ -9,6 +9,7 @@ import { mainWindow, restartApplication } from "../app";
 import { requireLogin } from "../router";
 import { ROOT_PATH } from "../constants";
 import { emit } from "../socket";
+import { logError } from "../utils";
 
 export function rest(router: Router) {
 
@@ -21,11 +22,12 @@ export function rest(router: Router) {
 			res.status(200).json(response);
 		}).catch(function (err: Error) {
 
-			dialog.showMessageBox(mainWindow, {
-				title: "Error",
-				type: "error",
+			logError(err.message, "entry.ts");
+
+			emit("app/in-app-dialog", {
+				title: "An error occurred",
 				message: err.message,
-				detail: err.stack,
+				icon: "error"
 			});
 
 			res.status(500).json({ message: err.message, stack: err.stack, name: err.name });
