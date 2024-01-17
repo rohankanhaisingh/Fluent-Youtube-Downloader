@@ -88,3 +88,6 @@ export const TAR_FILE_NAME: string = "yt-dlp.tar.gz";
 
 // How long it should take to send the authentication request.
 export const EXTENSION_CONNECTION_INTERVAL: number = 1000;
+
+export const AUDIO_FILE_EXTENSIONS: string[] = ["mp3", "ogg", "wav", "okt3"];
+
