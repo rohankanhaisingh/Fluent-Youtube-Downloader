@@ -9,7 +9,7 @@ import { mainWindow, restartApplication } from "../app";
 import { requireLogin } from "../router";
 import { ROOT_PATH } from "../constants";
 import { emit } from "../socket";
-import { logError } from "../utils";
+import { logError, logInfo } from "../utils";
 
 export function rest(router: Router) {
 
@@ -36,9 +36,9 @@ export function rest(router: Router) {
 
 	router.post("/rest/download", requireLogin, function (req: Request, res: Response) {
 
-		const { url, requestId, quality } = req.body;
+		const { url, requestId, quality, extension } = req.body;
 
-		pipeline(url, quality, requestId).then(function (response) {
+		pipeline(url, quality, extension, requestId).then(function (response) {
 
 			if (response.state === "ok") {
 
@@ -70,13 +70,6 @@ export function rest(router: Router) {
 				message: response.reason,
 				icon: "error"
 			});
-
-			//dialog.showMessageBox(mainWindow, {
-			//	title: "Conversion error",
-			//	type: "error",
-			//	message: "Something went wrong while converting a video.",
-			//	detail: response.reason,
-			//});
 
 			res.status(500).send(response.reason);
 
