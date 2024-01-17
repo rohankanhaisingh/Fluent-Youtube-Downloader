@@ -152,11 +152,11 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 		if (notEmptyWords[0].trim() !== "[download]") return;
 
 		// If yt-dlp determines the physical location of the media files.
-		//if (notEmptyWords[1].includes("destination")) {
+		if (notEmptyWords[1].includes("destination")) {
 
-		//	logInfo(`File part destination reserved at: ${notEmptyWords[2].trim()}`, "ytdlp.ts");
-		//	fileDestinations.push(notEmptyWords[2].trim());
-		//}
+			logInfo(`File part destination reserved at: ${notEmptyWords[2].trim()}`, "ytdlp.ts");
+			fileDestinations.push(notEmptyWords[2].trim());
+		}
 		
 		if (!notEmptyWords[1].trim().includes("%") ||
 			!notEmptyWords[3].trim().includes("ib") ||
