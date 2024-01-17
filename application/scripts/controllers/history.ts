@@ -133,6 +133,8 @@ async function loadController() {
 
     const history: HistoryItem[] = await get("/appdata/history");
 
+    if (typeof history.reverse !== "function") return;
+
     history.reverse().forEach(function (historyItem: HistoryItem) {
 
         if (historyItem.timestamp === null) return;

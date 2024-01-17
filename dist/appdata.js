@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHistoryItem = exports.clearHistory = exports.getHistory = exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
+exports.restoreSettings = exports.createHistoryItem = exports.clearHistory = exports.getHistory = exports.getCacheDirectory = exports.updateSettingsFile = exports.readSettingsFile = exports.checkPathVariables = exports.initializeAppData = exports.checkFolderStructure = exports.createFolderStructure = exports.errorLogs = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importStar(require("electron"));
@@ -248,4 +248,18 @@ function createHistoryItem(data) {
     return filePath;
 }
 exports.createHistoryItem = createHistoryItem;
+function restoreSettings() {
+    const checkedPathVariables = checkPathVariables();
+    if (checkedPathVariables.status === "failed" || constants_1.APPDATA_PATH === undefined)
+        return (0, utils_1.logError)("Could not restore the settings because the check for path variables has failed.", "appdata.ts");
+    const settingsPath = path_1.default.join(constants_1.APPDATA_PATH, constants_1.APPDATA_DIRECTORY_NAME, "Application", "Settings.json");
+    try {
+        fs_1.default.unlinkSync(settingsPath);
+        (0, utils_1.logInfo)(`Succesfully deleted ${settingsPath}.`, "appdata.ts");
+    }
+    catch (err) {
+        (0, utils_1.logError)(`Failed deleting file ${settingsPath}. Error: ${err.message}`, "appdata.ts");
+    }
+}
+exports.restoreSettings = restoreSettings;
 //# sourceMappingURL=appdata.js.map

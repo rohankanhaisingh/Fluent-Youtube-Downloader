@@ -12,17 +12,18 @@ const app_1 = require("../app");
 const router_1 = require("../router");
 const constants_1 = require("../constants");
 const socket_1 = require("../socket");
+const utils_1 = require("../utils");
 function rest(router) {
     router.post("/rest/video-details", router_1.requireLogin, function (req, res) {
         const { url } = req.body;
         (0, video_details_1.default)(url).then(function (response) {
             res.status(200).json(response);
         }).catch(function (err) {
-            electron_1.dialog.showMessageBox(app_1.mainWindow, {
-                title: "Error",
-                type: "error",
+            (0, utils_1.logError)(err.message, "entry.ts");
+            (0, socket_1.emit)("app/in-app-dialog", {
+                title: "An error occurred",
                 message: err.message,
-                detail: err.stack,
+                icon: "error"
             });
             res.status(500).json({ message: err.message, stack: err.stack, name: err.name });
         });

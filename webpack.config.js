@@ -38,7 +38,7 @@ console.log(entryPoints);
 module.exports = {
     mode: "production",
     watch: true,
-    // devtool: "eval",
+    devtool: "source-map",
     plugins: [],
     entry: entryPoints,
     output: {
