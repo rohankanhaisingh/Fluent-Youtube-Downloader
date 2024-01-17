@@ -120,6 +120,11 @@ export interface ExtensionConversionPostBody {
 	readonly requestId: string;
 }
 
+export interface ResolvedVideoInfo {
+	readonly videoTitle: string;
+	readonly videoThumbnail: string;
+}
+
 // Typings specifically made for SocketIO events.
 export namespace SocketIOEvents {
 
