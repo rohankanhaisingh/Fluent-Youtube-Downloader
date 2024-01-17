@@ -4,6 +4,7 @@ import { Socket } from "socket.io-client";
 
 import { renderSelects } from "../handlers/dom-generator";
 import { getClient } from "../handlers/socket";
+import { FluentSelect } from "../handlers/fluent-renderer";
 
 interface Thumbnail {
 	url: string;
@@ -231,31 +232,27 @@ function displayVideoInfo(videoDetails: VideoDetails) {
 	videoInfoContainer.replaceChildren(contentElement);
 }
 
-async function downloadVideo(url: string, quality: string, resultDomElement: HTMLDivElement) {
+async function downloadVideo(url: string, quality: string, extension: string, resultDomElement: HTMLDivElement) {
 
-	const requestId: string = v4();
-
-	const words: string[] = quality.toLocaleLowerCase().split(" ");
-	const constructedWord = words.join("-");
+	const words: string[] = quality.toLocaleLowerCase().split(" "),
+		constructedWord = words.join("-"),
+		requestId: string = v4();
 
 	if (!resultDomElement.classList.contains("downloading"))
 		resultDomElement.classList.add("downloading");
 
 	window.activeDownloads[requestId] = new ActiveDownload(requestId, resultDomElement);
-
-	// Should start the download async.
+	
 	await fetch("/rest/download", {
-		body: JSON.stringify({ url, requestId, quality: constructedWord }),
+		body: JSON.stringify({ url, requestId, extension, quality: constructedWord }),
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
 		}
 	});
-
-	// Will change the dom element anyway.
+	
 	resultDomElement.classList.remove("downloading");
-
-	// Remove the request id.
+	
 	if (typeof window.activeDownloads[requestId] !== "undefined")
 		delete window.activeDownloads[requestId];
 }
@@ -276,15 +273,21 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 			<div class="convert-results__result__info__author"><img src="${videoDetails.author.thumbnails.pop()?.url}" alt="Author" />${videoDetails.author.user} - ${videoDetails.author.subscriber_count} subscribers</div>
 			<div class="convert-results__result__info__description">${videoDetails.description}</div>
 			<div class="convert-results__result__info__button-container">
-				<div class="convert-results__result__info__button" id="button-convert">Convert</div>
-				<option-select class="convert-results__result__info__select" id="select-quality">
-					<option active="true">bestvideo+bestaudio</option>
-					<option>Best</option>
-					<option>Worst</option>
-					<option>Bestvideo</option>
-					<option>Bestaudio</option>
-				</option-select>
-				<div class="convert-results__result__info__button" id="button-info">Info</div>
+				<fluent-select id="select-quality">
+					<fluent-option value="bestvideo+bestaudio">Best video and audio</fluent-option>
+					<fluent-option value="best">Best</fluent-option>
+					<fluent-option value="worst">Worst</fluent-option>
+					<fluent-option value="bestvideo">Bestvideo</fluent-option>
+					<fluent-option value="bestaudio">Bestaudio</fluent-option>
+				</fluent-select>
+				<fluent-select id="select-extension">
+					<fluent-option value="mp4">.mp4</fluent-option>
+					<fluent-option value="mp3">.mp3</fluent-option>
+					<fluent-option value="ogg">.ogg</fluent-option>
+					<fluent-option value="wav">.wav</fluent-option>
+				</fluent-select>
+				<fluent-button id="button-convert">Convert</fluent-button>
+				<fluent-button id="button-info">Info</fluent-button>
 			</div>
 			<div class="convert-results__result__info__progression">
 				<svg class="convert-results__result__info__progression__spinner spinner">
@@ -299,17 +302,20 @@ function createResultDom(videoDetails: VideoDetails, skeletonDomElement: HTMLDiv
 		</div>
 	`;
 
-	const convertButton = mainElement.querySelector("#button-convert") as HTMLDivElement;
-	const infoButton = mainElement.querySelector("#button-info") as HTMLDivElement;
+	const convertButton = mainElement.querySelector("#button-convert") as HTMLDivElement,
+		infoButton = mainElement.querySelector("#button-info") as HTMLDivElement,
+		qualitySelect = mainElement.querySelector("#select-quality") as FluentSelect,
+		extensionSelect = mainElement.querySelector("#select-extension") as FluentSelect;
 
 	convertButton.addEventListener("click", function () {
 
-		const qualityButton = mainElement.querySelector("#select-quality") as HTMLDivElement; 
-		const qualityValue: string | null = qualityButton.getAttribute("value");
+		const qualityValueAttribute: string | null = qualitySelect.getAttribute("value"),
+			extensionValueAttribute: string | null = extensionSelect.getAttribute("value");
 
-		if (qualityValue === null) return;
+		const quality: string = qualityValueAttribute === null ? "bestvideo+bestaudio" : qualityValueAttribute,
+			extension: string = extensionValueAttribute === null ? "mp4" : extensionValueAttribute;
 
-		downloadVideo(videoDetails.video_url, qualityValue, mainElement);
+		downloadVideo(videoDetails.video_url, quality, extension, mainElement);
 	});
 
 	infoButton.addEventListener("click", function () {
