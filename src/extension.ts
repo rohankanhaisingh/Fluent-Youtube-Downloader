@@ -64,7 +64,7 @@ export function convertVideoFromYoutube(body: ExtensionConversionPostBody): Prom
 
 		activeConversionThread = body;
 
-		pipeline(body.videoUrl, body.videoQuality, body.requestId).then(function (response: ConversionPipeline) {
+		pipeline(body.videoUrl, body.videoQuality, "mp4", body.requestId).then(function (response: ConversionPipeline) {
 
 			activeConversionThread = null;
 

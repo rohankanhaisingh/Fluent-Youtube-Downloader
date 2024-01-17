@@ -6,7 +6,7 @@ import electron from "electron";
 import { Readable } from "stream";
 
 import { StreamConversionProgress, StreamConvesionEvents } from "../../typings";
-import { MAX_FILE_SIZE } from "../../constants";
+import { AUDIO_FILE_EXTENSIONS, MAX_FILE_SIZE } from "../../constants";
 
 import abort from "./abort";
 import { getCacheDirectory } from "../../appdata";
@@ -120,6 +120,32 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 			logError(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream.ts");
 			reject(err.message);
 		});
+	});
+}
+
+export function changeFileExtension(mediaPart: string, extension: string, fileDestination: string) {
+
+	logInfo(`Attempting to convert ${mediaPart} into ${fileDestination} with extension ${extension}.`, "ffmpeg-stream.ts");
+
+	const isAudioExtension: boolean = AUDIO_FILE_EXTENSIONS.includes(extension);
+
+	if (!isAudioExtension) return;
+
+	const command: FfmpegCommand = ffmpeg()
+		.input(mediaPart)
+		.outputOptions("-q:a 0")
+		.outputOptions("-map a")
+		.save(fileDestination);
+
+	command.on("progress", function (progress: StreamConversionProgress) {
+
+		console.log(progress.timemark);
+	});
+
+	command.on("error", function (err: Error) {
+
+		logError(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream");
+
 	});
 }
 

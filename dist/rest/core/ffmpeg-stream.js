@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeMediaFilesSync = exports.moveMediaFile = exports.checkMediaParts = exports.probeFfmpeg = void 0;
+exports.changeFileExtension = exports.mergeMediaFilesSync = exports.moveMediaFile = exports.checkMediaParts = exports.probeFfmpeg = void 0;
 const fs_1 = __importDefault(require("fs"));
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
 const ffmpeg_1 = __importDefault(require("@ffmpeg-installer/ffmpeg"));
@@ -106,6 +106,24 @@ function mergeMediaFilesSync(fileId, fileOutputPath) {
     });
 }
 exports.mergeMediaFilesSync = mergeMediaFilesSync;
+function changeFileExtension(mediaPart, extension, fileDestination) {
+    (0, utils_1.logInfo)(`Attempting to convert ${mediaPart} into ${fileDestination} with extension ${extension}.`, "ffmpeg-stream.ts");
+    const isAudioExtension = constants_1.AUDIO_FILE_EXTENSIONS.includes(extension);
+    if (!isAudioExtension)
+        return;
+    const command = (0, fluent_ffmpeg_1.default)()
+        .input(mediaPart)
+        .outputOptions("-q:a 0")
+        .outputOptions("-map a")
+        .save(fileDestination);
+    command.on("progress", function (progress) {
+        console.log(progress.timemark);
+    });
+    command.on("error", function (err) {
+        (0, utils_1.logError)(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream");
+    });
+}
+exports.changeFileExtension = changeFileExtension;
 function execute(convertStream, destinationPath, events) {
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);

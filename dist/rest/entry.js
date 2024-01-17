@@ -29,8 +29,8 @@ function rest(router) {
         });
     });
     router.post("/rest/download", router_1.requireLogin, function (req, res) {
-        const { url, requestId, quality } = req.body;
-        (0, pipeline_1.default)(url, quality, requestId).then(function (response) {
+        const { url, requestId, quality, extension } = req.body;
+        (0, pipeline_1.default)(url, quality, extension, requestId).then(function (response) {
             if (response.state === "ok") {
                 new electron_1.Notification({
                     title: "Fluent Youtube Downloader",

@@ -5,52 +5,39 @@ import path from "path";
 import { ChildProcess } from "child_process";
 
 import { createHistoryItem, readSettingsFile } from "../../appdata";
-import { ApplicationSettings, ConversionPipeline, ConvertQuality, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
-import { logError, logInfo, resolveVideoQuality } from "../../utils";
+import { ApplicationSettings, ConversionPipeline, ConvertQuality, ResolvedVideoInfo, StreamConversionProgress, StreamOutputExtractionEvent, YTDLPInitializationFailReason } from "../../typings";
+import { logError, logInfo, logWarning, resolveVideoQuality } from "../../utils";
 
 import stream from "./video-stream";
 import details from "./video-details";
-import command, { mergeMediaFilesSync } from "./ffmpeg-stream";
+import command, { changeFileExtension, mergeMediaFilesSync } from "./ffmpeg-stream";
 
 import { emit } from "../../socket";
-import { createYtdlpStream, extractStreamOutput, initializeYtdlp, promptInstallation } from "./ytdlp";
+import { createYtdlpStream, extractStreamOutput, getCompleteCacheFile, initializeYtdlp, promptInstallation } from "./ytdlp";
 
+function checkSettingsProperties(settings: ApplicationSettings): ConversionPipeline | string {
 
-export default async function execute(url: string, qualityString: ConvertQuality, requestId: string): Promise<ConversionPipeline> {
-
-	logInfo(`Starting conversion pipeline using the following arguments: url: ${url}, qualityString: ${qualityString}, requestId: ${requestId}`, "pipeline.ts");
-
-	// Settings must be read before running the entire pipeline.
-	const settings = readSettingsFile();
-
-	if (settings.status !== "ok") return {
+	if (settings.path.downloadPath === null) return {
 		state: "failed",
-		reason: "ApplicationSettings: Application failed reading settings."
+		reason: `NullReferenceError: Download path is set to null. Path: ${settings.path.downloadPath}. Configure the download path in the settings.`
 	}
 
-	const casting = settings as ApplicationSettings;
-
-	// Check if the download destination path exist.
-	if (casting.path.downloadPath === null) return {
+	if (!fs.existsSync(settings.path.downloadPath)) return {
 		state: "failed",
-		reason: `NullReferenceError: Download path is set to null. Path: ${casting.path.downloadPath}. Configure the download path in the settings.`
-	}
-
-	if (!fs.existsSync(casting.path.downloadPath)) return {
-		state: "failed",
-		reason: `FileSystemError: Given download path does not exist. Path: ${casting.path.downloadPath}`
+		reason: `FileSystemError: Given download path does not exist. Path: ${settings.path.downloadPath}`
 	};
 
 	// Check if the download destination is an actual directory.
-	if (!fs.lstatSync(casting.path.downloadPath).isDirectory()) return {
+	if (!fs.lstatSync(settings.path.downloadPath).isDirectory()) return {
 		state: "failed",
-		reason: `FileSystemError: Given download path is not a directory. Path: ${casting.path.downloadPath}`
+		reason: `FileSystemError: Given download path is not a directory. Path: ${settings.path.downloadPath}`
 	};
 
-	// Resolve the video quality.
-	const resolvedQuality: string = resolveVideoQuality(qualityString);
+	return settings.path.downloadPath;
+}
 
-	// Need to fetch the video details to grab it's title.
+async function resolveVideoInfo(url: string): Promise<ResolvedVideoInfo> {
+
 	const videoDetails: MoreVideoDetails = (await details(url)).videoDetails;
 
 	let videoTitle: string = videoDetails.title;
@@ -63,15 +50,14 @@ export default async function execute(url: string, qualityString: ConvertQuality
 			videoTitle = videoTitle.replace(character, " ");
 	}
 
-	// Try to reserve the file location.
-	let physicalFileDestinationPath = path.join(casting.path.downloadPath, videoTitle + ".mp4");
+	return {
+		videoTitle,
+		videoThumbnail: videoDetails.thumbnails[0].url
+	}
 
-	// Make sure that the file does not exist already.
-	// Should the file be rewritten if it already exists??????
-	if (fs.existsSync(physicalFileDestinationPath)) return {
-		reason: `FileSystemError: Reserved file path is already in use. Path: ${physicalFileDestinationPath}`,
-		state: "failed"
-	};
+}
+
+async function preInitializeYtdlp(): Promise<ConversionPipeline> {
 
 	// Initialize ytdlp
 	const ytdlpInitializationState: boolean | YTDLPInitializationFailReason = initializeYtdlp();
@@ -110,29 +96,79 @@ export default async function execute(url: string, qualityString: ConvertQuality
 		reason: "Execution directory could not be found."
 	}
 
-	// The code down below will only run IF the yt-dlp has succesfully initialized.
+	return {
+		state: "ok"
+	}
+}
+
+export default async function execute(url: string, qualityString: ConvertQuality, extension: string, requestId: string): Promise<ConversionPipeline> {
+
+	logInfo(`Starting conversion pipeline using the following arguments: url: ${url}, qualityString: ${qualityString}, requestId: ${requestId}, extension: ${extension}`, "pipeline.ts");
+	
+	const settings = readSettingsFile();
+
+	if (settings.status !== "ok") return {
+		state: "failed",
+		reason: "ApplicationSettings: Application failed reading settings."
+	}
+
+	// Check for settings properties, to make sure everything is set up correctly.
+	// When the check passed, the variable will eventually be a string referring to the download path.
+	const settingsCheck: ConversionPipeline | string = checkSettingsProperties(settings as ApplicationSettings);
+
+	if (typeof settingsCheck !== "string") return settingsCheck;
+	
+	const videoInfo: ResolvedVideoInfo = await resolveVideoInfo(url);
+	
+	let physicalFileDestinationPath = path.join(settingsCheck, videoInfo.videoTitle + "." + extension);
+	
+	if (fs.existsSync(physicalFileDestinationPath)) return {
+		reason: `FileSystemError: Reserved file path is already in use. Path: ${physicalFileDestinationPath}`,
+		state: "failed"
+	};
+
+	const preInitializedYtdlp = await preInitializeYtdlp();
+
+	if (preInitializedYtdlp.state !== "ok") return preInitializedYtdlp;
+	
 	logInfo(`Found yt-dlp executable in application's root file.`, "pipeline.ts");
 
-	// Will create a ChildProcess steam.
-	const convertStream: ChildProcess | null = createYtdlpStream(url, qualityString, requestId);
+	// Will convert the video to mp4 anyways.
+	const convertStream: ChildProcess | null = createYtdlpStream(url, qualityString, extension, requestId);
 
 	return new Promise(function (resolve, reject) {
 
 		if (convertStream === null || convertStream.stdout === null)
 			return reject(new Error("NullReferenceError: 'convertStream' has defined as null"));
 
+		convertStream.stderr?.on("data", function (chunk: Buffer) {
+
+			const errorText: string = chunk.toString();
+
+			logError(errorText, "pipeline.ts");
+			reject(new Error(errorText));
+		});
+
 		extractStreamOutput(convertStream.stdout, async function (event: StreamOutputExtractionEvent) {
 
 			if (event.isDone) {
 
-				if (event.fileDestinations) {
+				if (event.fileDestinations && extension === "mp4") {
 
-					emit("app/yt-dlp/download-video", { percentage: "100% - Merging media files together. This can take a little bit.", requestId });
+					emit("app/yt-dlp/download-video", { percentage: "Merging media files together. This can take a little bit.", requestId });
 
 					const mergeState: string | null = await mergeMediaFilesSync(requestId, physicalFileDestinationPath);
 
 					if (mergeState === null)
-						reject(new Error("NullReferenceError: Something went wrong during the process of merging media files."));
+						return reject(new Error("NullReferenceError: Something went wrong during the process of merging media files."));
+				} else {
+
+					const cacheFile: string | null = getCompleteCacheFile(requestId);
+
+					if (cacheFile === null)
+						return reject(new Error("NullReferenceError: Could not change media file into something else because the cache file could not be found."));
+
+					const hasChangedFile = changeFileExtension(cacheFile, extension, physicalFileDestinationPath)
 				}
 
 				createHistoryItem({
@@ -142,7 +178,7 @@ export default async function execute(url: string, qualityString: ConvertQuality
 					timestamp: Date.now(),
 					fileSize: null,
 					videoUrl: url,
-					thumbnailUrl: videoDetails.thumbnails[0].url
+					thumbnailUrl: videoInfo.videoThumbnail
 				});
 
 				return resolve({ state: "ok" });

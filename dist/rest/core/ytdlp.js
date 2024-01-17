@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.extractStreamOutput = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = exports.parseVideoIdFromUrl = void 0;
+exports.initializeYtdlp = exports.promptInstallation = exports.createYtdlpStream = exports.getCompleteCacheFile = exports.extractStreamOutput = exports.downloadYtdlp = exports.extractTarFile = exports.checkForInstallation = exports.parseVideoIdFromUrl = void 0;
 const electron_1 = __importDefault(require("electron"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -99,20 +99,17 @@ function extractStreamOutput(stream, callback) {
     stream.on("data", function (chunk) {
         const chunkText = chunk.toString().toLowerCase();
         const words = chunkText.split(" ");
-        const filteredWords = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
-        if (filteredWords[0].replace("\r", "") !== "[download]")
+        const notEmptyWords = words.filter(word => word.length !== 0);
+        (0, utils_1.logInfo)(chunkText, "downloading video");
+        if (notEmptyWords[0].trim() !== "[download]")
             return;
-        if (filteredWords[1].includes("destination")) {
-            (0, utils_1.logInfo)(`File part destination reserved at: ${filteredWords[2].trim()}`, "ytdlp.ts");
-            fileDestinations.push(filteredWords[2].trim());
-        }
-        if (!filteredWords[1].includes("%") ||
-            !filteredWords[3].includes("kib") ||
-            !filteredWords[5].includes("mib/s"))
+        if (!notEmptyWords[1].trim().includes("%") ||
+            !notEmptyWords[3].trim().includes("ib") ||
+            !notEmptyWords[5].trim().includes("ib/s"))
             return;
-        const percentage = parseFloat(filteredWords[1].replace("%", ""));
-        const chunkSize = parseFloat(filteredWords[3].replace("kib", ""));
-        const downloadSpeed = parseFloat(filteredWords[5].replace("mib/s", ""));
+        const percentage = parseFloat(notEmptyWords[1].trim().replace("%", ""));
+        const chunkSize = parseFloat(notEmptyWords[3].trim());
+        const downloadSpeed = parseFloat(notEmptyWords[5].trim());
         if (percentage === 100)
             completedDownload += 1;
         callback({ isDone: false, percentage, downloadSpeed });
@@ -123,7 +120,16 @@ function extractStreamOutput(stream, callback) {
     });
 }
 exports.extractStreamOutput = extractStreamOutput;
-function createYtdlpStream(videoUrl, videoQuality, requestId) {
+function getCompleteCacheFile(fileId) {
+    const cacheDirectory = (0, appdata_1.getCacheDirectory)();
+    if (cacheDirectory === null)
+        return null;
+    const files = fs_1.default.readdirSync(cacheDirectory);
+    const foundFiles = files.filter(fileName => fileName.startsWith(fileId));
+    return path_1.default.join(cacheDirectory, foundFiles[0]);
+}
+exports.getCompleteCacheFile = getCompleteCacheFile;
+function createYtdlpStream(videoUrl, videoQuality, extension, fileId) {
     var _a;
     const executionPath = electron_1.default.app.getPath("exe");
     const directoryName = path_1.default.dirname(executionPath);
@@ -139,8 +145,7 @@ function createYtdlpStream(videoUrl, videoQuality, requestId) {
     const cacheDirectory = (0, appdata_1.getCacheDirectory)();
     if (cacheDirectory === null)
         return null;
-    const parsedVideoId = parseVideoIdFromUrl(videoUrl);
-    const commandString = `${physicalFilePath} ${parsedVideoId} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+    const parsedVideoId = parseVideoIdFromUrl(videoUrl), commandString = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${fileId}`;
     (0, utils_1.logInfo)(`Starting yt-dlp executable located in ${physicalFilePath}.`, "ytdlp.ts");
     (0, utils_1.logInfo)(commandString, "ytdlp.ts");
     const process = child_process_1.default.exec(commandString);

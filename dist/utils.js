@@ -84,10 +84,10 @@ function formatCurrentTime() {
     return `${hours}:${minutes}:${seconds}`;
 }
 exports.formatCurrentTime = formatCurrentTime;
-const logInfo = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[INFO]:`.green + " " + message.trim());
+const logInfo = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from !== undefined ? from : "unknown"}) `.gray + `[INFO]:`.green + " " + message.trim());
 exports.logInfo = logInfo;
-const logError = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[ERROR]:`.red + " " + message.trim());
+const logError = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from !== undefined ? from : "unknown"}) `.gray + `[ERROR]:`.red + " " + message.trim());
 exports.logError = logError;
-const logWarning = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from}) `.gray + `[WARNING]:`.yellow + " " + message.trim());
+const logWarning = (message, from) => console.log(`(${formatCurrentTime()})`.cyan + ` (from: ${from !== undefined ? from : "unknown"}) `.gray + `[WARNING]:`.yellow + " " + message.trim());
 exports.logWarning = logWarning;
 //# sourceMappingURL=utils.js.map

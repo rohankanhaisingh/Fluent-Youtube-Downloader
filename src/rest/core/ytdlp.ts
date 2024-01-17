@@ -144,31 +144,32 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 
 		const words: string[] = chunkText.split(" ");
 
-		const filteredWords: string[] = words.filter(text => text.trim() !== "" || text.replace("\r", ""));
+		const notEmptyWords: string[] = words.filter(word => word.length !== 0);
 		
+		logInfo(chunkText, "downloading video");
+
 		// Check if the first string has '[download]'
-		if (filteredWords[0].replace("\r", "") !== "[download]") return;
+		if (notEmptyWords[0].trim() !== "[download]") return;
 
 		// If yt-dlp determines the physical location of the media files.
-		if (filteredWords[1].includes("destination")) {
+		//if (notEmptyWords[1].includes("destination")) {
 
-			logInfo(`File part destination reserved at: ${filteredWords[2].trim()}`, "ytdlp.ts");
-			fileDestinations.push(filteredWords[2].trim());
-		}
-
-		// Some other string checking yea
-		if (!filteredWords[1].includes("%") ||
-			!filteredWords[3].includes("kib") ||
-			!filteredWords[5].includes("mib/s")) return;
+		//	logInfo(`File part destination reserved at: ${notEmptyWords[2].trim()}`, "ytdlp.ts");
+		//	fileDestinations.push(notEmptyWords[2].trim());
+		//}
+		
+		if (!notEmptyWords[1].trim().includes("%") ||
+			!notEmptyWords[3].trim().includes("ib") ||
+			!notEmptyWords[5].trim().includes("ib/s")) return;
 
 		// Percentage of the download.
-		const percentage: number = parseFloat(filteredWords[1].replace("%", ""));
+		const percentage: number = parseFloat(notEmptyWords[1].trim().replace("%", ""));
 	
 		// Chunk size in KiB.
-		const chunkSize: number = parseFloat(filteredWords[3].replace("kib", ""));
+		const chunkSize: number = parseFloat(notEmptyWords[3].trim());
 
 		// Download speed in MiB/s
-		const downloadSpeed: number = parseFloat(filteredWords[5].replace("mib/s", ""));
+		const downloadSpeed: number = parseFloat(notEmptyWords[5].trim());
 
 		// If any of the download is complete.
 		if (percentage === 100)
@@ -185,7 +186,25 @@ export function extractStreamOutput(stream: stream.Readable, callback: (event: S
 	});
 }
 
-export function createYtdlpStream(videoUrl: string, videoQuality: string, requestId: string): null | cp.ChildProcess {
+/**
+ * Gets the chache file based on the given file id.
+ * @param fileId
+ * @returns
+ */
+export function getCompleteCacheFile(fileId: string): string | null {
+
+	const cacheDirectory: string | null = getCacheDirectory();
+
+	if (cacheDirectory === null) return null;
+
+	const files: string[] = fs.readdirSync(cacheDirectory);
+
+	const foundFiles: string[] = files.filter(fileName => fileName.startsWith(fileId));
+
+	return path.join(cacheDirectory, foundFiles[0]);
+}
+
+export function createYtdlpStream(videoUrl: string, videoQuality: string, extension: string, fileId: string): null | cp.ChildProcess {
 
 	// Checks if the yt-dlp executable exists.
 	const executionPath: string = electron.app.getPath("exe");
@@ -213,10 +232,8 @@ export function createYtdlpStream(videoUrl: string, videoQuality: string, reques
 	if (cacheDirectory === null)
 		return null;
 
-	const parsedVideoId: string = parseVideoIdFromUrl(videoUrl);
-
-	// This string contains the arguments that will be used for the command.
-	const commandString: string = `${physicalFilePath} ${parsedVideoId} -f ${videoQuality} -o ${cacheDirectory}/${requestId}.mp4`;
+	const parsedVideoId: string = parseVideoIdFromUrl(videoUrl),
+		commandString: string = `${physicalFilePath} ${videoUrl} -f ${videoQuality} -o ${cacheDirectory}/${fileId}`
 
 	logInfo(`Starting yt-dlp executable located in ${physicalFilePath}.`, "ytdlp.ts");
 	logInfo(commandString, "ytdlp.ts");

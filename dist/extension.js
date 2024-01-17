@@ -36,7 +36,7 @@ function convertVideoFromYoutube(body) {
         if (difference >= constants_1.EXTENSION_CONNECTION_INTERVAL)
             return reject(new Error(`The delay between the request and the response is more than ${constants_1.EXTENSION_CONNECTION_INTERVAL}.`));
         exports.activeConversionThread = body;
-        (0, pipeline_1.default)(body.videoUrl, body.videoQuality, body.requestId).then(function (response) {
+        (0, pipeline_1.default)(body.videoUrl, body.videoQuality, "mp4", body.requestId).then(function (response) {
             exports.activeConversionThread = null;
             if (response.state === "ok") {
                 new electron_1.Notification({
