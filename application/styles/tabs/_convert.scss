@@ -287,7 +287,7 @@
                     left: 20px;
                     background: url(/static/media/icons/windows-icon-add.png);
                     background-size: 100% 100%;
-                    filter: opacity(0.2);
+                    filter: var(--icon-filter);
                 }
 
                 &::after {
@@ -295,7 +295,7 @@
                     left: 50px;
                     font-size: 14px;
                     top: 1px;
-                    color: rgb(0, 0, 0, .4);
+                    color: var(--primary-text-color);
                 }
 
                 &:focus, &:not(:empty) {
@@ -317,17 +317,9 @@
 
                     img {
                         @include mixins.StaticIcon;
-                        -moz-filter: opacity(.2);
-                        -webkit-filter: opacity(.2);
-                        filter: opacity(.2);
-                    }
-
-                    &:hover {
-                        img {
-                            -moz-filter: opacity(0.3);
-                            -webkit-filter: opacity(0.3);
-                            filter: opacity(0.3);
-                        }
+                        -moz-filter: var(--icon-filter);
+                        -webkit-filter: var(--icon-filter);
+                        filter: var(--icon-filter);
                     }
                 }
             }
