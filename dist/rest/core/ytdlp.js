@@ -103,6 +103,10 @@ function extractStreamOutput(stream, callback) {
         (0, utils_1.logInfo)(chunkText, "downloading video");
         if (notEmptyWords[0].trim() !== "[download]")
             return;
+        if (notEmptyWords[1].includes("destination")) {
+            (0, utils_1.logInfo)(`File part destination reserved at: ${notEmptyWords[2].trim()}`, "ytdlp.ts");
+            fileDestinations.push(notEmptyWords[2].trim());
+        }
         if (!notEmptyWords[1].trim().includes("%") ||
             !notEmptyWords[3].trim().includes("ib") ||
             !notEmptyWords[5].trim().includes("ib/s"))
