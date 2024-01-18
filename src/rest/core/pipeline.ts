@@ -82,7 +82,7 @@ async function preInitializeYtdlp(): Promise<ConversionPipeline> {
 
 		if (!isInstalled) return {
 			state: "failed",
-			reason: "User denied the prompt"
+			reason: "Fluent YouTube Downloader may not work if the dependency has not been installed. You can either install it within this application or manually install the dependency from GitHub."
 		}
 
 		return {

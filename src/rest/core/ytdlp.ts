@@ -265,7 +265,7 @@ export async function promptInstallation(): Promise<boolean | Error> {
 		title: "yt-dlp executable not found",
 		message: `The exectable '${YTDLP_EXECUTABLE_FILENAME}' in '${executionPath}' has not been found`,
 		type: "question",
-		detail: `Fluent Youtube Download needs access to a yt-dlp executable to convert YouTube video's into any media format. Would you like to download the latest release from Github? (https://github.com/yt-dlp/yt-dlp).\nYoutube Fluent Downloader will restart after the installation.`,
+		detail: `yt-dlp.exe has not been found. Would you like to install this dependency from GitHub? (https://github.com/yt-dlp/yt-dlp)`,
 		buttons: ["Yes", "No"]
 	});
 
