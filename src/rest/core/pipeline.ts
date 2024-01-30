@@ -168,8 +168,16 @@ export default async function execute(url: string, qualityString: ConvertQuality
 					if (cacheFile === null)
 						return reject(new Error("NullReferenceError: Could not change media file into something else because the cache file could not be found."));
 
-					const hasChangedFile = changeFileExtension(cacheFile, extension, physicalFileDestinationPath)
+					emit("app/yt-dlp/download-video", { percentage: "Post processing media files. This can take a while.", requestId });
+
+					try {
+						await changeFileExtension(cacheFile, extension, physicalFileDestinationPath);
+					} catch (err: unknown) {
+						return reject(new Error((err as Error).message));
+					}
 				}
+
+				logInfo(`Succesfully downloaded ${url}.`, "pipeline.ts");
 
 				createHistoryItem({
 					fileLocation: physicalFileDestinationPath,

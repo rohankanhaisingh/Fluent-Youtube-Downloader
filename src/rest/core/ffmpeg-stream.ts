@@ -123,29 +123,31 @@ export async function mergeMediaFilesSync(fileId: string, fileOutputPath: string
 	});
 }
 
-export function changeFileExtension(mediaPart: string, extension: string, fileDestination: string) {
+export function changeFileExtension(mediaPart: string, extension: string, fileDestination: string): Promise<boolean> {
 
-	logInfo(`Attempting to convert ${mediaPart} into ${fileDestination} with extension ${extension}.`, "ffmpeg-stream.ts");
+	return new Promise(function (resolve, reject) {
 
-	const isAudioExtension: boolean = AUDIO_FILE_EXTENSIONS.includes(extension);
+		logInfo(`Attempting to convert ${mediaPart} into ${fileDestination} with extension ${extension}.`, "ffmpeg-stream.ts");
 
-	if (!isAudioExtension) return;
+		const isAudioExtension: boolean = AUDIO_FILE_EXTENSIONS.includes(extension);
 
-	const command: FfmpegCommand = ffmpeg()
-		.input(mediaPart)
-		.outputOptions("-q:a 0")
-		.outputOptions("-map a")
-		.save(fileDestination);
+		if (!isAudioExtension) return reject(new Error(`Attempt to convert ${mediaPart} into ${fileDestination} failed because the given extension is not supported.`));
 
-	command.on("progress", function (progress: StreamConversionProgress) {
+		const command: FfmpegCommand = ffmpeg()
+			.input(mediaPart)
+			.outputOptions("-q:a 0")
+			.outputOptions("-map a")
+			.save(fileDestination);
 
-		console.log(progress.timemark);
-	});
+		command.on("end", function () {
+			resolve(true);
+		});
 
-	command.on("error", function (err: Error) {
+		command.on("error", function (err: Error) {
 
-		logError(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream");
-
+			logError(`ffmpeg.exe failed with reason: ${err.message}.`, "ffmpeg-stream");
+			reject(new Error(`ffmpeg.exe failed with reason: ${err.message}.`));
+		});
 	});
 }
 

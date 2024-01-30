@@ -132,8 +132,15 @@ function execute(url, qualityString, extension, requestId) {
                             const cacheFile = (0, ytdlp_1.getCompleteCacheFile)(requestId);
                             if (cacheFile === null)
                                 return reject(new Error("NullReferenceError: Could not change media file into something else because the cache file could not be found."));
-                            const hasChangedFile = (0, ffmpeg_stream_1.changeFileExtension)(cacheFile, extension, physicalFileDestinationPath);
+                            (0, socket_1.emit)("app/yt-dlp/download-video", { percentage: "Post processing media files. This can take a while.", requestId });
+                            try {
+                                yield (0, ffmpeg_stream_1.changeFileExtension)(cacheFile, extension, physicalFileDestinationPath);
+                            }
+                            catch (err) {
+                                return reject(new Error(err.message));
+                            }
                         }
+                        (0, utils_1.logInfo)(`Succesfully downloaded ${url}.`, "pipeline.ts");
                         (0, appdata_1.createHistoryItem)({
                             fileLocation: physicalFileDestinationPath,
                             fileName: path_1.default.basename(physicalFileDestinationPath),
